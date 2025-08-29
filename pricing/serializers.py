@@ -13,7 +13,8 @@ from customers.models import Customer
 from customers.serializers import CustomerSerializer
 from catalog.serializers import  CategorySerializer
 from catalog.serializers import BrandSerializer
-
+from catalog.serializers import ProductVariantSerializer
+from .models import ProjectPlanImageGroup, ProjectPlanImage
 
 
 
@@ -144,16 +145,26 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class ProjectLineItemAccessorySerializer(serializers.ModelSerializer):
-    accessory_detail = AccessoriesSerializer(source='accessory', read_only=True)
+    product_variant_detail = ProductVariantSerializer(source='product_variant', read_only=True)
+    
+    # Computed fields from model properties
+    accessory_name = serializers.ReadOnlyField()
+    accessory_image = serializers.ReadOnlyField()
+    material_code = serializers.ReadOnlyField()
+    dimensions = serializers.ReadOnlyField()
 
     class Meta:
         model = ProjectLineItemAccessory
         fields = [
-            'id', 'line_item', 'accessory', 'accessory_detail',
+            'id', 'line_item', 'product_variant', 'product_variant_detail',
             'qty', 'unit_price', 'tax_rate_snapshot', 'total_price',
+            'installation_notes',
+            # Computed fields for easy access
+            'accessory_name', 'accessory_image', 'material_code', 'dimensions',
             'is_active', 'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at', 'total_price', 
+                           'accessory_name', 'accessory_image', 'material_code', 'dimensions']
 
     def validate_qty(self, value):
         """Validate quantity is positive"""
@@ -244,20 +255,60 @@ class ProjectTotalsSerializer(serializers.ModelSerializer):
 
 
 class ProjectPlanImageSerializer(serializers.ModelSerializer):
+    thumbnail_url = serializers.ReadOnlyField()
+    file_size_display = serializers.ReadOnlyField()
+    
     class Meta:
         model = ProjectPlanImage
         fields = [
-            'id', 'project', 'image', 'caption', 'sort_order',
+            'id', 'image_group', 'image', 'caption', 'sort_order',
+            'file_size', 'file_type', 'thumbnail_url', 'file_size_display',
+            'is_active', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['id', 'file_size', 'file_type', 'created_at', 'updated_at']
+
+class ProjectPlanImageGroupSerializer(serializers.ModelSerializer):
+    images = ProjectPlanImageSerializer(many=True, read_only=True)
+    image_count = serializers.ReadOnlyField()
+    first_image_url = serializers.ReadOnlyField()
+    
+    class Meta:
+        model = ProjectPlanImageGroup
+        fields = [
+            'id', 'project', 'title', 'description', 'sort_order',
+            'images', 'image_count', 'first_image_url',
             'is_active', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
-
-    def validate_sort_order(self, value):
-        """Validate sort order is not negative"""
-        if value < 0:
-            raise serializers.ValidationError("Sort order cannot be negative")
+    
+    def validate_title(self, value):
+        """Ensure unique title per project"""
+        project = self.initial_data.get('project') or getattr(self.instance, 'project', None)
+        if project:
+            existing = ProjectPlanImageGroup.objects.filter(
+                project=project, 
+                title=value,
+                is_active=True
+            )
+            if self.instance:
+                existing = existing.exclude(id=self.instance.id)
+            
+            if existing.exists():
+                raise serializers.ValidationError(f"A group with title '{value}' already exists for this project.")
+        
         return value
 
+# Compact version without nested images for list views
+class ProjectPlanImageGroupListSerializer(serializers.ModelSerializer):
+    image_count = serializers.ReadOnlyField()
+    first_image_url = serializers.ReadOnlyField()
+    
+    class Meta:
+        model = ProjectPlanImageGroup
+        fields = [
+            'id', 'project', 'title', 'description', 'sort_order',
+            'image_count', 'first_image_url', 'is_active', 'created_at'
+        ]
 
 # Additional serializers for different use cases
 

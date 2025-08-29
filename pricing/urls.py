@@ -29,12 +29,15 @@ router.register(r'projects', views.ProjectViewSet)
 router.register(r'project-line-items', views.ProjectLineItemViewSet)
 router.register(r'project-line-item-accessories', views.ProjectLineItemAccessoryViewSet)
 router.register(r'project-totals', views.ProjectTotalsViewSet)
-router.register(r'project-plan-images', views.ProjectPlanImageViewSet)
+# router.register(r'project-plan-images', views.ProjectPlanImageViewSet)
 
 # Enhanced Lighting Configuration (UPDATED)
 router.register(r'lighting-rules', views.LightingRulesViewSet)
 router.register(r'lighting-configurations', views.ProjectLightingConfigurationViewSet)
 router.register(r'lighting-items', views.ProjectLightingItemViewSet)
+
+router.register(r'project-plan-image-groups', views.ProjectPlanImageGroupViewSet)
+router.register(r'project-plan-images', views.ProjectPlanImageViewSet)
 
 urlpatterns = [
     # Router URLs (provides full CRUD for all registered ViewSets)

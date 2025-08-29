@@ -1,18 +1,24 @@
 from datetime import date
 from decimal import Decimal
 from django.db import transaction
-from django.db.models import Sum, F, Q
+from django.db.models import Sum, F, Q, Case, When, Value
 from django.utils.timezone import now
+from django.db import transaction
+# from rest_framework import viewsets, status
+from rest_framework.decorators import action
+
+from rest_framework.parsers import MultiPartParser, FormParser
+from django.shortcuts import get_object_or_404
 
 from rest_framework import viewsets, status, filters
-from rest_framework.decorators import action
+
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
 
 from .models import *
 from .serializers import (
-    GeometryRuleSerializer, ProjectLightingConfigurationSerializer, ProjectSerializer, ProjectLineItemSerializer,
+    GeometryRuleSerializer, ProjectLightingConfigurationSerializer, ProjectPlanImageGroupListSerializer, ProjectPlanImageGroupSerializer, ProjectSerializer, ProjectLineItemSerializer,
     ProjectLineItemAccessorySerializer, ProjectTotalsSerializer, 
     ProjectPlanImageSerializer, MaterialsSerializer, FinishRatesSerializer,
     DoorFinishRatesSerializer, CabinetTypesSerializer, 
@@ -382,46 +388,127 @@ class ProjectLineItemViewSet(BaseModelViewSet):
 
 class ProjectLineItemAccessoryViewSet(BaseModelViewSet):
     queryset = ProjectLineItemAccessory.objects.all().select_related(
-        'line_item', 'accessory'
-    )
+        'line_item', 'line_item__project', 'line_item__project__customer',
+        'product_variant', 'product_variant__product', 'product_variant__product__brand',
+        'product_variant__product__category'
+    ).prefetch_related('product_variant__images')
+    
     serializer_class = ProjectLineItemAccessorySerializer
-    search_fields = ['accessory__name', 'line_item__project__customer__name']
+    search_fields = [
+        'product_variant__product__name', 
+        'product_variant__color_name',
+        'product_variant__material_code',
+        'line_item__project__customer__name'
+    ]
     ordering_fields = ['total_price', 'created_at', 'updated_at']
     
+    def get_queryset(self):
+        """Filter accessories by project or line item"""
+        queryset = self.queryset
+        
+        project_id = self.request.query_params.get('project')
+        line_item_id = self.request.query_params.get('line_item')
+        category = self.request.query_params.get('category')
+        
+        if project_id:
+            queryset = queryset.filter(line_item__project=project_id)
+        
+        if line_item_id:
+            queryset = queryset.filter(line_item=line_item_id)
+            
+        if category:
+            queryset = queryset.filter(product_variant__product__category__name__icontains=category)
+            
+        return queryset
+    
+    @action(detail=False, methods=['get'])
+    def available_products(self, request):
+        """Get available product variants for accessories"""
+        from catalog.models import ProductVariant
+        from catalog.serializers import ProductVariantSerializer
+        
+        # Get query parameters
+        category_name = request.query_params.get('category', 'ACCESSORIES')
+        search = request.query_params.get('search', '')
+        brand_id = request.query_params.get('brand')
+        
+        # Base queryset - active product variants
+        variants = ProductVariant.objects.filter(
+            is_active=True,
+            product__is_active=True
+        ).select_related(
+            'product', 'product__category', 'product__brand'
+        ).prefetch_related('images')
+        
+        # Filter by category
+        if category_name:
+            variants = variants.filter(
+                product__category__name__icontains=category_name
+            )
+        
+        # Filter by brand
+        if brand_id:
+            variants = variants.filter(product__brand_id=brand_id)
+        
+        # Search filter
+        if search:
+            variants = variants.filter(
+                Q(product__name__icontains=search) |
+                Q(color_name__icontains=search) |
+                Q(material_code__icontains=search) |
+                Q(product__description__icontains=search)
+            )
+        
+        # Pagination
+        page = self.paginate_queryset(variants)
+        if page is not None:
+            serializer = ProductVariantSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        
+        serializer = ProductVariantSerializer(variants, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'])
+    def categories(self, request):
+        """Get available categories for filtering"""
+        from catalog.models import Category
+        from catalog.serializers import CategorySerializer
+        
+        categories = Category.objects.filter(
+            is_active=True,
+            product__variants__is_active=True
+        ).distinct()
+        
+        serializer = CategorySerializer(categories, many=True)
+        return Response(serializer.data)
+    
     def perform_create(self, serializer):
-        acc = serializer.save()
-        if acc.unit_price == 0:
-            acc.unit_price = acc.accessory.unit_price
-        acc.total_price = (Decimal(acc.unit_price) * acc.qty).quantize(Decimal('0.01'))
-        # Note: Assuming tax_rate exists on Accessories model or remove this line
-        # acc.tax_rate_snapshot = acc.accessory.tax_rate
-        acc.save()
-        compute_line(acc.line_item)
-        recompute_totals(acc.line_item.project)
+        """Create accessory and recalculate totals"""
+        accessory = serializer.save()
+        
+        # Auto-populate pricing from product variant if not provided
+        if not accessory.unit_price:
+            accessory.unit_price = accessory.product_variant.company_price
+            accessory.tax_rate_snapshot = accessory.product_variant.tax_rate
+            accessory.save()
+        
+        # Recalculate line item and project totals
+        compute_line(accessory.line_item)
+        recompute_totals(accessory.line_item.project)
     
     def perform_update(self, serializer):
-        acc = serializer.save()
-        if acc.unit_price == 0:
-            acc.unit_price = acc.accessory.unit_price
-        acc.total_price = (Decimal(acc.unit_price) * acc.qty).quantize(Decimal('0.01'))
-        acc.save()
-        compute_line(acc.line_item)
-        recompute_totals(acc.line_item.project)
+        """Update accessory and recalculate totals"""
+        accessory = serializer.save()
+        compute_line(accessory.line_item)
+        recompute_totals(accessory.line_item.project)
     
     def perform_destroy(self, instance):
-        line = instance.line_item
-        project = line.project
+        """Delete accessory and recalculate totals"""
+        line_item = instance.line_item
+        project = line_item.project
         super().perform_destroy(instance)
-        compute_line(line)
+        compute_line(line_item)
         recompute_totals(project)
-    
-    def get_queryset(self):
-        """Filter accessories by project if provided"""
-        project_id = self.request.query_params.get('project')
-        if project_id:
-            return self.queryset.filter(line_item__project=project_id)
-        return self.queryset
-
 
 class ProjectTotalsViewSet(BaseModelViewSet):
     queryset = ProjectTotals.objects.all().select_related('project')
@@ -435,22 +522,198 @@ class ProjectTotalsViewSet(BaseModelViewSet):
             return self.queryset.filter(project=project_id)
         return self.queryset
 
-
-class ProjectPlanImageViewSet(BaseModelViewSet):
-    queryset = ProjectPlanImage.objects.all().select_related('project')
-    serializer_class = ProjectPlanImageSerializer
-    search_fields = ['project__customer__name', 'caption']
-    ordering_fields = ['sort_order', 'created_at']
-    ordering = ['sort_order', 'created_at']
-
+class ProjectPlanImageGroupViewSet(BaseModelViewSet):
+    queryset = ProjectPlanImageGroup.objects.all().prefetch_related('images')
+    serializer_class = ProjectPlanImageGroupSerializer
+    search_fields = ['title', 'description', 'project__customer__name']
+    ordering_fields = ['sort_order', 'created_at', 'updated_at']
+    
+    def get_serializer_class(self):
+        """Use different serializer for list view to optimize performance"""
+        if self.action == 'list':
+            return ProjectPlanImageGroupListSerializer
+        return ProjectPlanImageGroupSerializer
+    
     def get_queryset(self):
-        """Filter plan images by project if provided"""
+        """Filter groups by project if provided"""
         project_id = self.request.query_params.get('project')
         if project_id:
             return self.queryset.filter(project=project_id)
         return self.queryset
+    
+    @action(detail=True, methods=['post'])
+    def reorder_images(self, request, pk=None):
+        """Reorder images within a group"""
+        group = self.get_object()
+        image_orders = request.data.get('image_orders', [])
+        
+        try:
+            with transaction.atomic():
+                for order_data in image_orders:
+                    image_id = order_data.get('id')
+                    new_order = order_data.get('sort_order')
+                    
+                    if image_id and new_order is not None:
+                        ProjectPlanImage.objects.filter(
+                            id=image_id,
+                            image_group=group
+                        ).update(sort_order=new_order)
+                
+                return Response({'message': 'Images reordered successfully'})
+        except Exception as e:
+            return Response(
+                {'error': str(e)}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    
+    @action(detail=False, methods=['post'])
+    def reorder_groups(self, request):
+        """Reorder groups within a project"""
+        project_id = request.data.get('project')
+        group_orders = request.data.get('group_orders', [])
+        
+        if not project_id:
+            return Response(
+                {'error': 'Project ID is required'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            with transaction.atomic():
+                for order_data in group_orders:
+                    group_id = order_data.get('id')
+                    new_order = order_data.get('sort_order')
+                    
+                    if group_id and new_order is not None:
+                        ProjectPlanImageGroup.objects.filter(
+                            id=group_id,
+                            project=project_id
+                        ).update(sort_order=new_order)
+                
+                return Response({'message': 'Groups reordered successfully'})
+        except Exception as e:
+            return Response(
+                {'error': str(e)}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-
+class ProjectPlanImageViewSet(BaseModelViewSet):
+    queryset = ProjectPlanImage.objects.all().select_related('image_group', 'image_group__project')
+    serializer_class = ProjectPlanImageSerializer
+    parser_classes = [MultiPartParser, FormParser]  # Support file uploads
+    search_fields = ['caption', 'image_group__title', 'image_group__project__customer__name']
+    ordering_fields = ['sort_order', 'created_at', 'updated_at']
+    
+    def get_queryset(self):
+        """Filter images by group or project"""
+        queryset = self.queryset
+        
+        project_id = self.request.query_params.get('project')
+        group_id = self.request.query_params.get('image_group')
+        
+        if project_id:
+            queryset = queryset.filter(image_group__project=project_id)
+        
+        if group_id:
+            queryset = queryset.filter(image_group=group_id)
+            
+        return queryset
+    
+    @action(detail=False, methods=['post'])
+    def bulk_upload(self, request):
+        """Upload multiple images to a group at once"""
+        image_group_id = request.data.get('image_group')
+        
+        if not image_group_id:
+            return Response(
+                {'error': 'image_group is required'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            image_group = get_object_or_404(ProjectPlanImageGroup, id=image_group_id)
+        except:
+            return Response(
+                {'error': 'Image group not found'}, 
+                status=status.HTTP_404
+            )
+        
+        uploaded_images = []
+        errors = []
+        
+        # Handle multiple file upload
+        files = request.FILES.getlist('images')
+        captions = request.POST.getlist('captions')
+        
+        try:
+            with transaction.atomic():
+                for i, file in enumerate(files):
+                    try:
+                        # Get caption for this image
+                        caption = captions[i] if i < len(captions) else ''
+                        
+                        # Create image instance
+                        image_data = {
+                            'image_group': image_group.id,
+                            'image': file,
+                            'caption': caption,
+                            'sort_order': len(uploaded_images)
+                        }
+                        
+                        serializer = self.get_serializer(data=image_data)
+                        if serializer.is_valid():
+                            image = serializer.save()
+                            uploaded_images.append(serializer.data)
+                        else:
+                            errors.append({
+                                'file': file.name,
+                                'errors': serializer.errors
+                            })
+                    
+                    except Exception as e:
+                        errors.append({
+                            'file': file.name,
+                            'error': str(e)
+                        })
+            
+            return Response({
+                'uploaded_images': uploaded_images,
+                'errors': errors,
+                'total_uploaded': len(uploaded_images),
+                'total_errors': len(errors)
+            })
+            
+        except Exception as e:
+            return Response(
+                {'error': str(e)}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    
+    @action(detail=True, methods=['post'])
+    def reorder(self, request, pk=None):
+        """Reorder a specific image within its group"""
+        image = self.get_object()
+        new_order = request.data.get('sort_order')
+        
+        if new_order is None:
+            return Response(
+                {'error': 'sort_order is required'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            image.sort_order = new_order
+            image.save()
+            
+            return Response({
+                'message': 'Image reordered successfully',
+                'data': self.get_serializer(image).data
+            })
+        except Exception as e:
+            return Response(
+                {'error': str(e)}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
 # =========================
 # Additional API Views
 # =========================
@@ -563,14 +826,14 @@ class LightingRulesViewSet(BaseModelViewSet):
         
         return queryset.order_by(
             # Customer-specific rules first
-            models.Case(
-                models.When(customer__isnull=False, then=models.Value(0)),
-                default=models.Value(1)
+            Case(
+                When(customer__isnull=False, then=Value(0)),
+                default=Value(1)
             ),
             # Type-specific rules next
-            models.Case(
-                models.When(cabinet_type__isnull=False, then=models.Value(0)),
-                default=models.Value(1)
+            Case(
+                When(cabinet_type__isnull=False, then=Value(0)),
+                default=Value(1)
             ),
             '-effective_from'
         )
@@ -758,7 +1021,7 @@ class ProjectLightingItemViewSet(BaseModelViewSet):
 def get_applicable_lighting_rules(project, cabinet_material=None, cabinet_type=None):
     """Get lighting rules applicable to a project"""
     rules = LightingRules.objects.filter(
-        models.Q(is_global=True) | models.Q(customer=project.customer),
+        Q(is_global=True) | Q(customer=project.customer),
         budget_tier=project.budget_tier,
         is_active=True
     )
@@ -773,13 +1036,13 @@ def get_applicable_lighting_rules(project, cabinet_material=None, cabinet_type=N
     
     # Order by specificity: customer-specific first, then type-specific, then general
     return rules.order_by(
-        models.Case(
-            models.When(customer=project.customer, then=models.Value(0)),
-            default=models.Value(1)
+        Case(
+            When(customer=project.customer, then=Value(0)),
+            default=Value(1)
         ),
-        models.Case(
-            models.When(cabinet_type__isnull=False, then=models.Value(0)),
-            default=models.Value(1)
+        Case(
+            When(cabinet_type__isnull=False, then=Value(0)),
+            default=Value(1)
         ),
         '-effective_from'
     )

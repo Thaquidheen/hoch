@@ -1,9 +1,10 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 from decimal import Decimal
-from catalog.models import Category, Brand
+from catalog.models import Category, Brand,ProductVariant
 from customers.models import Customer
-
+import os
+import uuid
 
 class TimeStamped(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -202,18 +203,53 @@ class ProjectLineItem(TimeStamped):
     def __str__(self):
         return f'{self.project} - {self.cabinet_type} ({self.qty}x)'
 
-
 class ProjectLineItemAccessory(TimeStamped):
+    """Project accessories using ProductVariants from catalog"""
     line_item = models.ForeignKey(ProjectLineItem, on_delete=models.CASCADE, related_name='extra_accessories')
-    accessory = models.ForeignKey(Accessories, on_delete=models.PROTECT)
+    product_variant = models.ForeignKey('catalog.ProductVariant', on_delete=models.PROTECT)  # Now required
+    
     qty = models.PositiveIntegerField(default=1)
-    unit_price = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('0'))  # snapshot
+    unit_price = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('0'))
     tax_rate_snapshot = models.DecimalField(max_digits=5, decimal_places=2, default=Decimal('18.00'))
     total_price = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('0'))
+    installation_notes = models.TextField(blank=True)
+    
+    class Meta:
+        unique_together = [('line_item', 'product_variant')]  # Prevent duplicate accessories per line item
+        ordering = ['line_item', 'id']
+    
+    def save(self, *args, **kwargs):
+        # Auto-populate pricing from product variant if not set
+        if not self.unit_price:
+            self.unit_price = self.product_variant.company_price
+            self.tax_rate_snapshot = self.product_variant.tax_rate
+        
+        # Calculate total
+        self.total_price = (self.unit_price * self.qty).quantize(Decimal('0.01'))
+        super().save(*args, **kwargs)
+    
+    @property
+    def accessory_name(self):
+        """Display name for the accessory"""
+        return f"{self.product_variant.product.name} - {self.product_variant.color_name}"
+    
+    @property
+    def accessory_image(self):
+        """Get product image URL"""
+        return getattr(self.product_variant, 'image_url', None)
+    
+    @property
+    def material_code(self):
+        """Get material code"""
+        return self.product_variant.material_code
+    
+    @property
+    def dimensions(self):
+        """Get dimensions display"""
+        return getattr(self.product_variant, 'dimensions_display', None)
     
     def __str__(self):
-        return f'{self.line_item} - {self.accessory} ({self.qty}x)'
-
+        return f'{self.line_item} - {self.accessory_name} ({self.qty}x)'
 
 class ProjectTotals(TimeStamped):
     project = models.OneToOneField(Project, on_delete=models.CASCADE, related_name='totals')
@@ -233,19 +269,95 @@ class ProjectTotals(TimeStamped):
 
 
 
-class ProjectPlanImage(TimeStamped):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='plan_images')
-    image = models.ImageField(upload_to='projects/plans/')
-    caption = models.CharField(max_length=200, blank=True)
-    sort_order = models.PositiveIntegerField(default=0)
+def plan_image_upload_path(instance, filename):
+    """Generate upload path for plan images"""
+    ext = filename.split('.')[-1]
+    filename = f"{uuid.uuid4().hex[:8]}.{ext}"
+    return f'projects/{instance.image_group.project.id}/plans/{instance.image_group.id}/{filename}'
+
+class ProjectPlanImageGroup(TimeStamped):
+    """Groups of images with headings for better organization"""
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='image_groups')
+    title = models.CharField(max_length=200, help_text="Group heading (e.g., 'Floor Plans', '3D Renderings')")
+    description = models.TextField(blank=True, help_text="Optional description of this image group")
+    sort_order = models.PositiveIntegerField(default=0, help_text="Order for displaying groups")
     
     class Meta:
-        ordering = ['sort_order', 'id']
+        ordering = ['sort_order', 'created_at']
+        unique_together = [('project', 'title')]  # Prevent duplicate titles per project
     
     def __str__(self):
-        return f'Plan {self.project_id} #{self.id}'
+        return f"{self.project} - {self.title}"
     
+    @property
+    def image_count(self):
+        """Get count of images in this group"""
+        return self.images.filter(is_active=True).count()
+    
+    @property
+    def first_image_url(self):
+        """Get URL of first image for group thumbnail"""
+        first_image = self.images.filter(is_active=True).first()
+        return first_image.image.url if first_image else None
 
+class ProjectPlanImage(TimeStamped):
+    """Individual images within groups"""
+    image_group = models.ForeignKey(
+        ProjectPlanImageGroup, 
+        on_delete=models.CASCADE, 
+        related_name='images'
+    )
+    image = models.ImageField(
+        upload_to=plan_image_upload_path,
+        help_text="Plan image file (JPG, PNG, PDF supported)"
+    )
+    caption = models.CharField(
+        max_length=200, 
+        blank=True,
+        help_text="Image caption or description"
+    )
+    sort_order = models.PositiveIntegerField(
+        default=0,
+        help_text="Order for displaying images within group"
+    )
+    file_size = models.PositiveIntegerField(null=True, blank=True, help_text="File size in bytes")
+    file_type = models.CharField(max_length=20, blank=True, help_text="File MIME type")
+    
+    class Meta:
+        ordering = ['sort_order', 'created_at']
+    
+    def save(self, *args, **kwargs):
+        # Auto-populate file metadata
+        if self.image:
+            self.file_size = self.image.size if hasattr(self.image, 'size') else None
+            self.file_type = getattr(self.image.file, 'content_type', '')
+            
+        # Auto-generate caption from filename if not provided
+        if not self.caption and self.image:
+            filename = os.path.basename(self.image.name)
+            self.caption = os.path.splitext(filename)[0].replace('_', ' ').title()
+            
+        super().save(*args, **kwargs)
+    
+    def __str__(self):
+        return f"{self.image_group.title} - {self.caption or f'Image {self.id}'}"
+    
+    @property
+    def thumbnail_url(self):
+        """Get thumbnail URL (implement thumbnail generation if needed)"""
+        return self.image.url  # For now, return original image URL
+    
+    @property
+    def file_size_display(self):
+        """Human readable file size"""
+        if not self.file_size:
+            return "Unknown"
+        
+        for unit in ['B', 'KB', 'MB', 'GB']:
+            if self.file_size < 1024.0:
+                return f"{self.file_size:.1f} {unit}"
+            self.file_size /= 1024.0
+        return f"{self.file_size:.1f} TB"
 
 
 class LightingRules(TimeStamped):
