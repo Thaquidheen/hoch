@@ -141,38 +141,103 @@ class Product(BaseModel):
         return f"{self.brand.name} - {self.name}"
 
 
+def variant_image_upload_path(instance, filename):
+    """Generate upload path for variant images"""
+    # Create unique filename with material code
+    ext = filename.split('.')[-1]
+    filename = f"{instance.material_code}_{uuid.uuid4().hex[:8]}.{ext}"
+    return f'variants/{instance.product.category.slug}/{instance.product.slug}/{filename}'
+
 class ProductVariant(BaseModel):
-    """Product variants with size, color, and pricing - each variant has its own material code"""
+    """Product variants with size, color, pricing, and images"""
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='variants')
-    size = models.ForeignKey(ProductSize, on_delete=models.CASCADE, null=True, blank=True)
-    color = models.ForeignKey(Color, on_delete=models.CASCADE, null=True, blank=True)
     
-    # Custom dimensions if not using standard size
-    custom_width = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
-    custom_height = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
-    custom_depth = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
-    
-    # Admin manually enters material code - NO auto generation
-    material_code = models.CharField(max_length=50, unique=True, help_text="Enter material code manually")
-    
-    # Pricing - all manual entry, NO calculations
-    mrp = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))])
-    tax_percentage = models.DecimalField(
-        max_digits=5, 
+    # Simplified size inputs
+    size_width = models.DecimalField(
+        max_digits=8, 
         decimal_places=2, 
-        validators=[MinValueValidator(Decimal('0')), MaxValueValidator(Decimal('100'))]
+        null=True, 
+        blank=True,
+        help_text="Width in mm"
     )
-    discount_percentage = models.DecimalField(
-        max_digits=5, 
+    size_height = models.DecimalField(
+        max_digits=8, 
         decimal_places=2, 
-        validators=[MinValueValidator(Decimal('0')), MaxValueValidator(Decimal('100'))]
+        null=True, 
+        blank=True,
+        help_text="Height in mm"
     )
-    # Final value entered manually by admin
-    value = models.DecimalField(
+    size_depth = models.DecimalField(
+        max_digits=8, 
+        decimal_places=2, 
+        null=True, 
+        blank=True,
+        help_text="Depth in mm"
+    )
+    
+    # Simplified color input
+    color_name = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text="Color name (e.g., Stainless Steel Silver)"
+    )
+    
+    # Material code - unique identifier
+    material_code = models.CharField(
+        max_length=50, 
+        unique=True, 
+        help_text="Enter material code manually"
+    )
+    
+    # NEW: Variant-specific image field
+    image = models.ImageField(
+        upload_to=variant_image_upload_path,
+        null=True,
+        blank=True,
+        help_text="Primary image for this variant"
+    )
+    
+    # Pricing fields (backend auto-calculates derived values)
+    mrp = models.DecimalField(
         max_digits=10, 
         decimal_places=2, 
         validators=[MinValueValidator(Decimal('0.01'))],
-        help_text="Final value/selling price - enter manually"
+        help_text="Maximum Retail Price"
+    )
+    
+    tax_rate = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=Decimal('18.00'),
+        validators=[MinValueValidator(Decimal('0')), MaxValueValidator(Decimal('100'))],
+        help_text="Tax percentage (default 18%)"
+    )
+    tax_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=Decimal('0.00'),
+        help_text="Calculated tax amount (auto-calculated)"
+    )
+    
+    discount_rate = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=Decimal('0.00'),
+        validators=[MinValueValidator(Decimal('0')), MaxValueValidator(Decimal('100'))],
+        help_text="Discount percentage"
+    )
+    discount_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=Decimal('0.00'),
+        help_text="Calculated discount amount (auto-calculated)"
+    )
+    
+    company_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=Decimal('0.00'),
+        help_text="Final company price (auto-calculated: MRP + Tax - Discount)"
     )
     
     # Inventory
@@ -183,41 +248,59 @@ class ProductVariant(BaseModel):
     specifications = models.JSONField(default=dict, blank=True)
     
     class Meta:
-        unique_together = ['product', 'size', 'color']
-        ordering = ['product', 'size', 'color']
+        unique_together = ['product', 'material_code']
+        ordering = ['product', 'material_code']
     
     def save(self, *args, **kwargs):
-        # Only generate SKU if not provided (can be same as material code)
+        # Calculate tax amount: tax_rate% of MRP
+        self.tax_amount = (self.mrp * self.tax_rate) / 100
+        
+        # Calculate discount amount
+        self.discount_amount = (self.mrp * self.discount_rate) / 100
+        
+        # Calculate company price: MRP + Tax - Discount
+        self.company_price = self.mrp + self.tax_amount - self.discount_amount
+        
+        # Auto-generate SKU if not provided
         if not self.sku_code:
             self.sku_code = self.material_code
+        
         super().save(*args, **kwargs)
     
     @property
-    def dimensions(self):
-        """Get dimensions (either standard or custom)"""
-        if self.size:
-            return {
-                'width': self.size.width,
-                'height': self.size.height,
-                'depth': self.size.depth
-            }
+    def dimensions_display(self):
+        """Display dimensions as a string"""
+        dims = []
+        if self.size_width:
+            dims.append(f"W:{self.size_width}")
+        if self.size_height:
+            dims.append(f"H:{self.size_height}")
+        if self.size_depth:
+            dims.append(f"D:{self.size_depth}")
+        return " × ".join(dims) + "mm" if dims else "Custom"
+    
+    @property
+    def price_breakdown(self):
+        """Return detailed price breakdown"""
         return {
-            'width': self.custom_width,
-            'height': self.custom_height,
-            'depth': self.custom_depth
+            'mrp': float(self.mrp),
+            'tax_rate': float(self.tax_rate),
+            'tax_amount': float(self.tax_amount),
+            'discount_rate': float(self.discount_rate),
+            'discount_amount': float(self.discount_amount),
+            'company_price': float(self.company_price),
+            'savings': float(self.discount_amount)
         }
     
     @property
-    def primary_image_url(self):
-        """Primary image URL for this variant (fallback to first image)."""
-        img = self.images.filter(is_primary=True).first() or self.images.order_by('sort_order', 'id').first()
-        return img.image.url if img and img.image else None
+    def image_url(self):
+        """Get absolute URL for variant image"""
+        if self.image:
+            return self.image.url
+        return None
     
     def __str__(self):
-        size_str = self.size.name if self.size else "Custom"
-        color_str = self.color.name if self.color else "Default"
-        return f"{self.product.name} - {size_str} - {color_str} ({self.material_code})"
-
+        return f"{self.product.name} - {self.color_name} - {self.dimensions_display} ({self.material_code})"
 
 class ProductImage(BaseModel):
     """Multiple images for product variants"""

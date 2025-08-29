@@ -204,16 +204,17 @@ class ProductViewSet(viewsets.ModelViewSet):
 
 
 class ProductVariantViewSet(viewsets.ModelViewSet):
-    """ViewSet for managing product variants"""
+    """Updated ViewSet for managing product variants with price calculations"""
 
-    queryset = ProductVariant.objects.select_related('product', 'size', 'color').prefetch_related('images', 'detailed_specs')
+    queryset = ProductVariant.objects.select_related(
+        'product', 'product__category', 'product__brand'
+    ).prefetch_related('images')
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['product', 'product__category', 'product__brand', 'is_active']
-    search_fields = ['material_code', 'sku_code', 'product__name']
-    ordering_fields = ['value', 'stock_quantity', 'created_at']
+    search_fields = ['material_code', 'sku_code', 'product__name', 'color_name']
+    ordering_fields = ['company_price', 'stock_quantity', 'created_at']
     ordering = ['-created_at']
-    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -222,8 +223,8 @@ class ProductVariantViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = ProductVariant.objects.select_related(
-            'product', 'product__category', 'product__brand', 'size', 'color'
-        ).prefetch_related('images', 'detailed_specs')
+            'product', 'product__category', 'product__brand'
+        ).prefetch_related('images')
 
         # Filter by stock status
         stock_status = self.request.query_params.get('stock_status', None)
@@ -238,92 +239,207 @@ class ProductVariantViewSet(viewsets.ModelViewSet):
         min_price = self.request.query_params.get('min_price')
         max_price = self.request.query_params.get('max_price')
         if min_price:
-            queryset = queryset.filter(value__gte=min_price)
+            queryset = queryset.filter(company_price__gte=min_price)
         if max_price:
-            queryset = queryset.filter(value__lte=max_price)
+            queryset = queryset.filter(company_price__lte=max_price)
+
+        # Color filtering
+        color = self.request.query_params.get('color')
+        if color:
+            queryset = queryset.filter(color_name__icontains=color)
 
         return queryset
 
-    def perform_update(self, serializer):
-        """Track price changes when updating"""
-        track_price_fields = {'mrp', 'discount_percentage'}
-        incoming_fields = set(self.request.data.keys())
-        old_instance = self.get_object()
-
-        instance = serializer.save()
-
-        # Create price history record if values changed
-        if track_price_fields & incoming_fields:
-            if (old_instance.mrp != instance.mrp or
-                    old_instance.discount_percentage != instance.discount_percentage):
-                ProductPriceHistory.objects.create(
-                    product_variant=instance,
-                    old_mrp=old_instance.mrp,
-                    new_mrp=instance.mrp,
-                    old_discount=old_instance.discount_percentage,
-                    new_discount=instance.discount_percentage,
-                    changed_by=self.request.user if self.request.user.is_authenticated else None,
-                    reason=self.request.data.get('price_change_reason', 'Updated via API')
-                )
-    
-    @action(detail=True, methods=['post'], url_path='upload-images')
-    def upload_images(self, request, pk=None):
-        variant = self.get_object()
-        files = request.FILES.getlist('images') or ([request.FILES['image']] if 'image' in request.FILES else [])
-        if not files:
-            return Response({'detail': "No images provided. Use 'images'[] or 'image'."}, status=400)
-
-        created = []
-        for idx, f in enumerate(files):
-            created.append(ProductImage.objects.create(
-                product_variant=variant,
-                image=f,
-                alt_text=request.data.get('alt_text', ''),
-                is_primary=str(request.data.get('is_primary', '')).lower() in ('1', 'true', 'yes') and idx == 0,
-                sort_order=int(request.data.get('sort_order', 0)),
-            ))
-        return Response(ProductImageSerializer(created, many=True, context=self.get_serializer_context()).data, status=201)
-
-    @action(detail=True, methods=['get'], url_path='images')
-    def list_images(self, request, pk=None):
-        variant = self.get_object()
-        qs = variant.images.order_by('sort_order', 'id')
-        return Response(ProductImageSerializer(qs, many=True, context=self.get_serializer_context()).data)
+    @action(detail=False, methods=['post'])
+    def calculate_price(self, request):
+        """Calculate price breakdown without saving"""
+        serializer = PriceCalculationSerializer(data=request.data)
+        if serializer.is_valid():
+            return Response({
+                'message': 'Price calculated successfully',
+                'calculations': serializer.validated_data
+            })
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['post'])
-    def update_stock(self, request, pk=None):
-        """Update stock quantity"""
+    def update_pricing(self, request, pk=None):
+        """Update variant pricing with automatic recalculation"""
         variant = self.get_object()
-        new_quantity = request.data.get('stock_quantity')
-
-        if new_quantity is None:
-            return Response({'error': 'stock_quantity is required'}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            new_quantity = int(new_quantity)
-            if new_quantity < 0:
-                return Response({'error': 'Stock quantity cannot be negative'}, status=status.HTTP_400_BAD_REQUEST)
-        except (ValueError, TypeError):
-            return Response({'error': 'Invalid stock quantity'}, status=status.HTTP_400_BAD_REQUEST)
-
-        variant.stock_quantity = new_quantity
-        variant.save(update_fields=['stock_quantity'])
-
-        return Response({
-            'message': 'Stock updated successfully',
-            'new_stock': variant.stock_quantity
-        })
+        
+        # Extract pricing fields from request
+        pricing_fields = {}
+        if 'mrp' in request.data:
+            pricing_fields['mrp'] = request.data['mrp']
+        if 'tax_rate' in request.data:
+            pricing_fields['tax_rate'] = request.data['tax_rate']
+        if 'discount_rate' in request.data:
+            pricing_fields['discount_rate'] = request.data['discount_rate']
+        
+        if not pricing_fields:
+            return Response(
+                {'error': 'At least one pricing field (mrp, tax_rate, discount_rate) is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Validate the data
+        serializer = self.get_serializer(variant, data=pricing_fields, partial=True)
+        if serializer.is_valid():
+            updated_variant = serializer.save()
+            return Response({
+                'message': 'Pricing updated successfully',
+                'variant': ProductVariantSerializer(updated_variant, context={'request': request}).data,
+                'price_breakdown': updated_variant.price_breakdown
+            })
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['get'])
-    def price_history(self, request, pk=None):
-        """Get price change history for this variant"""
+    def price_breakdown(self, request, pk=None):
+        """Get detailed price breakdown for a variant"""
         variant = self.get_object()
-        history = variant.price_history.all()
+        return Response({
+            'variant_id': variant.id,
+            'material_code': variant.material_code,
+            'price_breakdown': variant.price_breakdown,
+            'dimensions': variant.dimensions_display
+        })
 
-        serializer = ProductPriceHistorySerializer(history, many=True)
+    @action(detail=False, methods=['get'])
+    def by_color(self, request):
+        """Get variants filtered by color"""
+        color = request.query_params.get('color')
+        if not color:
+            return Response({'error': 'Color parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        variants = self.get_queryset().filter(color_name__icontains=color)
+        serializer = ProductVariantListSerializer(variants, many=True, context={'request': request})
         return Response(serializer.data)
 
+    @action(detail=False, methods=['get'])
+    def by_size_range(self, request):
+        """Get variants within size range"""
+        min_width = request.query_params.get('min_width')
+        max_width = request.query_params.get('max_width')
+        min_height = request.query_params.get('min_height')
+        max_height = request.query_params.get('max_height')
+        
+        queryset = self.get_queryset()
+        
+        if min_width:
+            queryset = queryset.filter(size_width__gte=min_width)
+        if max_width:
+            queryset = queryset.filter(size_width__lte=max_width)
+        if min_height:
+            queryset = queryset.filter(size_height__gte=min_height)
+        if max_height:
+            queryset = queryset.filter(size_height__lte=max_height)
+        
+        serializer = ProductVariantListSerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data)
+    
 
+class PriceCalculatorAPIView(APIView):
+    """Standalone price calculator API"""
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        """Calculate price breakdown for given inputs"""
+        serializer = PriceCalculationSerializer(data=request.data)
+        if serializer.is_valid():
+            calculations = serializer.validated_data
+            
+            return Response({
+                'success': True,
+                'inputs': {
+                    'mrp': str(calculations['mrp']),
+                    'tax_rate': str(calculations['tax_rate']),
+                    'discount_rate': str(calculations['discount_rate'])
+                },
+                'calculations': {
+                    'tax_amount': str(calculations['tax_amount']),
+                    'discount_amount': str(calculations['discount_amount']),
+                    'company_price': str(calculations['company_price'])
+                },
+                'breakdown': {
+                    'mrp': f"₹{calculations['mrp']:,.2f}",
+                    'tax': f"₹{calculations['tax_amount']:,.2f} ({calculations['tax_rate']}%)",
+                    'discount': f"-₹{calculations['discount_amount']:,.2f} ({calculations['discount_rate']}%)",
+                    'final_price': f"₹{calculations['company_price']:,.2f}"
+                }
+            })
+        
+        return Response({
+            'success': False,
+            'errors': serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class CatalogUtilitiesAPIView(APIView):
+    """Utilities for catalog management"""
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        """Get available colors and size ranges"""
+        # Get unique colors
+        colors = ProductVariant.objects.filter(
+            is_active=True
+        ).values_list('color_name', flat=True).distinct().order_by('color_name')
+        
+        # Get size ranges
+        size_stats = ProductVariant.objects.filter(is_active=True).aggregate(
+            min_width=models.Min('size_width'),
+            max_width=models.Max('size_width'),
+            min_height=models.Min('size_height'),
+            max_height=models.Max('size_height'),
+            min_depth=models.Min('size_depth'),
+            max_depth=models.Max('size_depth')
+        )
+        
+        return Response({
+            'available_colors': list(colors),
+            'size_ranges': size_stats,
+            'tax_rate_options': [18.0, 12.0, 5.0, 0.0],  # Common tax rates
+            'common_discount_rates': [0, 5, 10, 15, 20, 25, 30]  # Common discount rates
+        })
+
+    @action(detail=False, methods=['post'])
+    def bulk_update_tax(self, request):
+        """Bulk update tax rate for multiple variants"""
+        variant_ids = request.data.get('variant_ids', [])
+        new_tax_rate = request.data.get('tax_rate')
+        
+        if not variant_ids or new_tax_rate is None:
+            return Response(
+                {'error': 'variant_ids and tax_rate are required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            new_tax_rate = Decimal(str(new_tax_rate))
+            if new_tax_rate < 0 or new_tax_rate > 100:
+                raise ValueError("Tax rate must be between 0 and 100")
+        except (ValueError, TypeError):
+            return Response(
+                {'error': 'Invalid tax rate'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Update variants
+        updated_count = 0
+        for variant_id in variant_ids:
+            try:
+                variant = ProductVariant.objects.get(id=variant_id, is_active=True)
+                variant.tax_rate = new_tax_rate
+                variant.save()  # This will trigger recalculation
+                updated_count += 1
+            except ProductVariant.DoesNotExist:
+                continue
+        
+        return Response({
+            'message': f'Updated tax rate for {updated_count} variants',
+            'updated_count': updated_count,
+            'new_tax_rate': str(new_tax_rate)
+        })
 
 # ============================================================================
 # Dashboard and Statistics Views
@@ -356,31 +472,121 @@ class CatalogDashboardAPIView(APIView):
             stock_quantity=0
         ).count()
 
-        # Value statistics
+        # Value statistics - FIXED: using 'company_price' instead of 'value'
         total_value = ProductVariant.objects.filter(is_active=True).aggregate(
-            total=Sum('value')
+            total=Sum('company_price')
         )['total'] or Decimal('0.00')
 
-        # Category breakdown
-        category_stats = Category.objects.filter(is_active=True).annotate(
-            product_count=Count('product', filter=Q(product__is_active=True))
-        ).values('id', 'name', 'product_count')
+        # Additional value statistics for better dashboard insights
+        total_mrp = ProductVariant.objects.filter(is_active=True).aggregate(
+            total=Sum('mrp')
+        )['total'] or Decimal('0.00')
 
-        # Brand breakdown
+        total_tax_amount = ProductVariant.objects.filter(is_active=True).aggregate(
+            total=Sum('tax_amount')
+        )['total'] or Decimal('0.00')
+
+        total_discount_amount = ProductVariant.objects.filter(is_active=True).aggregate(
+            total=Sum('discount_amount')
+        )['total'] or Decimal('0.00')
+
+        # Category breakdown with enhanced statistics
+        category_stats = Category.objects.filter(is_active=True).annotate(
+            product_count=Count('product', filter=Q(product__is_active=True)),
+            variant_count=Count('product__variants', filter=Q(product__variants__is_active=True)),
+            total_value=Sum('product__variants__company_price', filter=Q(product__variants__is_active=True))
+        ).values('id', 'name', 'product_count', 'variant_count', 'total_value')
+
+        # Brand breakdown with enhanced statistics
         brand_stats = Brand.objects.filter(is_active=True).annotate(
-            product_count=Count('product', filter=Q(product__is_active=True))
-        ).values('id', 'name', 'product_count')
+            product_count=Count('product', filter=Q(product__is_active=True)),
+            variant_count=Count('product__variants', filter=Q(product__variants__is_active=True)),
+            total_value=Sum('product__variants__company_price', filter=Q(product__variants__is_active=True))
+        ).values('id', 'name', 'product_count', 'variant_count', 'total_value')
+
+        # Top performing variants by value
+        top_variants = ProductVariant.objects.filter(is_active=True).select_related('product').annotate(
+            stock_value=F('stock_quantity') * F('company_price')
+        ).order_by('-stock_value')[:10]
+
+        top_variants_data = []
+        for variant in top_variants:
+            top_variants_data.append({
+                'id': variant.id,
+                'material_code': variant.material_code,
+                'product_name': variant.product.name,
+                'company_price': str(variant.company_price),
+                'stock_quantity': variant.stock_quantity,
+                'stock_value': str(variant.stock_value),
+                'dimensions': f"W:{variant.size_width or 0} × H:{variant.size_height or 0} × D:{variant.size_depth or 0}mm"
+            })
+
+        # Price range analysis
+        price_ranges = [
+            {
+                'range': '0-5000',
+                'count': ProductVariant.objects.filter(
+                    is_active=True, 
+                    company_price__lt=5000
+                ).count()
+            },
+            {
+                'range': '5000-15000', 
+                'count': ProductVariant.objects.filter(
+                    is_active=True,
+                    company_price__gte=5000, 
+                    company_price__lt=15000
+                ).count()
+            },
+            {
+                'range': '15000-30000',
+                'count': ProductVariant.objects.filter(
+                    is_active=True,
+                    company_price__gte=15000, 
+                    company_price__lt=30000
+                ).count()
+            },
+            {
+                'range': '30000+',
+                'count': ProductVariant.objects.filter(
+                    is_active=True,
+                    company_price__gte=30000
+                ).count()
+            }
+        ]
+
+        # Stock status distribution
+        stock_distribution = {
+            'in_stock': ProductVariant.objects.filter(is_active=True, stock_quantity__gt=10).count(),
+            'low_stock': ProductVariant.objects.filter(is_active=True, stock_quantity__lte=10, stock_quantity__gt=0).count(),
+            'out_of_stock': ProductVariant.objects.filter(is_active=True, stock_quantity=0).count()
+        }
 
         data = {
+            # Basic counts
             'total_products': total_products,
             'total_variants': total_variants,
             'total_categories': total_categories,
             'total_brands': total_brands,
+            
+            # Stock statistics
             'low_stock_count': low_stock_count,
             'out_of_stock_count': out_of_stock_count,
+            'stock_distribution': stock_distribution,
+            
+            # Financial statistics
             'total_value': str(total_value),
+            'total_mrp': str(total_mrp),
+            'total_tax_amount': str(total_tax_amount),
+            'total_discount_amount': str(total_discount_amount),
+            
+            # Breakdowns
             'category_breakdown': list(category_stats),
-            'brand_breakdown': list(brand_stats)
+            'brand_breakdown': list(brand_stats),
+            'price_ranges': price_ranges,
+            
+            # Top performers
+            'top_variants': top_variants_data
         }
 
         return Response(data)

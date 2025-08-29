@@ -101,134 +101,123 @@ class ProductImageSerializer(serializers.ModelSerializer):
 
 
 class ProductVariantSerializer(serializers.ModelSerializer):
-    """Detailed serializer for product variants"""
+    """Detailed serializer for product variants with image support"""
 
     product_name = serializers.CharField(source='product.name', read_only=True)
     brand_name = serializers.CharField(source='product.brand.name', read_only=True)
     category_name = serializers.CharField(source='product.category.name', read_only=True)
-    size_display = serializers.CharField(source='size.name', read_only=True)
-    color_display = serializers.CharField(source='color.name', read_only=True)
 
-    # Read-only nested representations
-    size = ProductSizeSerializer(read_only=True)
-    color = ColorSerializer(read_only=True)
-    images = ProductImageSerializer(many=True, read_only=True)  # <-- make images nested read-only
-
-    # Write-only inputs for setting relations
-    size_id = serializers.PrimaryKeyRelatedField(
-        queryset=ProductSize.objects.all(), write_only=True, required=False, allow_null=True
-    )
-    color_id = serializers.PrimaryKeyRelatedField(
-        queryset=Color.objects.all(), write_only=True, required=False, allow_null=True
-    )
-
-    # Calculated fields
+    # Calculated fields (read-only)
     dimensions_display = serializers.SerializerMethodField()
-    final_price = serializers.SerializerMethodField()
-    discount_amount = serializers.SerializerMethodField()
-    price_after_discount = serializers.SerializerMethodField()
-    primary_image = serializers.SerializerMethodField()
+    price_breakdown = serializers.SerializerMethodField()
+    image_url = serializers.SerializerMethodField()
+
+    # Price calculation fields (read-only - calculated automatically)
+    tax_amount = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    discount_amount = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    company_price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
 
     class Meta:
         model = ProductVariant
         fields = [
             'id', 'product', 'product_name', 'brand_name', 'category_name',
-            'size', 'size_display', 'size_id',
-            'color', 'color_display', 'color_id',
-            'custom_width', 'custom_height', 'custom_depth', 'dimensions_display',
-            'material_code', 'mrp', 'tax_percentage', 'discount_percentage', 'value',
-            'final_price', 'discount_amount', 'price_after_discount',
+            
+            # Size fields (simplified)
+            'size_width', 'size_height', 'size_depth', 'dimensions_display',
+            
+            # Color field (simplified)
+            'color_name',
+            
+            # Material code
+            'material_code',
+            
+            # NEW: Image field
+            'image', 'image_url',
+            
+            # Pricing fields
+            'mrp', 'tax_rate', 'tax_amount', 'discount_rate', 'discount_amount', 'company_price',
+            'price_breakdown',
+            
+            # Stock and other fields
             'stock_quantity', 'sku_code', 'specifications',
-            'images',                 # kept as read-only nested
-            'is_active', 'created_at', 'updated_at', 'primary_image'
+            
+            # Meta
+            'is_active', 'created_at', 'updated_at'
         ]
-        read_only_fields = ['created_at', 'updated_at']
-    
-    def create(self, validated_data):
-        size = validated_data.pop('size_id', None)
-        color = validated_data.pop('color_id', None)
-        obj = super().create(validated_data)
-        # assign FKs if provided
-        if size is not None:
-            obj.size = size
-        if color is not None:
-            obj.color = color
-        obj.save(update_fields=['size', 'color'])
-        return obj
-
-    def update(self, instance, validated_data):
-        size = validated_data.pop('size_id', None)
-        color = validated_data.pop('color_id', None)
-        obj = super().update(instance, validated_data)
-        changed = []
-        if 'size_id' in self.initial_data:
-            obj.size = size
-            changed.append('size')
-        if 'color_id' in self.initial_data:
-            obj.color = color
-            changed.append('color')
-        if changed:
-            obj.save(update_fields=changed)
-        return obj
-
-    def get_primary_image(self, obj):
-        url = getattr(obj, 'primary_image_url', None)
-        req = self.context.get('request')
-        return req.build_absolute_uri(url) if req and url else url
+        read_only_fields = [
+            'tax_amount', 'discount_amount', 'company_price', 
+            'created_at', 'updated_at'
+        ]
     
     def get_dimensions_display(self, obj):
-        dims = obj.dimensions
-        parts = []
-        if dims['width']:
-            parts.append(f"W:{dims['width']}")
-        if dims['height']:
-            parts.append(f"H:{dims['height']}")
-        if dims['depth']:
-            parts.append(f"D:{dims['depth']}")
-        return " × ".join(parts) + "mm" if parts else "Custom"
+        return obj.dimensions_display
     
-    def get_final_price(self, obj):
-        """Final selling price (same as value field)"""
-        return float(obj.value)
+    def get_price_breakdown(self, obj):
+        return obj.price_breakdown
     
-    def get_discount_amount(self, obj):
-        """Calculate discount amount"""
-        return float(obj.mrp * obj.discount_percentage / 100)
+    def get_image_url(self, obj):
+        if obj.image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            return obj.image.url
+        return None
     
-    def get_price_after_discount(self, obj):
-        """Price after discount (before tax)"""
-        return float(obj.mrp - (obj.mrp * obj.discount_percentage / 100))
+    def validate_mrp(self, value):
+        """Validate MRP is positive"""
+        if value <= 0:
+            raise serializers.ValidationError("MRP must be greater than 0")
+        return value
+    
+    def validate_discount_rate(self, value):
+        """Validate discount rate is between 0-100"""
+        if value < 0 or value > 100:
+            raise serializers.ValidationError("Discount rate must be between 0 and 100")
+        return value
+    
+    def validate_tax_rate(self, value):
+        """Validate tax rate is between 0-100"""
+        if value < 0 or value > 100:
+            raise serializers.ValidationError("Tax rate must be between 0 and 100")
+        return value
     
     def validate_material_code(self, value):
         """Validate material code uniqueness"""
-        if ProductVariant.objects.filter(material_code=value).exclude(id=self.instance.id if self.instance else None).exists():
+        if ProductVariant.objects.filter(
+            material_code=value
+        ).exclude(id=self.instance.id if self.instance else None).exists():
             raise serializers.ValidationError("Material code must be unique")
         return value
 
 
 class ProductVariantListSerializer(serializers.ModelSerializer):
-    """Lightweight serializer for product variant lists"""
+    """Lightweight serializer for product variant lists with image"""
     
     product_name = serializers.CharField(source='product.name', read_only=True)
     brand_name = serializers.CharField(source='product.brand.name', read_only=True)
     category_name = serializers.CharField(source='product.category.name', read_only=True)
-    size_display = serializers.CharField(source='size.name', read_only=True)
-    color_display = serializers.CharField(source='color.name', read_only=True)
-    primary_image = serializers.SerializerMethodField()
+    dimensions_display = serializers.SerializerMethodField()
+    image_url = serializers.SerializerMethodField()
     
     class Meta:
         model = ProductVariant
         fields = [
             'id', 'product_name', 'brand_name', 'category_name',
-            'size_display', 'color_display', 'material_code',
-            'mrp', 'discount_percentage', 'tax_percentage',  # <-- added
-            'value', 'stock_quantity', 'primary_image', 'is_active'
+            'color_name', 'dimensions_display', 'material_code',
+            'mrp', 'discount_rate', 'tax_rate', 'company_price',
+            'stock_quantity', 'image_url', 'is_active'
         ]
     
-    def get_primary_image(self, obj):
-        url = getattr(obj, 'primary_image_url', None) or (obj.images.order_by('sort_order', 'id').first().image.url if obj.images.exists() else None)
-        req = self.context.get('request')
-        return req.build_absolute_uri(url) if req and url else url
+    def get_dimensions_display(self, obj):
+        return obj.dimensions_display
+    
+    def get_image_url(self, obj):
+        if obj.image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            return obj.image.url
+        return None
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -299,7 +288,47 @@ class ProductListSerializer(serializers.ModelSerializer):
         return obj.variants.filter(is_active=True).count()
 
 
-
+class PriceCalculationSerializer(serializers.Serializer):
+    """Serializer for price calculations without saving"""
+    mrp = serializers.DecimalField(
+        max_digits=10, 
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.01'))]
+    )
+    tax_rate = serializers.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=Decimal('18.00'),
+        validators=[MinValueValidator(Decimal('0')), MaxValueValidator(Decimal('100'))]
+    )
+    discount_rate = serializers.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=Decimal('0.00'),
+        validators=[MinValueValidator(Decimal('0')), MaxValueValidator(Decimal('100'))]
+    )
+    
+    def validate(self, data):
+        """Calculate all price-related fields"""
+        mrp = data['mrp']
+        tax_rate = data.get('tax_rate', Decimal('18.00'))
+        discount_rate = data.get('discount_rate', Decimal('0.00'))
+        
+        # Calculate tax amount
+        tax_amount = (mrp * tax_rate) / 100
+        
+        # Calculate discount amount
+        discount_amount = (mrp * discount_rate) / 100
+        
+        # Calculate company price
+        company_price = mrp + tax_amount - discount_amount
+        
+        # Add calculated fields to response
+        data['tax_amount'] = tax_amount
+        data['discount_amount'] = discount_amount
+        data['company_price'] = company_price
+        
+        return data
 
 
 # ============================================================================
