@@ -189,7 +189,7 @@ class ProductVariant(BaseModel):
         help_text="Enter material code manually"
     )
     
-    # NEW: Variant-specific image field
+
     image = models.ImageField(
         upload_to=variant_image_upload_path,
         null=True,
