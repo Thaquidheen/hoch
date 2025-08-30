@@ -1,0 +1,799 @@
+/* quotation_pdf/static/css/quotation_styles.css */
+
+/* =============================================================================
+   PDF BASE STYLES & RESET
+   ============================================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', 'Helvetica', sans-serif;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #333;
+    background: #fff;
+}
+
+/* Print-specific settings */
+@page {
+    size: A4;
+    margin: 15mm;
+    @top-center {
+        content: "Kitchen Quotation";
+        font-size: 10px;
+        color: #666;
+    }
+    @bottom-right {
+        content: "Page " counter(page) " of " counter(pages);
+        font-size: 10px;
+        color: #666;
+    }
+}
+
+/* =============================================================================
+   TYPOGRAPHY
+   ============================================================================= */
+
+h1, h2, h3, h4, h5, h6 {
+    color: #2c3e50;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+h1 { font-size: 24px; }
+h2 { font-size: 18px; }
+h3 { font-size: 16px; }
+h4 { font-size: 14px; }
+h5, h6 { font-size: 12px; }
+
+p {
+    margin-bottom: 6px;
+}
+
+small {
+    font-size: 10px;
+    color: #666;
+}
+
+strong {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+/* =============================================================================
+   LAYOUT COMPONENTS
+   ============================================================================= */
+
+.section {
+    margin-bottom: 25px;
+    page-break-inside: avoid;
+}
+
+.section-title {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    color: white;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 4px;
+}
+
+.subsection {
+    margin-bottom: 20px;
+}
+
+/* =============================================================================
+   HEADER SECTION
+   ============================================================================= */
+
+.quotation-header {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 3px solid #dc2626;
+    margin-bottom: 25px;
+    page-break-after: avoid;
+}
+
+.company-branding h1 {
+    color: #dc2626;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.company-branding .tagline {
+    color: #666;
+    font-size: 11px;
+    font-style: italic;
+    margin-bottom: 0;
+}
+
+.quotation-title-section {
+    text-align: center;
+}
+
+.quotation-title {
+    color: #2c3e50;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+}
+
+.quotation-meta p {
+    margin-bottom: 4px;
+    font-size: 11px;
+}
+
+.customer-details {
+    text-align: right;
+    font-size: 11px;
+}
+
+.customer-details h3 {
+    color: #dc2626;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.customer-details p {
+    margin-bottom: 3px;
+}
+
+/* =============================================================================
+   PROJECT SUMMARY
+   ============================================================================= */
+
+.project-summary {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 25px;
+}
+
+.project-summary h2 {
+    color: #dc2626;
+    font-size: 16px;
+    margin-bottom: 12px;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.summary-item {
+    font-size: 11px;
+}
+
+/* =============================================================================
+   TABLES
+   ============================================================================= */
+
+.items-table,
+.doors-table,
+.lighting-table,
+.pricing-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+    font-size: 11px;
+}
+
+.items-table th,
+.doors-table th,
+.lighting-table th {
+    background: #f1f5f9;
+    color: #334155;
+    padding: 10px 8px;
+    text-align: left;
+    font-weight: 600;
+    border: 1px solid #e2e8f0;
+    font-size: 10px;
+}
+
+.items-table td,
+.doors-table td,
+.lighting-table td {
+    padding: 8px;
+    border: 1px solid #e2e8f0;
+    vertical-align: top;
+}
+
+.items-table tr:nth-child(even),
+.doors-table tr:nth-child(even),
+.lighting-table tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+/* Table alignment classes */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+
+/* Price styling */
+.price {
+    font-weight: 600;
+    color: #dc2626;
+    font-family: 'Courier New', monospace;
+}
+
+/* Scope badges */
+.scope-badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.scope-open {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.scope-working {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+/* Table subtotals and footers */
+.category-subtotal td,
+.material-summary td,
+.lighting-total td {
+    background: #f1f5f9;
+    font-weight: 600;
+    border-top: 2px solid #dc2626;
+}
+
+/* =============================================================================
+   CABINET SECTION
+   ============================================================================= */
+
+.cabinet-section .category-subsection {
+    margin-bottom: 25px;
+    page-break-inside: avoid;
+}
+
+.category-title {
+    color: #dc2626;
+    font-size: 14px;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    background: #fef2f2;
+    border-left: 4px solid #dc2626;
+}
+
+.item-description {
+    max-width: 200px;
+}
+
+.item-description strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.dimensions {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: #666;
+}
+
+/* =============================================================================
+   DOORS SECTION
+   ============================================================================= */
+
+.door-material-subsection {
+    margin-bottom: 20px;
+    page-break-inside: avoid;
+}
+
+.material-title {
+    color: #7c3aed;
+    font-size: 14px;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    background: #f3f4f6;
+    border-left: 4px solid #7c3aed;
+}
+
+/* =============================================================================
+   ACCESSORIES SECTION
+   ============================================================================= */
+
+.accessory-group {
+    margin-bottom: 30px;
+    page-break-inside: avoid;
+}
+
+.group-title {
+    color: #059669;
+    font-size: 14px;
+    margin-bottom: 15px;
+    padding: 8px 12px;
+    background: #ecfdf5;
+    border-left: 4px solid #059669;
+}
+
+.accessories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.accessory-item {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+    page-break-inside: avoid;
+}
+
+.accessory-images {
+    display: flex;
+    gap: 5px;
+    padding: 8px;
+    background: #f9fafb;
+    justify-content: center;
+}
+
+.accessory-image {
+    max-width: 80px;
+    max-height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #e5e7eb;
+}
+
+.accessory-details {
+    padding: 12px;
+}
+
+.accessory-name {
+    color: #1f2937;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.accessory-brand,
+.accessory-variant,
+.accessory-dimensions {
+    font-size: 10px;
+    color: #6b7280;
+    margin-bottom: 4px;
+}
+
+.accessory-description {
+    font-size: 10px;
+    color: #4b5563;
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+.accessory-pricing {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.pricing-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3px;
+    font-size: 10px;
+}
+
+.pricing-row.total {
+    font-weight: 600;
+    color: #dc2626;
+    font-size: 11px;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 4px;
+    margin-top: 4px;
+}
+
+.installation-notes {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px dotted #d1d5db;
+    font-size: 9px;
+    color: #6b7280;
+    line-height: 1.3;
+}
+
+.group-subtotal {
+    text-align: right;
+    font-size: 14px;
+    color: #dc2626;
+    font-weight: 600;
+    padding: 10px 15px;
+    background: #fef2f2;
+    border-radius: 4px;
+}
+
+/* =============================================================================
+   LIGHTING SECTION
+   ============================================================================= */
+
+.lighting-section .section-title {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+/* =============================================================================
+   PLAN IMAGES SECTION
+   ============================================================================= */
+
+.plan-images-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.plan-image-item {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+    page-break-inside: avoid;
+}
+
+.plan-image-container {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    background: #f9fafb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.plan-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.plan-image-info {
+    padding: 12px;
+}
+
+.image-title {
+    color: #1f2937;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.image-caption {
+    font-size: 11px;
+    color: #6b7280;
+    margin-bottom: 0;
+}
+
+/* =============================================================================
+   CUSTOMER NOTES SECTION
+   ============================================================================= */
+
+.notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.note-item {
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 15px;
+    background: #f9fafb;
+    page-break-inside: avoid;
+}
+
+.note-title {
+    color: #dc2626;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #dc2626;
+}
+
+.note-content {
+    font-size: 11px;
+    line-height: 1.4;
+    color: #374151;
+}
+
+/* =============================================================================
+   PRICING SECTION
+   ============================================================================= */
+
+.pricing-section {
+    page-break-inside: avoid;
+}
+
+.pricing-summary {
+    max-width: 500px;
+    margin-left: auto;
+    background: #fff;
+    border: 2px solid #dc2626;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.pricing-table {
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.pricing-table td {
+    padding: 12px 20px;
+    border: none;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 13px;
+}
+
+.pricing-label {
+    color: #374151;
+    font-weight: 500;
+}
+
+.pricing-value {
+    text-align: right;
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.pricing-row.subtotal td {
+    border-top: 2px solid #e5e7eb;
+    border-bottom: 2px solid #e5e7eb;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.pricing-row.discount td {
+    color: #059669;
+}
+
+.discount-amount {
+    color: #059669 !important;
+}
+
+.pricing-row.final-total td {
+    background: #dc2626;
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+    border-bottom: none;
+}
+
+.final-amount {
+    color: white !important;
+}
+
+/* =============================================================================
+   TERMS & CONDITIONS SECTION
+   ============================================================================= */
+
+.terms-section {
+    page-break-inside: avoid;
+}
+
+.terms-content {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 6px;
+}
+
+.terms-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 20px;
+}
+
+.terms-column h4 {
+    color: #dc2626;
+    font-size: 13px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #dc2626;
+    padding-bottom: 2px;
+}
+
+.terms-column ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.terms-column li {
+    font-size: 11px;
+    margin-bottom: 4px;
+    padding-left: 12px;
+    position: relative;
+    line-height: 1.4;
+}
+
+.terms-column li::before {
+    content: "•";
+    color: #dc2626;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+}
+
+.validity-note {
+    background: #fef2f2;
+    padding: 12px;
+    border-radius: 4px;
+    border-left: 4px solid #dc2626;
+}
+
+.validity-note p {
+    font-size: 11px;
+    margin-bottom: 4px;
+    color: #374151;
+}
+
+/* =============================================================================
+   WARRANTY SECTION
+   ============================================================================= */
+
+.warranty-section {
+    page-break-inside: avoid;
+}
+
+.warranty-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.warranty-item {
+    background: #f0f9ff;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #e0f2fe;
+}
+
+.warranty-item h4 {
+    color: #0369a1;
+    font-size: 12px;
+    margin-bottom: 6px;
+}
+
+.warranty-item p {
+    font-size: 11px;
+    color: #374151;
+    margin-bottom: 0;
+}
+
+.warranty-note {
+    text-align: center;
+    font-style: italic;
+}
+
+/* =============================================================================
+   FOOTER
+   ============================================================================= */
+
+.quotation-footer {
+    margin-top: 40px;
+    page-break-inside: avoid;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    padding: 20px 0;
+    border-top: 2px solid #dc2626;
+}
+
+.company-info h3 {
+    color: #dc2626;
+    font-size: 18px;
+    margin-bottom: 4px;
+}
+
+.company-info p {
+    color: #666;
+    font-size: 11px;
+    font-style: italic;
+    margin-bottom: 10px;
+}
+
+.contact-info p {
+    font-size: 10px;
+    margin-bottom: 3px;
+    color: #374151;
+}
+
+.signature-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.signature-box {
+    flex: 1;
+    text-align: center;
+}
+
+.signature-line {
+    width: 100%;
+    height: 40px;
+    border-bottom: 1px solid #374151;
+    margin-bottom: 8px;
+}
+
+.signature-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 4px;
+}
+
+.signature-date {
+    font-size: 10px;
+    color: #6b7280;
+    margin-bottom: 0;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding: 15px 0;
+    border-top: 1px solid #e5e7eb;
+    margin-top: 20px;
+}
+
+.footer-bottom p {
+    font-size: 12px;
+    color: #6b7280;
+    font-style: italic;
+    margin-bottom: 0;
+}
+
+/* =============================================================================
+   RESPONSIVE ADJUSTMENTS FOR PRINT
+   ============================================================================= */
+
+@media print {
+    body {
+        font-size: 11px;
+    }
+    
+    .section {
+        page-break-inside: avoid;
+    }
+    
+    .accessories-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .plan-images-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .terms-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .warranty-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+}

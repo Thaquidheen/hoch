@@ -1,0 +1,533 @@
+<!-- quotation_pdf/templates/quotation_pdf/detailed_quotation.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitchen Quotation - {{ project_info.customer_name }}</title>
+    <link rel="stylesheet" href="quotation_styles.css">
+</head>
+<body>
+    <!-- Page Header -->
+    <div class="quotation-header">
+        <div class="company-branding">
+            <div class="company-logo">
+                <!-- Add your company logo here -->
+                <h1>SPEISEKAMER</h1>
+                <p class="tagline">Premium Kitchen Solutions</p>
+            </div>
+        </div>
+        
+        <div class="quotation-title-section">
+            <h1 class="quotation-title">KITCHEN QUOTATION</h1>
+            <div class="quotation-meta">
+                <p><strong>Quote #:</strong> {{ project_info.quotation_number }}</p>
+                <p><strong>Date:</strong> {{ project_info.quotation_date }}</p>
+                <p><strong>Valid Until:</strong> {{ project_info.quotation_date|date:"M d, Y" }}</p>
+            </div>
+        </div>
+        
+        <div class="customer-details">
+            <h3>{{ customer_info.name }}</h3>
+            {% if customer_info.address %}
+                <p>{{ customer_info.address }}</p>
+            {% endif %}
+            {% if customer_info.city %}
+                <p>{{ customer_info.city }}{% if customer_info.state %}, {{ customer_info.state }}{% endif %}</p>
+            {% endif %}
+            {% if customer_info.phone %}
+                <p><strong>Phone:</strong> {{ customer_info.phone }}</p>
+            {% endif %}
+            {% if customer_info.email %}
+                <p><strong>Email:</strong> {{ customer_info.email }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Project Summary -->
+    <div class="project-summary">
+        <h2>Project Overview</h2>
+        <div class="summary-grid">
+            <div class="summary-item">
+                <strong>Kitchen Types:</strong>
+                {% for kitchen_type, enabled in project_info.kitchen_types.items %}
+                    {% if enabled %}{{ kitchen_type|title }}{% if not forloop.last %}, {% endif %}{% endif %}
+                {% endfor %}
+            </div>
+            <div class="summary-item">
+                <strong>Budget Tier:</strong> {{ project_info.budget_tier|title }}
+            </div>
+            {% if project_info.brand %}
+            <div class="summary-item">
+                <strong>Brand:</strong> {{ project_info.brand }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Cabinet Items Section -->
+    {% if customizations.include_cabinet_details and cabinet_items %}
+    <div class="section cabinet-section">
+        <h2 class="section-title">Cabinet Items</h2>
+        
+        {% for category in cabinet_items %}
+        <div class="category-subsection">
+            <h3 class="category-title">{{ category.name }} Cabinets</h3>
+            
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Cabinet Material</th>
+                        <th>Door Material</th>
+                        {% if customizations.show_dimensions %}
+                        <th>Dimensions (mm)</th>
+                        {% endif %}
+                        <th>Qty</th>
+                        <th>Cabinet Sqft</th>
+                        <th>Door Sqft</th>
+                        <th>Line Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in category.items %}
+                    <tr>
+                        <td class="item-description">
+                            <strong>{{ item.description }}</strong>
+                            {% if item.scope %}
+                                <br><small class="scope-badge scope-{{ item.scope|lower }}">{{ item.scope }}</small>
+                            {% endif %}
+                        </td>
+                        <td>{{ item.cabinet_material }}</td>
+                        <td>{{ item.door_material }}</td>
+                        {% if customizations.show_dimensions %}
+                        <td class="dimensions">{{ item.dimensions }}</td>
+                        {% endif %}
+                        <td class="text-center">{{ item.quantity }}</td>
+                        <td class="text-right">{{ item.cabinet_sqft }}</td>
+                        <td class="text-right">{{ item.door_sqft }}</td>
+                        <td class="text-right price">₹{{ item.line_total|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="category-subtotal">
+                        <td colspan="{% if customizations.show_dimensions %}7{% else %}6{% endif %}"><strong>{{ category.name }} Subtotal:</strong></td>
+                        <td class="text-right price"><strong>₹{{ category.subtotal|floatformat:2 }}</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Doors & Shutters Section -->
+    {% if customizations.include_door_details and door_items %}
+    <div class="section doors-section">
+        <h2 class="section-title">Doors & Shutters Breakdown</h2>
+        
+        {% for material in door_items %}
+        <div class="door-material-subsection">
+            <h3 class="material-title">{{ material.material_name }}</h3>
+            
+            <table class="doors-table">
+                <thead>
+                    <tr>
+                        <th>Cabinet Type</th>
+                        <th>Quantity</th>
+                        <th>Door Area (Sqft)</th>
+                        <th>Rate per Sqft</th>
+                        <th>Total Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for door_item in material.items %}
+                    <tr>
+                        <td>{{ door_item.cabinet_type }}</td>
+                        <td class="text-center">{{ door_item.quantity }}</td>
+                        <td class="text-right">{{ door_item.door_sqft|floatformat:2 }}</td>
+                        <td class="text-right">₹{{ door_item.door_unit_rate|floatformat:2 }}</td>
+                        <td class="text-right price">₹{{ door_item.door_price|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="material-summary">
+                        <td colspan="2"><strong>{{ material.material_name }} Summary</strong></td>
+                        <td class="text-right"><strong>{{ material.total_sqft|floatformat:2 }} Sqft</strong></td>
+                        <td class="text-right"><strong>Avg: ₹{{ material.avg_rate|floatformat:2 }}</strong></td>
+                        <td class="text-right price"><strong>₹{{ material.total_price|floatformat:2 }}</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Accessories Section with Images -->
+    {% if customizations.include_accessories and accessories %}
+    <div class="section accessories-section">
+        <h2 class="section-title">Accessories</h2>
+        
+        {% for accessory_group in accessories %}
+        <div class="accessory-group">
+            <h3 class="group-title">{{ accessory_group.line_item_info.cabinet_type }} - {{ accessory_group.line_item_info.scope }}</h3>
+            
+            <div class="accessories-grid">
+                {% for accessory in accessory_group.accessories %}
+                <div class="accessory-item">
+                    {% if customizations.include_accessory_images and accessory.images %}
+                    <div class="accessory-images">
+                        {% for image in accessory.images %}
+                        <img src="{{ image.url }}" alt="{{ image.alt_text }}" class="accessory-image">
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="accessory-details">
+                        <h4 class="accessory-name">{{ accessory.name }}</h4>
+                        
+                        {% if accessory.brand %}
+                        <p class="accessory-brand"><strong>Brand:</strong> {{ accessory.brand }}</p>
+                        {% endif %}
+                        
+                        {% if accessory.variant_info.color or accessory.variant_info.material_code %}
+                        <p class="accessory-variant">
+                            {% if accessory.variant_info.color %}
+                                <strong>Color:</strong> {{ accessory.variant_info.color }}
+                            {% endif %}
+                            {% if accessory.variant_info.material_code %}
+                                <br><strong>Code:</strong> {{ accessory.variant_info.material_code }}
+                            {% endif %}
+                        </p>
+                        {% endif %}
+                        
+                        {% if accessory.description %}
+                        <p class="accessory-description">{{ accessory.description|truncatewords:15 }}</p>
+                        {% endif %}
+                        
+                        {% if accessory.dimensions.width or accessory.dimensions.height %}
+                        <p class="accessory-dimensions">
+                            <strong>Size:</strong>
+                            {% if accessory.dimensions.width %}W: {{ accessory.dimensions.width }}mm{% endif %}
+                            {% if accessory.dimensions.height %} × H: {{ accessory.dimensions.height }}mm{% endif %}
+                            {% if accessory.dimensions.depth %} × D: {{ accessory.dimensions.depth }}mm{% endif %}
+                        </p>
+                        {% endif %}
+                        
+                        <div class="accessory-pricing">
+                            <div class="pricing-row">
+                                <span class="quantity">Qty: {{ accessory.quantity }}</span>
+                                <span class="unit-price">₹{{ accessory.unit_price|floatformat:2 }} each</span>
+                            </div>
+                            <div class="pricing-row total">
+                                <span class="total-label">Total:</span>
+                                <span class="total-price">₹{{ accessory.total_price|floatformat:2 }}</span>
+                            </div>
+                        </div>
+                        
+                        {% if accessory.installation_notes %}
+                        <p class="installation-notes">
+                            <small><strong>Installation:</strong> {{ accessory.installation_notes }}</small>
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="group-subtotal">
+                <strong>Group Total: {{ accessory_group.subtotal_formatted }}</strong>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Lighting Section -->
+    {% if customizations.include_lighting and lighting_items.items %}
+    <div class="section lighting-section">
+        <h2 class="section-title">Lighting Solutions</h2>
+        
+        <table class="lighting-table">
+            <thead>
+                <tr>
+                    <th>Lighting Type</th>
+                    <th>Cabinet Material</th>
+                    <th>Under Cabinet</th>
+                    <th>Nosing LED</th>
+                    <th>Spot Lights</th>
+                    <th>Total Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lighting_item in lighting_items.items %}
+                <tr>
+                    <td>{{ lighting_item.rule_name }}</td>
+                    <td>{{ lighting_item.cabinet_material }}</td>
+                    <td class="text-right">₹{{ lighting_item.under_cabinet_cost|floatformat:2 }}</td>
+                    <td class="text-right">₹{{ lighting_item.nosing_led_cost|floatformat:2 }}</td>
+                    <td class="text-right">₹{{ lighting_item.spot_lights_cost|floatformat:2 }}</td>
+                    <td class="text-right price">₹{{ lighting_item.total_cost|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr class="lighting-total">
+                    <td colspan="5"><strong>Total Lighting Cost:</strong></td>
+                    <td class="text-right price"><strong>{{ lighting_items.total_formatted }}</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Plan Images Section -->
+    {% if customizations.include_plan_images and plan_images %}
+    <div class="section plan-images-section">
+        <h2 class="section-title">Design Plans & Layout</h2>
+        
+        <div class="plan-images-grid">
+            {% for image in plan_images %}
+            <div class="plan-image-item">
+                <div class="plan-image-container">
+                    <img src="{{ image.url }}" alt="{{ image.caption }}" class="plan-image">
+                </div>
+                <div class="plan-image-info">
+                    <h4 class="image-title">{{ image.group_title }}</h4>
+                    <p class="image-caption">{{ image.caption }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Customer Notes Section -->
+    {% if customer_notes.special_instructions or customer_notes.installation_notes or customer_notes.timeline_notes or customer_notes.custom_requirements %}
+    <div class="section customer-notes-section">
+        <h2 class="section-title">Special Instructions & Notes</h2>
+        
+        <div class="notes-grid">
+            {% if customer_notes.special_instructions %}
+            <div class="note-item">
+                <h4 class="note-title">Special Instructions</h4>
+                <div class="note-content">
+                    {{ customer_notes.special_instructions|linebreaks }}
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if customer_notes.installation_notes %}
+            <div class="note-item">
+                <h4 class="note-title">Installation Requirements</h4>
+                <div class="note-content">
+                    {{ customer_notes.installation_notes|linebreaks }}
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if customer_notes.timeline_notes %}
+            <div class="note-item">
+                <h4 class="note-title">Timeline Information</h4>
+                <div class="note-content">
+                    {{ customer_notes.timeline_notes|linebreaks }}
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if customer_notes.custom_requirements %}
+            <div class="note-item">
+                <h4 class="note-title">Custom Requirements</h4>
+                <div class="note-content">
+                    {{ customer_notes.custom_requirements|linebreaks }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Pricing Summary -->
+    <div class="section pricing-section">
+        <h2 class="section-title">Pricing Summary</h2>
+        
+        <div class="pricing-summary">
+            <table class="pricing-table">
+                <tbody>
+                    <tr class="pricing-row">
+                        <td class="pricing-label">Cabinet Items Total:</td>
+                        <td class="pricing-value">{{ calculations.formatted.line_items_total }}</td>
+                    </tr>
+                    
+                    {% if calculations.accessories_total > 0 %}
+                    <tr class="pricing-row">
+                        <td class="pricing-label">Accessories Total:</td>
+                        <td class="pricing-value">{{ calculations.formatted.accessories_total }}</td>
+                    </tr>
+                    {% endif %}
+                    
+                    {% if calculations.lighting_total > 0 %}
+                    <tr class="pricing-row">
+                        <td class="pricing-label">Lighting Total:</td>
+                        <td class="pricing-value">{{ calculations.formatted.lighting_total }}</td>
+                    </tr>
+                    {% endif %}
+                    
+                    <tr class="pricing-row subtotal">
+                        <td class="pricing-label">Subtotal:</td>
+                        <td class="pricing-value">{{ calculations.formatted.subtotal }}</td>
+                    </tr>
+                    
+                    {% if calculations.tax_amount > 0 %}
+                    <tr class="pricing-row tax">
+                        <td class="pricing-label">Tax (18% GST):</td>
+                        <td class="pricing-value">{{ calculations.formatted.tax_amount }}</td>
+                    </tr>
+                    {% endif %}
+                    
+                    {% if calculations.discount_amount > 0 %}
+                    <tr class="pricing-row discount">
+                        <td class="pricing-label">
+                            Discount
+                            {% if calculations.discount_reason %}
+                                <br><small>({{ calculations.discount_reason }})</small>
+                            {% endif %}
+                            {% if calculations.discount_percentage > 0 %}
+                                <br><small>{{ calculations.discount_percentage }}% off</small>
+                            {% endif %}:
+                        </td>
+                        <td class="pricing-value discount-amount">-{{ calculations.formatted.discount_amount }}</td>
+                    </tr>
+                    {% endif %}
+                    
+                    <tr class="pricing-row final-total">
+                        <td class="pricing-label">Final Total:</td>
+                        <td class="pricing-value final-amount">{{ calculations.formatted.final_total }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Terms & Conditions -->
+    {% if customizations.include_terms_conditions %}
+    <div class="section terms-section">
+        <h2 class="section-title">Terms & Conditions</h2>
+        
+        <div class="terms-content">
+            <div class="terms-grid">
+                <div class="terms-column">
+                    <h4>Payment Terms</h4>
+                    <ul>
+                        <li>25% advance payment upon order confirmation</li>
+                        <li>35% payment before material dispatch</li>
+                        <li>35% payment before installation</li>
+                        <li>5% balance payment after completion</li>
+                    </ul>
+                    
+                    <h4>Delivery & Installation</h4>
+                    <ul>
+                        <li>Standard delivery: 4-6 weeks from order confirmation</li>
+                        <li>Installation: 3-5 working days</li>
+                        <li>Site readiness required before installation</li>
+                    </ul>
+                </div>
+                
+                <div class="terms-column">
+                    <h4>Inclusions</h4>
+                    <ul>
+                        <li>Design, manufacturing, and installation</li>
+                        <li>Basic fittings and hardware</li>
+                        <li>Post-installation cleaning</li>
+                    </ul>
+                    
+                    <h4>Exclusions</h4>
+                    <ul>
+                        <li>Electrical and plumbing work</li>
+                        <li>Civil work and structural modifications</li>
+                        <li>Appliances (unless specified)</li>
+                        <li>Countertop (client scope, unless mentioned)</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="validity-note">
+                <p><strong>Quote Validity:</strong> This quotation is valid for 30 days from the date of issue.</p>
+                <p><strong>Note:</strong> Prices may vary if there are changes in specifications or material costs.</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Warranty Information -->
+    {% if customizations.include_warranty_info %}
+    <div class="section warranty-section">
+        <h2 class="section-title">Warranty Information</h2>
+        
+        <div class="warranty-content">
+            <div class="warranty-grid">
+                <div class="warranty-item">
+                    <h4>Carcass Structure</h4>
+                    <p>10 years warranty against manufacturing defects</p>
+                </div>
+                <div class="warranty-item">
+                    <h4>Shutters & Doors</h4>
+                    <p>5 years warranty on finish and construction</p>
+                </div>
+                <div class="warranty-item">
+                    <h4>Hardware & Fittings</h4>
+                    <p>2-5 years warranty as per manufacturer specifications</p>
+                </div>
+                <div class="warranty-item">
+                    <h4>Installation</h4>
+                    <p>1 year warranty on installation workmanship</p>
+                </div>
+            </div>
+            
+            <div class="warranty-note">
+                <p><small>Warranty terms and conditions apply. Regular maintenance required for optimal performance.</small></p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Footer & Signatures -->
+    <div class="quotation-footer">
+        <div class="footer-content">
+            <div class="company-info">
+                <h3>SPEISEKAMER</h3>
+                <p>Premium Kitchen Solutions</p>
+                <div class="contact-info">
+                    <p>📧 info@speisekamer.com</p>
+                    <p>📞 +91 XXXXX XXXXX</p>
+                    <p>🌐 www.speisekamer.com</p>
+                </div>
+            </div>
+            
+            <div class="signatures">
+                <div class="signature-section">
+                    <div class="signature-box">
+                        <div class="signature-line"></div>
+                        <p class="signature-label">Customer Signature</p>
+                        <p class="signature-date">Date: ___________</p>
+                    </div>
+                    
+                    <div class="signature-box">
+                        <div class="signature-line"></div>
+                        <p class="signature-label">Authorized Representative</p>
+                        <p class="signature-date">Date: {{ project_info.quotation_date }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>Thank you for choosing Speisekamer for your kitchen requirements. We look forward to creating your dream kitchen!</p>
+        </div>
+    </div>
+
+</body>
+</html>

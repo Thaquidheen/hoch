@@ -36,6 +36,7 @@ urlpatterns = [
     path('api/architects/', include('architect.urls')),
     path('api/catalog/', include(('catalog.urls', 'catalog'), namespace='catalog')),
     path('api/pricing/', include('pricing.urls')),
+    path('api/quotation-pdf/', include('quotation_pdf.urls')),
 
 
 

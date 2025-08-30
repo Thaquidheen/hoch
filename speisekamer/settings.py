@@ -40,7 +40,7 @@ INSTALLED_APPS = [
 
     'catalog',  
     'pricing',         # Product catalog management
-
+    'quotation_pdf',
   
 
     'whitenoise.runserver_nostatic',
@@ -96,9 +96,12 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
+
 # Media files configuration
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+PDF_STORAGE_PATH = os.path.join(MEDIA_ROOT, 'quotation_pdfs')
+
 
 
 JAZZMIN_SETTINGS = {
