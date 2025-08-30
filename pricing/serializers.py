@@ -149,7 +149,7 @@ class ProjectLineItemAccessorySerializer(serializers.ModelSerializer):
     
     # Computed fields from model properties
     accessory_name = serializers.ReadOnlyField()
-    accessory_image = serializers.ReadOnlyField()
+    accessory_image_url = serializers.SerializerMethodField()  # Changed from accessory_image
     material_code = serializers.ReadOnlyField()
     dimensions = serializers.ReadOnlyField()
 
@@ -160,18 +160,19 @@ class ProjectLineItemAccessorySerializer(serializers.ModelSerializer):
             'qty', 'unit_price', 'tax_rate_snapshot', 'total_price',
             'installation_notes',
             # Computed fields for easy access
-            'accessory_name', 'accessory_image', 'material_code', 'dimensions',
+            'accessory_name', 'accessory_image_url', 'material_code', 'dimensions',
             'is_active', 'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'created_at', 'updated_at', 'total_price', 
-                           'accessory_name', 'accessory_image', 'material_code', 'dimensions']
-
-    def validate_qty(self, value):
-        """Validate quantity is positive"""
-        if value <= 0:
-            raise serializers.ValidationError("Quantity must be greater than 0")
-        return value
-
+        read_only_fields = ['id', 'created_at', 'updated_at', 'total_price']
+    
+    def get_accessory_image_url(self, obj):
+        """Get the product variant image URL with absolute URL"""
+        if obj.product_variant and obj.product_variant.image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.product_variant.image.url)
+            return obj.product_variant.image.url
+        return None
 
 class ProjectLineItemSerializer(serializers.ModelSerializer):
     cabinet_type_detail = CabinetTypesSerializer(source='cabinet_type', read_only=True)
@@ -240,6 +241,19 @@ class ProjectLineItemSerializer(serializers.ModelSerializer):
         if value < 50 or value > 3000:
             raise serializers.ValidationError("Height must be between 50mm and 3000mm")
         return value
+    
+    def get_accessory_image_url(self, obj):
+        """Get the product variant image URL with absolute URL"""
+        if obj.product_variant and obj.product_variant.image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.product_variant.image.url)
+            else:
+                # Fallback
+                from django.conf import settings
+                base_url = getattr(settings, 'BASE_URL', 'http://127.0.0.1:8000')
+                return f"{base_url.rstrip('/')}{obj.product_variant.image.url}"
+        return None
 
 
 class ProjectTotalsSerializer(serializers.ModelSerializer):

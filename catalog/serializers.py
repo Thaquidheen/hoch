@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from decimal import Decimal
+from django.core.validators import MinValueValidator, MaxValueValidator
 from .models import *
 from customers.models import Customer
 
@@ -107,6 +108,7 @@ class ProductVariantSerializer(serializers.ModelSerializer):
     brand_name = serializers.CharField(source='product.brand.name', read_only=True)
     category_name = serializers.CharField(source='product.category.name', read_only=True)
 
+
     # Calculated fields (read-only)
     dimensions_display = serializers.SerializerMethodField()
     price_breakdown = serializers.SerializerMethodField()
@@ -156,11 +158,16 @@ class ProductVariantSerializer(serializers.ModelSerializer):
         return obj.price_breakdown
     
     def get_image_url(self, obj):
+        """Get absolute URL for variant image"""
         if obj.image:
             request = self.context.get('request')
             if request:
                 return request.build_absolute_uri(obj.image.url)
-            return obj.image.url
+            else:
+                # Fallback
+                from django.conf import settings
+                base_url = getattr(settings, 'BASE_URL', 'http://127.0.0.1:8000')
+                return f"{base_url.rstrip('/')}{obj.image.url}"
         return None
     
     def validate_mrp(self, value):
@@ -212,11 +219,17 @@ class ProductVariantListSerializer(serializers.ModelSerializer):
         return obj.dimensions_display
     
     def get_image_url(self, obj):
+        """Get absolute URL for variant image"""
         if obj.image:
             request = self.context.get('request')
             if request:
+                # Build absolute URI
                 return request.build_absolute_uri(obj.image.url)
-            return obj.image.url
+            else:
+                # Fallback: construct absolute URL manually
+                from django.conf import settings
+                base_url = getattr(settings, 'BASE_URL', 'http://127.0.0.1:8000')
+                return f"{base_url.rstrip('/')}{obj.image.url}"
         return None
 
 
@@ -258,19 +271,28 @@ class ProductSerializer(serializers.ModelSerializer):
     
     def get_variants_count(self, obj):
         return obj.variants.filter(is_active=True).count()
-    
     def get_price_range(self, obj):
         variants = obj.variants.filter(is_active=True)
-        if variants:
-            prices = [float(v.value) for v in variants]
-            min_price = min(prices)
-            max_price = max(prices)
-            if min_price == max_price:
-                return f"₹{min_price:,.2f}"
-            return f"₹{min_price:,.2f} - ₹{max_price:,.2f}"
+        if variants.exists():
+            # Get company_price values, filtering out None values
+            prices = []
+            for variant in variants:
+                if variant.company_price is not None:
+                    prices.append(float(variant.company_price))
+            
+            if prices:  # Only proceed if we have valid prices
+                min_price = min(prices)
+                max_price = max(prices)
+                if min_price == max_price:
+                    return f"₹{min_price:,.2f}"
+                return f"₹{min_price:,.2f} - ₹{max_price:,.2f}"
+            else:
+                return "Price not set"
         return "No variants"
+        
 
 class ProductListSerializer(serializers.ModelSerializer):
+    """Lightweight serializer for product lists"""
     """Lightweight serializer for product lists"""
     
     category_name = serializers.CharField(source='category.name', read_only=True)
