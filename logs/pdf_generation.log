@@ -509,3 +509,45 @@ INFO 2025-08-31 08:07:32,192 pdf_generator 17472 19196 PDF saved to storage: quo
 ERROR 2025-08-31 08:07:32,193 pdf_generator 17472 19196 Error saving PDF history: table quotation_pdf_quotationpdfhistory has no column named project_name
 INFO 2025-08-31 08:07:32,193 pdf_generator 17472 19196 PDF generation completed: quotation_test4_7_20250831_080732.pdf
 INFO 2025-08-31 08:07:32,193 generation 17472 19196 PDF generation completed in 0.05 seconds
+INFO 2025-08-31 08:11:20,703 generation 17472 19196 PDF generation request for project 7
+INFO 2025-08-31 08:11:20,707 generation 17472 19196 PDF customizations: {'template_id': 'SIMPLE', 'template_type': 'SIMPLE', 'include_cabinet_details': True, 'include_door_details': True, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': True, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+INFO 2025-08-31 08:11:20,716 pdf_renderer 17472 19196 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 08:11:20,716 pdf_generator 17472 19196 Starting PDF generation for project 7
+INFO 2025-08-31 08:11:20,727 pdf_generator 17472 19196 Using template: quotation_pdf/simple_quotation.html
+INFO 2025-08-31 08:11:20,728 pdf_generator 17472 19196 HTML content rendered successfully
+INFO 2025-08-31 08:11:20,729 pdf_generator 17472 19196 Starting PDF rendering
+INFO 2025-08-31 08:11:20,729 pdf_renderer 17472 19196 Rendering PDF with ReportLab
+INFO 2025-08-31 08:11:20,729 pdf_renderer 17472 19196 Starting PDF generation with ReportLab
+INFO 2025-08-31 08:11:20,732 pdf_renderer 17472 19196 PDF generated successfully with ReportLab, size: 1980 bytes
+INFO 2025-08-31 08:11:20,733 pdf_generator 17472 19196 PDF saved to storage: quotation_pdfs/quotation_test4_7_20250831_081120.pdf
+ERROR 2025-08-31 08:11:20,734 pdf_generator 17472 19196 Error saving PDF history: table quotation_pdf_quotationpdfhistory has no column named project_name
+INFO 2025-08-31 08:11:20,734 pdf_generator 17472 19196 PDF generation completed: quotation_test4_7_20250831_081120.pdf
+INFO 2025-08-31 08:11:20,734 generation 17472 19196 PDF generation completed in 0.03 seconds
+INFO 2025-08-31 08:12:05,678 generation 17472 37784 PDF generation request for project 7
+INFO 2025-08-31 08:12:05,681 generation 17472 37784 PDF customizations: {}
+INFO 2025-08-31 08:12:05,686 pdf_renderer 17472 37784 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 08:12:05,686 pdf_generator 17472 37784 Starting PDF generation for project 7
+INFO 2025-08-31 08:12:05,694 pdf_generator 17472 37784 Using template: quotation_pdf/detailed_quotation.html
+INFO 2025-08-31 08:12:05,694 pdf_generator 17472 37784 HTML content rendered successfully
+INFO 2025-08-31 08:12:05,694 pdf_generator 17472 37784 Starting PDF rendering
+INFO 2025-08-31 08:12:05,694 pdf_renderer 17472 37784 Rendering PDF with ReportLab
+INFO 2025-08-31 08:12:05,694 pdf_renderer 17472 37784 Starting PDF generation with ReportLab
+INFO 2025-08-31 08:12:05,697 pdf_renderer 17472 37784 PDF generated successfully with ReportLab, size: 1980 bytes
+INFO 2025-08-31 08:12:05,698 pdf_generator 17472 37784 PDF saved to storage: quotation_pdfs/quotation_test4_7_20250831_081205.pdf
+ERROR 2025-08-31 08:12:05,698 pdf_generator 17472 37784 Error saving PDF history: table quotation_pdf_quotationpdfhistory has no column named project_name
+INFO 2025-08-31 08:12:05,698 pdf_generator 17472 37784 PDF generation completed: quotation_test4_7_20250831_081205.pdf
+INFO 2025-08-31 08:12:05,698 generation 17472 37784 PDF generation completed in 0.02 seconds
+INFO 2025-08-31 08:12:35,878 generation 17472 19196 PDF generation request for project 7
+INFO 2025-08-31 08:12:35,880 generation 17472 19196 PDF customizations: {'template_id': 'STANDARD', 'template_type': 'STANDARD', 'include_cabinet_details': True, 'include_door_details': True, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': True, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+INFO 2025-08-31 08:12:35,888 pdf_renderer 17472 19196 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 08:12:35,888 pdf_generator 17472 19196 Starting PDF generation for project 7
+INFO 2025-08-31 08:12:35,900 pdf_generator 17472 19196 Using template: quotation_pdf/standard_quotation.html
+INFO 2025-08-31 08:12:35,901 pdf_generator 17472 19196 HTML content rendered successfully
+INFO 2025-08-31 08:12:35,901 pdf_generator 17472 19196 Starting PDF rendering
+INFO 2025-08-31 08:12:35,901 pdf_renderer 17472 19196 Rendering PDF with ReportLab
+INFO 2025-08-31 08:12:35,901 pdf_renderer 17472 19196 Starting PDF generation with ReportLab
+INFO 2025-08-31 08:12:35,904 pdf_renderer 17472 19196 PDF generated successfully with ReportLab, size: 1980 bytes
+INFO 2025-08-31 08:12:35,905 pdf_generator 17472 19196 PDF saved to storage: quotation_pdfs/quotation_test4_7_20250831_081235.pdf
+ERROR 2025-08-31 08:12:35,905 pdf_generator 17472 19196 Error saving PDF history: table quotation_pdf_quotationpdfhistory has no column named project_name
+INFO 2025-08-31 08:12:35,905 pdf_generator 17472 19196 PDF generation completed: quotation_test4_7_20250831_081235.pdf
+INFO 2025-08-31 08:12:35,905 generation 17472 19196 PDF generation completed in 0.03 seconds
