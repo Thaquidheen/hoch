@@ -1,0 +1,10 @@
+WARNING 2025-08-31 06:16:54,522 pdf_renderer 13324 12976 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 06:16:54,627 pdf_renderer 13324 12976 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 06:16:54,627 pdf_renderer 13324 12976 For Windows users: Consider using xhtml2pdf or ReportLab as alternatives
+INFO 2025-08-31 06:16:55,066 pdf_renderer 13324 12976 ReportLab available as PDF fallback
+INFO 2025-08-31 06:16:56,209 pdf_renderer 13324 12976 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 06:17:50,682 pdf_renderer 15572 36032 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 06:17:50,795 pdf_renderer 15572 36032 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 06:17:50,795 pdf_renderer 15572 36032 For Windows users: Consider using xhtml2pdf or ReportLab as alternatives
+INFO 2025-08-31 06:17:50,906 pdf_renderer 15572 36032 ReportLab available as PDF fallback
+INFO 2025-08-31 06:17:51,385 pdf_renderer 15572 36032 xhtml2pdf available as PDF fallback
