@@ -1076,3 +1076,53 @@ INFO 2025-08-31 11:08:07,038 generation 30096 14772 PDF generation completed in 
 WARNING 2025-08-31 11:31:01,653 pdf_renderer 28844 8908 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
 INFO 2025-08-31 11:31:03,106 pdf_renderer 28844 8908 xhtml2pdf available
 INFO 2025-08-31 11:31:03,106 pdf_renderer 28844 8908 ReportLab available
+INFO 2025-08-31 11:31:42,058 generation 28844 23808 PDF generation request for project 7
+INFO 2025-08-31 11:31:42,060 generation 28844 23808 PDF customizations: {'template_id': 'DETAILED', 'template_type': 'DETAILED', 'include_cabinet_details': True, 'include_door_details': True, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': True, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+INFO 2025-08-31 11:31:42,161 pdf_renderer 28844 23808 Successfully initialized xhtml2pdf-compatible for HTML-to-PDF
+INFO 2025-08-31 11:31:42,161 pdf_generator 28844 23808 Starting PDF generation for project 7
+INFO 2025-08-31 11:31:42,161 pdf_generator 28844 23808 Active renderer: xhtml2pdf-compatible
+INFO 2025-08-31 11:31:42,161 data_compiler 28844 23808 Starting comprehensive PDF data compilation with your models
+ERROR 2025-08-31 11:31:42,161 data_compiler 28844 23808 Error getting customer details: 'Customer' object has no attribute 'id'
+INFO 2025-08-31 11:31:42,184 pdf_generator 28844 23808 Raw PDF data compiled successfully
+INFO 2025-08-31 11:31:42,184 template_data_mapper 28844 23808 Mapping compiled data to template structure
+ERROR 2025-08-31 11:31:42,184 template_data_mapper 28844 23808 Error mapping template data: unsupported operand type(s) for +: 'float' and 'dict'
+WARNING 2025-08-31 11:31:42,184 template_data_mapper 28844 23808 Creating fallback template data due to mapping errors
+INFO 2025-08-31 11:31:42,184 pdf_generator 28844 23808 Data successfully mapped to template structure
+INFO 2025-08-31 11:31:42,184 pdf_generator 28844 23808 Using xhtml2pdf-compatible template
+INFO 2025-08-31 11:31:42,185 pdf_generator 28844 23808 Using template: quotation_pdf/simple_quotation_compatible.html
+INFO 2025-08-31 11:31:42,197 pdf_generator 28844 23808 HTML content rendered successfully, length: 9793 characters
+INFO 2025-08-31 11:31:42,197 pdf_generator 28844 23808 xhtml2pdf renderer - CSS embedded in template
+INFO 2025-08-31 11:31:42,197 pdf_generator 28844 23808 Starting PDF rendering with xhtml2pdf-compatible
+INFO 2025-08-31 11:31:42,197 pdf_renderer 28844 23808 Rendering HTML-to-PDF with xhtml2pdf-compatible
+INFO 2025-08-31 11:31:42,197 pdf_renderer 28844 23808 Starting HTML-to-PDF generation with xhtml2pdf (compatibility mode)
+INFO 2025-08-31 11:31:42,304 pdf_renderer 28844 23808 xhtml2pdf PDF generation successful, size: 6567 bytes
+INFO 2025-08-31 11:31:42,304 pdf_generator 28844 23808 PDF rendering successful with xhtml2pdf-compatible
+INFO 2025-08-31 11:31:42,305 pdf_generator 28844 23808 PDF saved to storage: quotation_pdfs/quotation_Customer_7_20250831_113142.pdf
+WARNING 2025-08-31 11:31:42,305 pdf_generator 28844 23808 Failed to save PDF history: QuotationPDFHistory() got unexpected keyword arguments: 'pdf_filename', 'generation_method', 'renderer_used'
+INFO 2025-08-31 11:31:42,306 pdf_generator 28844 23808 PDF generation completed successfully: quotation_Customer_7_20250831_113142.pdf
+INFO 2025-08-31 11:31:42,306 generation 28844 23808 PDF generation completed in 0.25 seconds
+INFO 2025-08-31 11:32:04,749 generation 28844 23808 PDF generation request for project 7
+INFO 2025-08-31 11:32:04,752 generation 28844 23808 PDF customizations: {'template_id': 'DETAILED', 'template_type': 'DETAILED', 'include_cabinet_details': True, 'include_door_details': True, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': True, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+INFO 2025-08-31 11:32:04,769 pdf_renderer 28844 23808 Successfully initialized xhtml2pdf-compatible for HTML-to-PDF
+INFO 2025-08-31 11:32:04,769 pdf_generator 28844 23808 Starting PDF generation for project 7
+INFO 2025-08-31 11:32:04,769 pdf_generator 28844 23808 Active renderer: xhtml2pdf-compatible
+INFO 2025-08-31 11:32:04,769 data_compiler 28844 23808 Starting comprehensive PDF data compilation with your models
+ERROR 2025-08-31 11:32:04,770 data_compiler 28844 23808 Error getting customer details: 'Customer' object has no attribute 'id'
+INFO 2025-08-31 11:32:04,798 pdf_generator 28844 23808 Raw PDF data compiled successfully
+INFO 2025-08-31 11:32:04,798 template_data_mapper 28844 23808 Mapping compiled data to template structure
+ERROR 2025-08-31 11:32:04,798 template_data_mapper 28844 23808 Error mapping template data: unsupported operand type(s) for +: 'float' and 'dict'
+WARNING 2025-08-31 11:32:04,798 template_data_mapper 28844 23808 Creating fallback template data due to mapping errors
+INFO 2025-08-31 11:32:04,798 pdf_generator 28844 23808 Data successfully mapped to template structure
+INFO 2025-08-31 11:32:04,798 pdf_generator 28844 23808 Using xhtml2pdf-compatible template
+INFO 2025-08-31 11:32:04,798 pdf_generator 28844 23808 Using template: quotation_pdf/simple_quotation_compatible.html
+INFO 2025-08-31 11:32:04,799 pdf_generator 28844 23808 HTML content rendered successfully, length: 9793 characters
+INFO 2025-08-31 11:32:04,799 pdf_generator 28844 23808 xhtml2pdf renderer - CSS embedded in template
+INFO 2025-08-31 11:32:04,799 pdf_generator 28844 23808 Starting PDF rendering with xhtml2pdf-compatible
+INFO 2025-08-31 11:32:04,799 pdf_renderer 28844 23808 Rendering HTML-to-PDF with xhtml2pdf-compatible
+INFO 2025-08-31 11:32:04,799 pdf_renderer 28844 23808 Starting HTML-to-PDF generation with xhtml2pdf (compatibility mode)
+INFO 2025-08-31 11:32:04,899 pdf_renderer 28844 23808 xhtml2pdf PDF generation successful, size: 6567 bytes
+INFO 2025-08-31 11:32:04,899 pdf_generator 28844 23808 PDF rendering successful with xhtml2pdf-compatible
+INFO 2025-08-31 11:32:04,900 pdf_generator 28844 23808 PDF saved to storage: quotation_pdfs/quotation_Customer_7_20250831_113204.pdf
+WARNING 2025-08-31 11:32:04,900 pdf_generator 28844 23808 Failed to save PDF history: QuotationPDFHistory() got unexpected keyword arguments: 'pdf_filename', 'generation_method', 'renderer_used'
+INFO 2025-08-31 11:32:04,900 pdf_generator 28844 23808 PDF generation completed successfully: quotation_Customer_7_20250831_113204.pdf
+INFO 2025-08-31 11:32:04,900 generation 28844 23808 PDF generation completed in 0.15 seconds
