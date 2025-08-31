@@ -1,4 +1,4 @@
-# quotation_pdf/pdf_renderer.py
+# quotation_pdf/pdf_renderer.py (Improved with better error handling)
 
 import os
 import logging
@@ -8,6 +8,7 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse
 from datetime import datetime
 import sys
+import re
 
 logger = logging.getLogger('quotation_pdf')
 
@@ -16,7 +17,6 @@ WEASYPRINT_AVAILABLE = False
 WEASYPRINT_ERROR = None
 
 try:
-    # Check if we're on Windows and warn about potential issues
     if sys.platform.startswith('win'):
         logger.warning("Running on Windows - WeasyPrint may require GTK+ libraries")
     
@@ -27,11 +27,8 @@ except ImportError as e:
     WEASYPRINT_ERROR = str(e)
     logger.warning(f"WeasyPrint not available: {e}")
 except OSError as e:
-    # This catches the gobject-2.0-0 error on Windows
     WEASYPRINT_ERROR = str(e)
     logger.warning(f"WeasyPrint dependencies not available: {e}")
-    if sys.platform.startswith('win'):
-        logger.info("For Windows users: Consider using xhtml2pdf or ReportLab as alternatives")
 
 # Try importing ReportLab as fallback
 REPORTLAB_AVAILABLE = False
@@ -71,34 +68,19 @@ class WeasyPrintRenderer:
         self.weasyprint = weasyprint
         
     def render_pdf(self, html_content, css_files=None, base_url=None):
-        """
-        Render HTML content to PDF using WeasyPrint
-        
-        Args:
-            html_content (str): HTML content to render
-            css_files (list): List of CSS file paths
-            base_url (str): Base URL for resolving relative paths
-            
-        Returns:
-            bytes: PDF content as bytes
-        """
+        """Render HTML content to PDF using WeasyPrint"""
         try:
             logger.info("Starting PDF generation with WeasyPrint")
             
-            # Prepare CSS stylesheets
             stylesheets = []
             if css_files:
                 for css_file in css_files:
                     if os.path.exists(css_file):
                         stylesheets.append(self.weasyprint.CSS(filename=css_file))
                         logger.info(f"Loaded CSS file: {css_file}")
-                    else:
-                        logger.warning(f"CSS file not found: {css_file}")
             
-            # Configure WeasyPrint
             config = self._get_weasyprint_config()
             
-            # Generate PDF
             html_doc = self.weasyprint.HTML(
                 string=html_content,
                 base_url=base_url,
@@ -121,40 +103,23 @@ class WeasyPrintRenderer:
     def _get_weasyprint_config(self):
         """Get WeasyPrint configuration"""
         font_config = self.weasyprint.fonts.FontConfiguration()
-        
-        # Add custom font paths if configured
-        font_paths = getattr(settings, 'WEASYPRINT_FONT_PATHS', [])
-        for font_path in font_paths:
-            if os.path.exists(font_path):
-                font_config.add_font_directory(font_path)
-                logger.info(f"Added font directory: {font_path}")
-        
-        return {
-            'font_config': font_config,
-        }
+        return {'font_config': font_config}
 
 
 class XHTMLToPDFRenderer:
-    """PDF renderer using xhtml2pdf"""
+    """PDF renderer using xhtml2pdf with improved error handling"""
     
     def __init__(self):
         if not XHTML2PDF_AVAILABLE:
             raise PDFGenerationError("xhtml2pdf is not available")
     
     def render_pdf(self, html_content, css_files=None, base_url=None):
-        """
-        Render HTML content to PDF using xhtml2pdf
-        
-        Args:
-            html_content (str): HTML content to render
-            css_files (list): List of CSS file paths (embedded in HTML)
-            base_url (str): Base URL for resolving relative paths
-            
-        Returns:
-            bytes: PDF content as bytes
-        """
+        """Render HTML content to PDF using xhtml2pdf with better error handling"""
         try:
             logger.info("Starting PDF generation with xhtml2pdf")
+            
+            # Clean HTML content for xhtml2pdf compatibility
+            cleaned_html = self._clean_html_for_xhtml2pdf(html_content)
             
             # Embed CSS in HTML if provided
             if css_files:
@@ -165,9 +130,12 @@ class XHTMLToPDFRenderer:
                             css_content += f.read()
                         logger.info(f"Loaded CSS file: {css_file}")
                 
+                # Clean CSS for xhtml2pdf
+                css_content = self._clean_css_for_xhtml2pdf(css_content)
+                
                 if css_content:
-                    # Embed CSS in HTML
-                    html_content = f"""
+                    cleaned_html = f"""
+                    <!DOCTYPE html>
                     <html>
                     <head>
                         <meta charset="UTF-8">
@@ -176,24 +144,31 @@ class XHTMLToPDFRenderer:
                         </style>
                     </head>
                     <body>
-                    {html_content}
+                    {cleaned_html}
                     </body>
                     </html>
                     """
             
-            # Generate PDF
+            # Generate PDF with error handling
             result = BytesIO()
+            
+            # Use CreatePDF with better error handling
             pdf_status = pisa.CreatePDF(
-                html_content,
+                cleaned_html,
                 dest=result,
-                encoding='utf-8'
+                encoding='utf-8',
+                show_error_as_pdf=True  # Show errors in PDF instead of crashing
             )
             
             if pdf_status.err:
-                raise PDFGenerationError(f"xhtml2pdf generation failed with errors")
+                logger.warning(f"xhtml2pdf reported errors but continued: {pdf_status.err}")
+                # Don't fail completely, just log the warning
             
             pdf_bytes = result.getvalue()
             result.close()
+            
+            if len(pdf_bytes) == 0:
+                raise PDFGenerationError("xhtml2pdf generated empty PDF")
             
             logger.info(f"PDF generated successfully with xhtml2pdf, size: {len(pdf_bytes)} bytes")
             return pdf_bytes
@@ -201,10 +176,45 @@ class XHTMLToPDFRenderer:
         except Exception as e:
             logger.error(f"xhtml2pdf PDF generation failed: {str(e)}")
             raise PDFGenerationError(f"xhtml2pdf failed: {str(e)}")
+    
+    def _clean_html_for_xhtml2pdf(self, html_content):
+        """Clean HTML to make it more compatible with xhtml2pdf"""
+        # Remove problematic HTML5 elements and attributes
+        html_content = re.sub(r'<(section|article|header|footer|nav|aside)', r'<div', html_content)
+        html_content = re.sub(r'</(section|article|header|footer|nav|aside)>', r'</div>', html_content)
+        
+        # Remove data attributes that might cause issues
+        html_content = re.sub(r'\s+data-[^=]*="[^"]*"', '', html_content)
+        
+        # Remove CSS Grid and Flexbox properties that xhtml2pdf doesn't support
+        html_content = re.sub(r'display:\s*grid[^;]*;?', '', html_content)
+        html_content = re.sub(r'display:\s*flex[^;]*;?', '', html_content)
+        html_content = re.sub(r'grid-[^:]*:[^;]*;?', '', html_content)
+        html_content = re.sub(r'flex-[^:]*:[^;]*;?', '', html_content)
+        
+        return html_content
+    
+    def _clean_css_for_xhtml2pdf(self, css_content):
+        """Clean CSS to make it more compatible with xhtml2pdf"""
+        # Remove CSS Grid and Flexbox
+        css_content = re.sub(r'display:\s*(grid|flex)[^;]*;?', 'display: block;', css_content)
+        css_content = re.sub(r'grid-[^:]*:[^;]*;?', '', css_content)
+        css_content = re.sub(r'flex-[^:]*:[^;]*;?', '', css_content)
+        
+        # Remove modern CSS that xhtml2pdf doesn't support
+        css_content = re.sub(r'transform:[^;]*;?', '', css_content)
+        css_content = re.sub(r'box-shadow:[^;]*;?', '', css_content)
+        css_content = re.sub(r'border-radius:[^;]*;?', '', css_content)
+        
+        # Remove CSS variables
+        css_content = re.sub(r'--[^:]*:[^;]*;?', '', css_content)
+        css_content = re.sub(r'var\([^)]*\)', '0', css_content)
+        
+        return css_content
 
 
 class ReportLabRenderer:
-    """Fallback PDF renderer using ReportLab"""
+    """Enhanced ReportLab renderer with actual project data"""
     
     def __init__(self):
         if not REPORTLAB_AVAILABLE:
@@ -222,28 +232,26 @@ class ReportLabRenderer:
         self.colors = colors
         self.inch = inch
     
-    def render_pdf(self, html_content, css_files=None, base_url=None):
-        """
-        Render basic PDF using ReportLab (simplified version)
-        This doesn't parse HTML but creates a structured PDF
-        """
-        logger.info("Starting PDF generation with ReportLab (simplified)")
+    def render_pdf(self, html_content, css_files=None, base_url=None, pdf_data=None):
+        """Enhanced ReportLab PDF generation with project data"""
+        logger.info("Starting PDF generation with ReportLab")
         
         buffer = BytesIO()
         doc = self.SimpleDocTemplate(buffer, pagesize=self.A4)
         styles = self.getSampleStyleSheet()
         story = []
         
-        # Add custom styles
-        styles.add(ParagraphStyle(
+        # Custom styles
+        styles.add(self.ParagraphStyle(
             name='CustomTitle',
             parent=styles['Title'],
-            fontSize=18,
+            fontSize=20,
             spaceAfter=20,
-            textColor=self.colors.darkblue
+            textColor=self.colors.darkblue,
+            alignment=1  # Center
         ))
         
-        styles.add(ParagraphStyle(
+        styles.add(self.ParagraphStyle(
             name='CustomHeading',
             parent=styles['Heading2'],
             fontSize=14,
@@ -251,29 +259,69 @@ class ReportLabRenderer:
             textColor=self.colors.darkblue
         ))
         
-        # Title
+        # Header
         title = self.Paragraph("Kitchen Quotation", styles['CustomTitle'])
         story.append(title)
         story.append(self.Spacer(1, 20))
         
-        # Add a simple message about the PDF generation method
-        message = self.Paragraph(
-            "This PDF was generated using ReportLab as a fallback. "
-            "For full HTML rendering capabilities, please install WeasyPrint with its dependencies.",
-            styles['Normal']
-        )
-        story.append(message)
-        story.append(self.Spacer(1, 20))
+        # Add project data if available
+        if pdf_data:
+            project_info = pdf_data.get('project_info', {})
+            customer_info = pdf_data.get('customer_info', {})
+            calculations = pdf_data.get('calculations', {})
+            
+            # Customer details
+            if customer_info.get('name'):
+                customer_text = f"""
+                <b>Customer:</b> {customer_info.get('name', 'Unknown')}<br/>
+                <b>Project:</b> {project_info.get('quotation_number', 'N/A')}<br/>
+                <b>Date:</b> {project_info.get('quotation_date', datetime.now().strftime('%d %B %Y'))}<br/>
+                <b>Brand:</b> {project_info.get('brand', 'Speisekamer')}
+                """
+                customer_para = self.Paragraph(customer_text, styles['Normal'])
+                story.append(customer_para)
+                story.append(self.Spacer(1, 20))
+            
+            # Pricing summary
+            if calculations:
+                pricing_heading = self.Paragraph("Pricing Summary", styles['CustomHeading'])
+                story.append(pricing_heading)
+                
+                pricing_data = [
+                    ['Description', 'Amount'],
+                    ['Line Items Total', calculations.get('formatted', {}).get('line_items_total', '₹0.00')],
+                    ['Accessories Total', calculations.get('formatted', {}).get('accessories_total', '₹0.00')],
+                    ['Lighting Total', calculations.get('formatted', {}).get('lighting_total', '₹0.00')],
+                    ['Discount', f"-{calculations.get('formatted', {}).get('discount_amount', '₹0.00')}"],
+                    ['Final Total', calculations.get('formatted', {}).get('final_total', '₹0.00')]
+                ]
+                
+                pricing_table = self.Table(pricing_data, colWidths=[3*self.inch, 2*self.inch])
+                pricing_table.setStyle(self.TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), self.colors.grey),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), self.colors.whitesmoke),
+                    ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                    ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTSIZE', (0, 0), (-1, 0), 12),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                    ('BACKGROUND', (0, 1), (-1, -1), self.colors.beige),
+                    ('GRID', (0, 0), (-1, -1), 1, self.colors.black),
+                    ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
+                    ('BACKGROUND', (0, -1), (-1, -1), self.colors.lightgrey),
+                ]))
+                story.append(pricing_table)
+                story.append(self.Spacer(1, 20))
         
-        # Basic project information (you can extract this from HTML or pass separately)
-        info_text = f"""
-        <b>Generated:</b> {datetime.now().strftime('%d %B %Y at %H:%M')}<br/>
-        <b>Status:</b> PDF Generated Successfully<br/>
-        <b>Method:</b> ReportLab Fallback Renderer
+        # Footer note
+        footer_text = f"""
+        <i>Generated on {datetime.now().strftime('%d %B %Y at %H:%M')}</i><br/>
+        <b>Note:</b> This PDF was generated using ReportLab. 
+        For enhanced formatting, please install WeasyPrint or ensure xhtml2pdf works properly.
         """
-        
-        info_para = self.Paragraph(info_text, styles['Normal'])
-        story.append(info_para)
+        footer_para = self.Paragraph(footer_text, styles['Normal'])
+        story.append(self.Spacer(1, 30))
+        story.append(footer_para)
         
         # Build PDF
         doc.build(story)
@@ -286,61 +334,77 @@ class ReportLabRenderer:
 
 
 class PDFRendererProxy:
-    """Proxy class that chooses the best available PDF renderer"""
+    """Enhanced proxy with better fallback logic"""
     
     def __init__(self, prefer_weasyprint=True):
         self.renderer = None
         self.renderer_name = None
+        self.attempted_renderers = []
         
-        # Try to initialize the best available renderer
+        # Try renderers in order
         if prefer_weasyprint and WEASYPRINT_AVAILABLE:
             try:
                 self.renderer = WeasyPrintRenderer()
                 self.renderer_name = "WeasyPrint"
                 logger.info("Using WeasyPrint renderer")
+                return
             except Exception as e:
+                self.attempted_renderers.append(f"WeasyPrint: {str(e)}")
                 logger.warning(f"WeasyPrint initialization failed: {e}")
         
-        # Fallback to xhtml2pdf
-        if not self.renderer and XHTML2PDF_AVAILABLE:
+        # Try ReportLab first as it's most reliable
+        if REPORTLAB_AVAILABLE:
+            try:
+                self.renderer = ReportLabRenderer()
+                self.renderer_name = "ReportLab"
+                logger.info("Using ReportLab renderer (reliable fallback)")
+                return
+            except Exception as e:
+                self.attempted_renderers.append(f"ReportLab: {str(e)}")
+                logger.warning(f"ReportLab initialization failed: {e}")
+        
+        # Finally try xhtml2pdf
+        if XHTML2PDF_AVAILABLE:
             try:
                 self.renderer = XHTMLToPDFRenderer()
                 self.renderer_name = "xhtml2pdf"
                 logger.info("Using xhtml2pdf renderer")
+                return
             except Exception as e:
+                self.attempted_renderers.append(f"xhtml2pdf: {str(e)}")
                 logger.warning(f"xhtml2pdf initialization failed: {e}")
         
-        # Final fallback to ReportLab
-        if not self.renderer and REPORTLAB_AVAILABLE:
-            try:
-                self.renderer = ReportLabRenderer()
-                self.renderer_name = "ReportLab"
-                logger.info("Using ReportLab renderer (simplified)")
-            except Exception as e:
-                logger.warning(f"ReportLab initialization failed: {e}")
-        
-        if not self.renderer:
-            available_libs = []
-            if WEASYPRINT_AVAILABLE:
-                available_libs.append("WeasyPrint")
-            if XHTML2PDF_AVAILABLE:
-                available_libs.append("xhtml2pdf")
-            if REPORTLAB_AVAILABLE:
-                available_libs.append("ReportLab")
-            
-            error_msg = f"No PDF rendering libraries available. Install one of: {', '.join(['WeasyPrint', 'xhtml2pdf', 'ReportLab'])}"
-            if available_libs:
-                error_msg += f" (Found but failed to initialize: {', '.join(available_libs)})"
-            
-            raise PDFGenerationError(error_msg)
+        # No renderer available
+        error_msg = f"No PDF rendering libraries available. Attempted: {'; '.join(self.attempted_renderers)}"
+        raise PDFGenerationError(error_msg)
     
-    def render_pdf(self, html_content, css_files=None, base_url=None):
-        """Render PDF using the available renderer"""
+    def render_pdf(self, html_content, css_files=None, base_url=None, pdf_data=None):
+        """Render PDF with enhanced error handling"""
         if not self.renderer:
             raise PDFGenerationError("No PDF renderer available")
         
         logger.info(f"Rendering PDF with {self.renderer_name}")
-        return self.renderer.render_pdf(html_content, css_files, base_url)
+        
+        try:
+            # ReportLab renderer accepts pdf_data parameter
+            if self.renderer_name == "ReportLab":
+                return self.renderer.render_pdf(html_content, css_files, base_url, pdf_data)
+            else:
+                return self.renderer.render_pdf(html_content, css_files, base_url)
+                
+        except Exception as e:
+            logger.error(f"Primary renderer {self.renderer_name} failed: {str(e)}")
+            
+            # Try fallback to ReportLab if we weren't already using it
+            if self.renderer_name != "ReportLab" and REPORTLAB_AVAILABLE:
+                logger.info("Attempting fallback to ReportLab")
+                try:
+                    fallback_renderer = ReportLabRenderer()
+                    return fallback_renderer.render_pdf(html_content, css_files, base_url, pdf_data)
+                except Exception as fallback_error:
+                    logger.error(f"Fallback renderer also failed: {str(fallback_error)}")
+            
+            raise PDFGenerationError(f"All renderers failed. Primary: {str(e)}")
     
     def get_renderer_info(self):
         """Get information about the active renderer"""
@@ -349,25 +413,18 @@ class PDFRendererProxy:
             'weasyprint_available': WEASYPRINT_AVAILABLE,
             'xhtml2pdf_available': XHTML2PDF_AVAILABLE,
             'reportlab_available': REPORTLAB_AVAILABLE,
+            'attempted_renderers': self.attempted_renderers,
             'weasyprint_error': WEASYPRINT_ERROR
         }
 
 
-# Factory function to get appropriate renderer
+# Factory function
 def get_pdf_renderer(prefer_weasyprint=True):
-    """
-    Get the best available PDF renderer
-    
-    Args:
-        prefer_weasyprint (bool): Prefer WeasyPrint if available
-        
-    Returns:
-        PDFRendererProxy: Configured PDF renderer
-    """
+    """Get the best available PDF renderer"""
     return PDFRendererProxy(prefer_weasyprint=prefer_weasyprint)
 
 
-# Utility function to check available renderers
+# Utility functions
 def get_available_renderers():
     """Get information about available PDF renderers"""
     return {
@@ -384,40 +441,3 @@ def get_available_renderers():
             'error': None if REPORTLAB_AVAILABLE else "Not installed"
         }
     }
-
-
-# Helper function for quick installation instructions
-def get_installation_instructions():
-    """Get installation instructions for PDF libraries"""
-    instructions = {
-        'windows': {
-            'weasyprint': [
-                "Option 1: Install GTK+ for Windows from https://github.com/tschoonj/GTK-for-Windows-Runtime-Environment-Installer",
-                "Then: pip install weasyprint",
-                "",
-                "Option 2 (easier): Use alternative renderers:",
-                "pip install xhtml2pdf reportlab"
-            ],
-            'xhtml2pdf': ["pip install xhtml2pdf"],
-            'reportlab': ["pip install reportlab"]
-        },
-        'linux': {
-            'weasyprint': [
-                "sudo apt-get install build-essential python3-dev python3-pip python3-setuptools python3-wheel python3-cffi libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info",
-                "pip install weasyprint"
-            ],
-            'xhtml2pdf': ["pip install xhtml2pdf"],
-            'reportlab': ["pip install reportlab"]
-        },
-        'macos': {
-            'weasyprint': [
-                "brew install cairo pango gdk-pixbuf libffi",
-                "pip install weasyprint"
-            ],
-            'xhtml2pdf': ["pip install xhtml2pdf"],
-            'reportlab': ["pip install reportlab"]
-        }
-    }
-    
-    platform = 'windows' if sys.platform.startswith('win') else ('darwin' if sys.platform == 'darwin' else 'linux')
-    return instructions.get(platform, instructions['linux'])

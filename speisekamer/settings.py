@@ -11,6 +11,52 @@ SECRET_KEY = 'django-insecure-l+ip+3p)m#t^tv#5#@x#-=+5i!fj-9h&dj--j80u5xo_bycf(o
 DEBUG = True
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost','http://localhost:5173/']
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",  # In case you switch to port 3000
+    "http://127.0.0.1:3000",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+# Allow all headers for development
+CORS_ALLOW_ALL_HEADERS = True
+
+# Allow common HTTP methods
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+# CSRF Configuration for API
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+# For development, you can disable CSRF for API endpoints
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SAMESITE = 'Lax'
+
+# Session configuration
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SECURE = False
+
+# Update ALLOWED_HOSTS
+ALLOWED_HOSTS = [
+    '127.0.0.1', 
+    'localhost',
+    '127.0.0.1:8000',
+    'localhost:8000'
+]
 # Applications
 INSTALLED_APPS = [
     'jazzmin', 

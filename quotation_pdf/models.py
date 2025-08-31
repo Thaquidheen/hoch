@@ -23,8 +23,10 @@ class QuotationPDFTemplate(models.Model):
         default='DETAILED'
     )
     template_file = models.CharField(
-        max_length=255,
-        help_text="Path to template file relative to templates directory"
+    max_length=255,
+    blank=True,
+    default='quotation_pdf/detailed_quotation.html',
+    help_text="Path to template file relative to templates directory"
     )
     css_file = models.CharField(
         max_length=255,
