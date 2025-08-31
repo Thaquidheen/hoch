@@ -133,11 +133,13 @@ class QuotationPDFDataCompiler:
             customer = self.project.customer
             return {
                 'name': customer.name,
-                'email': getattr(customer, 'email', ''),
-                'phone': getattr(customer, 'phone', ''),
-                'address': getattr(customer, 'address', ''),
-                'company': getattr(customer, 'company', ''),
-                'gst_number': getattr(customer, 'gst_number', ''),
+                'email': '',
+                'phone': customer.contact_number,
+                'address': customer.location,  # Use location instead of address
+                'contact_number': customer.contact_number,  # Also include the actual field
+                'location': customer.location,  # Also include the actual field
+                'company': '',
+                'gst_number': '',
                 'customer_id': customer.id
             }
         except Exception as e:

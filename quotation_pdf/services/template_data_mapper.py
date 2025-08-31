@@ -88,12 +88,12 @@ class TemplateDataMapper:
         customer_data = self.compiled_data.get('customer_info', {})
         
         return {
-            'name': customer_data.get('name', 'Customer Name'),
-            'email': customer_data.get('email', 'customer@email.com'),
-            'phone': customer_data.get('phone', '+91-XXXXXXXXXX'),
-            'address': customer_data.get('address', 'Customer Address'),
-            'company': customer_data.get('company', ''),
-            'gst_number': customer_data.get('gst_number', '')
+           'name': customer_data.get('name', 'Customer Name'),
+        'email': customer_data.get('email', 'customer@email.com'),
+        'phone': customer_data.get('phone', customer_data.get('contact_number', '+91-XXXXXXXXXX')),  # Fallback to contact_number
+        'address': customer_data.get('address', customer_data.get('location', 'Customer Address')),  # Fallback to location
+        'company': customer_data.get('company', ''),
+        'gst_number': customer_data.get('gst_number', '')
         }
     
     def _map_quotation_info(self):

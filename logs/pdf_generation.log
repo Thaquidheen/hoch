@@ -1151,3 +1151,120 @@ INFO 2025-08-31 11:33:30,379 pdf_generator 28844 24164 PDF saved to storage: quo
 WARNING 2025-08-31 11:33:30,379 pdf_generator 28844 24164 Failed to save PDF history: QuotationPDFHistory() got unexpected keyword arguments: 'pdf_filename', 'generation_method', 'renderer_used'
 INFO 2025-08-31 11:33:30,379 pdf_generator 28844 24164 PDF generation completed successfully: quotation_Customer_5_20250831_113330.pdf
 INFO 2025-08-31 11:33:30,379 generation 28844 24164 PDF generation completed in 0.17 seconds
+WARNING 2025-08-31 11:36:26,114 pdf_renderer 22444 24840 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 11:36:26,705 pdf_renderer 22444 24840 xhtml2pdf available
+INFO 2025-08-31 11:36:26,705 pdf_renderer 22444 24840 ReportLab available
+INFO 2025-08-31 11:41:30,745 generation 22444 33756 PDF generation request for project 7
+INFO 2025-08-31 11:41:30,751 generation 22444 33756 PDF customizations: {'template_id': 'DETAILED', 'template_type': 'DETAILED', 'include_cabinet_details': True, 'include_door_details': True, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': True, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+INFO 2025-08-31 11:41:30,818 pdf_renderer 22444 33756 Successfully initialized xhtml2pdf-compatible for HTML-to-PDF
+INFO 2025-08-31 11:41:30,818 pdf_generator 22444 33756 Starting PDF generation for project 7
+INFO 2025-08-31 11:41:30,818 pdf_generator 22444 33756 Active renderer: xhtml2pdf-compatible
+INFO 2025-08-31 11:41:30,818 data_compiler 22444 33756 Starting comprehensive PDF data compilation with your models
+ERROR 2025-08-31 11:41:30,819 data_compiler 22444 33756 Error getting customer details: 'Customer' object has no attribute 'id'
+INFO 2025-08-31 11:41:30,852 pdf_generator 22444 33756 Raw PDF data compiled successfully
+INFO 2025-08-31 11:41:30,852 template_data_mapper 22444 33756 Mapping compiled data to template structure
+ERROR 2025-08-31 11:41:30,852 template_data_mapper 22444 33756 Error mapping template data: unsupported operand type(s) for +: 'float' and 'dict'
+WARNING 2025-08-31 11:41:30,852 template_data_mapper 22444 33756 Creating fallback template data due to mapping errors
+INFO 2025-08-31 11:41:30,852 pdf_generator 22444 33756 Data successfully mapped to template structure
+INFO 2025-08-31 11:41:30,852 pdf_generator 22444 33756 Using xhtml2pdf-compatible template
+INFO 2025-08-31 11:41:30,852 pdf_generator 22444 33756 Using template: quotation_pdf/simple_quotation_compatible.html
+INFO 2025-08-31 11:41:30,861 pdf_generator 22444 33756 HTML content rendered successfully, length: 9793 characters
+INFO 2025-08-31 11:41:30,861 pdf_generator 22444 33756 xhtml2pdf renderer - CSS embedded in template
+INFO 2025-08-31 11:41:30,861 pdf_generator 22444 33756 Starting PDF rendering with xhtml2pdf-compatible
+INFO 2025-08-31 11:41:30,861 pdf_renderer 22444 33756 Rendering HTML-to-PDF with xhtml2pdf-compatible
+INFO 2025-08-31 11:41:30,861 pdf_renderer 22444 33756 Starting HTML-to-PDF generation with xhtml2pdf (compatibility mode)
+INFO 2025-08-31 11:41:30,981 pdf_renderer 22444 33756 xhtml2pdf PDF generation successful, size: 6567 bytes
+INFO 2025-08-31 11:41:30,981 pdf_generator 22444 33756 PDF rendering successful with xhtml2pdf-compatible
+INFO 2025-08-31 11:41:30,982 pdf_generator 22444 33756 PDF saved to storage: quotation_pdfs/quotation_Customer_7_20250831_114130.pdf
+WARNING 2025-08-31 11:41:30,982 pdf_generator 22444 33756 Failed to save PDF history: QuotationPDFHistory() got unexpected keyword arguments: 'pdf_filename', 'generation_method', 'renderer_used'
+INFO 2025-08-31 11:41:30,982 pdf_generator 22444 33756 PDF generation completed successfully: quotation_Customer_7_20250831_114130.pdf
+INFO 2025-08-31 11:41:30,982 generation 22444 33756 PDF generation completed in 0.24 seconds
+WARNING 2025-08-31 11:43:50,822 pdf_renderer 20280 19128 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 11:43:52,001 pdf_renderer 20280 19128 xhtml2pdf available
+INFO 2025-08-31 11:43:52,001 pdf_renderer 20280 19128 ReportLab available
+WARNING 2025-08-31 11:44:39,045 pdf_renderer 17556 2380 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 11:44:39,705 pdf_renderer 17556 2380 xhtml2pdf available
+INFO 2025-08-31 11:44:39,705 pdf_renderer 17556 2380 ReportLab available
+WARNING 2025-08-31 11:45:00,568 pdf_renderer 36568 8092 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 11:45:01,174 pdf_renderer 36568 8092 xhtml2pdf available
+INFO 2025-08-31 11:45:01,174 pdf_renderer 36568 8092 ReportLab available
+WARNING 2025-08-31 11:45:13,719 pdf_renderer 18892 15340 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 11:45:14,304 pdf_renderer 18892 15340 xhtml2pdf available
+INFO 2025-08-31 11:45:14,304 pdf_renderer 18892 15340 ReportLab available
+WARNING 2025-08-31 11:45:31,934 pdf_renderer 15704 17760 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 11:45:32,525 pdf_renderer 15704 17760 xhtml2pdf available
+INFO 2025-08-31 11:45:32,525 pdf_renderer 15704 17760 ReportLab available
+WARNING 2025-08-31 11:45:36,533 pdf_renderer 320 32504 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 11:45:37,170 pdf_renderer 320 32504 xhtml2pdf available
+INFO 2025-08-31 11:45:37,170 pdf_renderer 320 32504 ReportLab available
+WARNING 2025-08-31 11:45:41,362 pdf_renderer 8692 25484 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 11:45:42,009 pdf_renderer 8692 25484 xhtml2pdf available
+INFO 2025-08-31 11:45:42,009 pdf_renderer 8692 25484 ReportLab available
+WARNING 2025-08-31 11:45:46,046 pdf_renderer 26300 24444 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 11:45:46,689 pdf_renderer 26300 24444 xhtml2pdf available
+INFO 2025-08-31 11:45:46,689 pdf_renderer 26300 24444 ReportLab available
+WARNING 2025-08-31 11:45:49,652 pdf_renderer 20792 14900 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 11:45:50,346 pdf_renderer 20792 14900 xhtml2pdf available
+INFO 2025-08-31 11:45:50,346 pdf_renderer 20792 14900 ReportLab available
+WARNING 2025-08-31 11:45:53,278 pdf_renderer 36796 19868 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 11:45:53,864 pdf_renderer 36796 19868 xhtml2pdf available
+INFO 2025-08-31 11:45:53,864 pdf_renderer 36796 19868 ReportLab available
+INFO 2025-08-31 11:46:07,168 generation 36796 23564 PDF generation request for project 7
+INFO 2025-08-31 11:46:07,186 generation 36796 23564 PDF customizations: {'template_id': 'DETAILED', 'template_type': 'DETAILED', 'include_cabinet_details': True, 'include_door_details': True, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': True, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+INFO 2025-08-31 11:46:07,274 pdf_renderer 36796 23564 Successfully initialized xhtml2pdf-compatible for HTML-to-PDF
+INFO 2025-08-31 11:46:07,274 pdf_generator 36796 23564 Starting PDF generation for project 7
+INFO 2025-08-31 11:46:07,274 pdf_generator 36796 23564 Active renderer: xhtml2pdf-compatible
+INFO 2025-08-31 11:46:07,274 data_compiler 36796 23564 Starting comprehensive PDF data compilation with your models
+ERROR 2025-08-31 11:46:07,274 data_compiler 36796 23564 Error getting customer details: 'Customer' object has no attribute 'id'
+INFO 2025-08-31 11:46:07,307 pdf_generator 36796 23564 Raw PDF data compiled successfully
+INFO 2025-08-31 11:46:07,307 template_data_mapper 36796 23564 Mapping compiled data to template structure
+ERROR 2025-08-31 11:46:07,307 template_data_mapper 36796 23564 Error mapping template data: unsupported operand type(s) for +: 'float' and 'dict'
+WARNING 2025-08-31 11:46:07,307 template_data_mapper 36796 23564 Creating fallback template data due to mapping errors
+INFO 2025-08-31 11:46:07,307 pdf_generator 36796 23564 Data successfully mapped to template structure
+INFO 2025-08-31 11:46:07,307 pdf_generator 36796 23564 Using xhtml2pdf-compatible template
+INFO 2025-08-31 11:46:07,307 pdf_generator 36796 23564 Using template: quotation_pdf/simple_quotation_compatible.html
+INFO 2025-08-31 11:46:07,322 pdf_generator 36796 23564 HTML content rendered successfully, length: 9793 characters
+INFO 2025-08-31 11:46:07,322 pdf_generator 36796 23564 xhtml2pdf renderer - CSS embedded in template
+INFO 2025-08-31 11:46:07,322 pdf_generator 36796 23564 Starting PDF rendering with xhtml2pdf-compatible
+INFO 2025-08-31 11:46:07,323 pdf_renderer 36796 23564 Rendering HTML-to-PDF with xhtml2pdf-compatible
+INFO 2025-08-31 11:46:07,323 pdf_renderer 36796 23564 Starting HTML-to-PDF generation with xhtml2pdf (compatibility mode)
+INFO 2025-08-31 11:46:07,456 pdf_renderer 36796 23564 xhtml2pdf PDF generation successful, size: 6567 bytes
+INFO 2025-08-31 11:46:07,456 pdf_generator 36796 23564 PDF rendering successful with xhtml2pdf-compatible
+INFO 2025-08-31 11:46:07,457 pdf_generator 36796 23564 PDF saved to storage: quotation_pdfs/quotation_Customer_7_20250831_114607.pdf
+WARNING 2025-08-31 11:46:07,458 pdf_generator 36796 23564 Failed to save PDF history: QuotationPDFHistory() got unexpected keyword arguments: 'pdf_filename', 'generation_method', 'renderer_used'
+INFO 2025-08-31 11:46:07,458 pdf_generator 36796 23564 PDF generation completed successfully: quotation_Customer_7_20250831_114607.pdf
+INFO 2025-08-31 11:46:07,458 generation 36796 23564 PDF generation completed in 0.29 seconds
+INFO 2025-08-31 11:46:47,328 generation 36796 23564 PDF generation request for project 7
+INFO 2025-08-31 11:46:47,332 generation 36796 23564 PDF customizations: {'template_id': 'DETAILED', 'template_type': 'DETAILED', 'include_cabinet_details': True, 'include_door_details': True, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': True, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+INFO 2025-08-31 11:46:47,358 pdf_renderer 36796 23564 Successfully initialized xhtml2pdf-compatible for HTML-to-PDF
+INFO 2025-08-31 11:46:47,358 pdf_generator 36796 23564 Starting PDF generation for project 7
+INFO 2025-08-31 11:46:47,358 pdf_generator 36796 23564 Active renderer: xhtml2pdf-compatible
+INFO 2025-08-31 11:46:47,358 data_compiler 36796 23564 Starting comprehensive PDF data compilation with your models
+ERROR 2025-08-31 11:46:47,358 data_compiler 36796 23564 Error getting customer details: 'Customer' object has no attribute 'id'
+INFO 2025-08-31 11:46:47,389 pdf_generator 36796 23564 Raw PDF data compiled successfully
+INFO 2025-08-31 11:46:47,390 template_data_mapper 36796 23564 Mapping compiled data to template structure
+ERROR 2025-08-31 11:46:47,390 template_data_mapper 36796 23564 Error mapping template data: unsupported operand type(s) for +: 'float' and 'dict'
+WARNING 2025-08-31 11:46:47,390 template_data_mapper 36796 23564 Creating fallback template data due to mapping errors
+INFO 2025-08-31 11:46:47,390 pdf_generator 36796 23564 Data successfully mapped to template structure
+INFO 2025-08-31 11:46:47,390 pdf_generator 36796 23564 Using xhtml2pdf-compatible template
+INFO 2025-08-31 11:46:47,390 pdf_generator 36796 23564 Using template: quotation_pdf/simple_quotation_compatible.html
+INFO 2025-08-31 11:46:47,391 pdf_generator 36796 23564 HTML content rendered successfully, length: 9793 characters
+INFO 2025-08-31 11:46:47,391 pdf_generator 36796 23564 xhtml2pdf renderer - CSS embedded in template
+INFO 2025-08-31 11:46:47,391 pdf_generator 36796 23564 Starting PDF rendering with xhtml2pdf-compatible
+INFO 2025-08-31 11:46:47,391 pdf_renderer 36796 23564 Rendering HTML-to-PDF with xhtml2pdf-compatible
+INFO 2025-08-31 11:46:47,391 pdf_renderer 36796 23564 Starting HTML-to-PDF generation with xhtml2pdf (compatibility mode)
+INFO 2025-08-31 11:46:47,490 pdf_renderer 36796 23564 xhtml2pdf PDF generation successful, size: 6567 bytes
+INFO 2025-08-31 11:46:47,491 pdf_generator 36796 23564 PDF rendering successful with xhtml2pdf-compatible
+INFO 2025-08-31 11:46:47,492 pdf_generator 36796 23564 PDF saved to storage: quotation_pdfs/quotation_Customer_7_20250831_114647.pdf
+WARNING 2025-08-31 11:46:47,492 pdf_generator 36796 23564 Failed to save PDF history: QuotationPDFHistory() got unexpected keyword arguments: 'pdf_filename', 'generation_method', 'renderer_used'
+INFO 2025-08-31 11:46:47,492 pdf_generator 36796 23564 PDF generation completed successfully: quotation_Customer_7_20250831_114647.pdf
+INFO 2025-08-31 11:46:47,492 generation 36796 23564 PDF generation completed in 0.16 seconds
+WARNING 2025-08-31 11:48:13,936 pdf_renderer 5692 10024 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 11:48:14,475 pdf_renderer 5692 10024 xhtml2pdf available
+INFO 2025-08-31 11:48:14,475 pdf_renderer 5692 10024 ReportLab available
+WARNING 2025-08-31 11:48:18,900 pdf_renderer 22944 8824 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 11:48:19,440 pdf_renderer 22944 8824 xhtml2pdf available
+INFO 2025-08-31 11:48:19,440 pdf_renderer 22944 8824 ReportLab available
+WARNING 2025-08-31 11:48:24,705 pdf_renderer 29488 33108 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 11:48:25,256 pdf_renderer 29488 33108 xhtml2pdf available
+INFO 2025-08-31 11:48:25,257 pdf_renderer 29488 33108 ReportLab available
