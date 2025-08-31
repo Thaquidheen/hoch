@@ -495,3 +495,17 @@ WARNING 2025-08-31 08:07:23,712 pdf_renderer 17472 9968 Running on Windows - Wea
 WARNING 2025-08-31 08:07:23,824 pdf_renderer 17472 9968 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
 INFO 2025-08-31 08:07:23,939 pdf_renderer 17472 9968 ReportLab available as PDF fallback
 INFO 2025-08-31 08:07:24,421 pdf_renderer 17472 9968 xhtml2pdf available as PDF fallback
+INFO 2025-08-31 08:07:32,143 generation 17472 19196 PDF generation request for project 7
+INFO 2025-08-31 08:07:32,146 generation 17472 19196 PDF customizations: {'template_id': 'DETAILED', 'template_type': 'DETAILED', 'include_cabinet_details': True, 'include_door_details': True, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': True, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+INFO 2025-08-31 08:07:32,160 pdf_renderer 17472 19196 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 08:07:32,160 pdf_generator 17472 19196 Starting PDF generation for project 7
+INFO 2025-08-31 08:07:32,173 pdf_generator 17472 19196 Using template: quotation_pdf/detailed_quotation.html
+INFO 2025-08-31 08:07:32,187 pdf_generator 17472 19196 HTML content rendered successfully
+INFO 2025-08-31 08:07:32,187 pdf_generator 17472 19196 Starting PDF rendering
+INFO 2025-08-31 08:07:32,187 pdf_renderer 17472 19196 Rendering PDF with ReportLab
+INFO 2025-08-31 08:07:32,187 pdf_renderer 17472 19196 Starting PDF generation with ReportLab
+INFO 2025-08-31 08:07:32,190 pdf_renderer 17472 19196 PDF generated successfully with ReportLab, size: 1980 bytes
+INFO 2025-08-31 08:07:32,192 pdf_generator 17472 19196 PDF saved to storage: quotation_pdfs/quotation_test4_7_20250831_080732.pdf
+ERROR 2025-08-31 08:07:32,193 pdf_generator 17472 19196 Error saving PDF history: table quotation_pdf_quotationpdfhistory has no column named project_name
+INFO 2025-08-31 08:07:32,193 pdf_generator 17472 19196 PDF generation completed: quotation_test4_7_20250831_080732.pdf
+INFO 2025-08-31 08:07:32,193 generation 17472 19196 PDF generation completed in 0.05 seconds
