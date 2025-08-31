@@ -551,3 +551,393 @@ INFO 2025-08-31 08:12:35,905 pdf_generator 17472 19196 PDF saved to storage: quo
 ERROR 2025-08-31 08:12:35,905 pdf_generator 17472 19196 Error saving PDF history: table quotation_pdf_quotationpdfhistory has no column named project_name
 INFO 2025-08-31 08:12:35,905 pdf_generator 17472 19196 PDF generation completed: quotation_test4_7_20250831_081235.pdf
 INFO 2025-08-31 08:12:35,905 generation 17472 19196 PDF generation completed in 0.03 seconds
+WARNING 2025-08-31 08:13:52,047 pdf_renderer 14256 13572 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:13:52,483 pdf_renderer 14256 13572 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:13:52,753 pdf_renderer 14256 13572 ReportLab available as PDF fallback
+INFO 2025-08-31 08:13:53,609 pdf_renderer 14256 13572 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 08:15:13,254 pdf_renderer 24656 9392 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:15:13,368 pdf_renderer 24656 9392 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:15:13,479 pdf_renderer 24656 9392 ReportLab available as PDF fallback
+INFO 2025-08-31 08:15:13,972 pdf_renderer 24656 9392 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 08:15:56,438 pdf_renderer 19728 25648 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:15:56,551 pdf_renderer 19728 25648 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:15:56,668 pdf_renderer 19728 25648 ReportLab available as PDF fallback
+INFO 2025-08-31 08:15:57,200 pdf_renderer 19728 25648 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 08:16:11,469 pdf_renderer 17892 35952 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:16:11,582 pdf_renderer 17892 35952 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:16:11,707 pdf_renderer 17892 35952 ReportLab available as PDF fallback
+INFO 2025-08-31 08:16:12,147 pdf_renderer 17892 35952 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 08:17:06,107 pdf_renderer 27768 2820 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:17:06,232 pdf_renderer 27768 2820 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:17:06,364 pdf_renderer 27768 2820 ReportLab available as PDF fallback
+INFO 2025-08-31 08:17:06,814 pdf_renderer 27768 2820 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 08:17:30,525 pdf_renderer 2064 33248 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:17:30,636 pdf_renderer 2064 33248 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:17:30,748 pdf_renderer 2064 33248 ReportLab available as PDF fallback
+INFO 2025-08-31 08:17:31,169 pdf_renderer 2064 33248 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 08:17:39,112 pdf_renderer 16416 20148 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:17:39,222 pdf_renderer 16416 20148 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:17:39,331 pdf_renderer 16416 20148 ReportLab available as PDF fallback
+INFO 2025-08-31 08:17:39,766 pdf_renderer 16416 20148 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 08:17:52,974 pdf_renderer 15968 23376 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:17:53,082 pdf_renderer 15968 23376 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:17:53,194 pdf_renderer 15968 23376 ReportLab available as PDF fallback
+INFO 2025-08-31 08:17:53,671 pdf_renderer 15968 23376 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 08:18:11,228 pdf_renderer 9720 28724 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:18:11,365 pdf_renderer 9720 28724 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:18:11,511 pdf_renderer 9720 28724 ReportLab available as PDF fallback
+INFO 2025-08-31 08:18:11,986 pdf_renderer 9720 28724 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 08:20:23,667 pdf_renderer 21404 12440 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:20:23,771 pdf_renderer 21404 12440 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:20:23,877 pdf_renderer 21404 12440 ReportLab available as PDF fallback
+INFO 2025-08-31 08:20:24,291 pdf_renderer 21404 12440 xhtml2pdf available as PDF fallback
+INFO 2025-08-31 08:20:34,089 generation 21404 12492 PDF generation request for project 7
+INFO 2025-08-31 08:20:34,108 generation 21404 12492 PDF customizations: {'template_id': 'DETAILED', 'template_type': 'DETAILED', 'include_cabinet_details': True, 'include_door_details': True, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': True, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+INFO 2025-08-31 08:20:34,132 pdf_renderer 21404 12492 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 08:20:34,132 pdf_generator 21404 12492 Starting PDF generation for project 7
+INFO 2025-08-31 08:20:34,153 pdf_generator 21404 12492 Using template: quotation_pdf/detailed_quotation.html
+INFO 2025-08-31 08:20:34,182 pdf_generator 21404 12492 HTML content rendered successfully
+INFO 2025-08-31 08:20:34,182 pdf_generator 21404 12492 Starting PDF rendering
+INFO 2025-08-31 08:20:34,182 pdf_renderer 21404 12492 Rendering PDF with ReportLab
+INFO 2025-08-31 08:20:34,182 pdf_renderer 21404 12492 Starting enhanced PDF generation with ReportLab
+ERROR 2025-08-31 08:20:34,182 pdf_renderer 21404 12492 Primary renderer ReportLab failed: 'ReportLabRenderer' object has no attribute 'SimpleDocTemplate'
+ERROR 2025-08-31 08:20:34,182 pdf_generator 21404 12492 PDF rendering failed: All renderers failed. Primary: 'ReportLabRenderer' object has no attribute 'SimpleDocTemplate'
+ERROR 2025-08-31 08:20:34,182 pdf_generator 21404 12492 PDF generation error: Failed to render PDF: All renderers failed. Primary: 'ReportLabRenderer' object has no attribute 'SimpleDocTemplate'
+INFO 2025-08-31 08:20:34,182 generation 21404 12492 PDF generation completed in 0.09 seconds
+INFO 2025-08-31 08:20:52,017 generation 21404 12492 PDF generation request for project 7
+INFO 2025-08-31 08:20:52,020 generation 21404 12492 PDF customizations: {'template_id': 'STANDARD', 'template_type': 'STANDARD', 'include_cabinet_details': True, 'include_door_details': True, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': True, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+INFO 2025-08-31 08:20:52,029 pdf_renderer 21404 12492 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 08:20:52,029 pdf_generator 21404 12492 Starting PDF generation for project 7
+INFO 2025-08-31 08:20:52,048 pdf_generator 21404 12492 Using template: quotation_pdf/standard_quotation.html
+INFO 2025-08-31 08:20:52,050 pdf_generator 21404 12492 HTML content rendered successfully
+INFO 2025-08-31 08:20:52,050 pdf_generator 21404 12492 Starting PDF rendering
+INFO 2025-08-31 08:20:52,050 pdf_renderer 21404 12492 Rendering PDF with ReportLab
+INFO 2025-08-31 08:20:52,051 pdf_renderer 21404 12492 Starting enhanced PDF generation with ReportLab
+ERROR 2025-08-31 08:20:52,051 pdf_renderer 21404 12492 Primary renderer ReportLab failed: 'ReportLabRenderer' object has no attribute 'SimpleDocTemplate'
+ERROR 2025-08-31 08:20:52,051 pdf_generator 21404 12492 PDF rendering failed: All renderers failed. Primary: 'ReportLabRenderer' object has no attribute 'SimpleDocTemplate'
+ERROR 2025-08-31 08:20:52,051 pdf_generator 21404 12492 PDF generation error: Failed to render PDF: All renderers failed. Primary: 'ReportLabRenderer' object has no attribute 'SimpleDocTemplate'
+INFO 2025-08-31 08:20:52,051 generation 21404 12492 PDF generation completed in 0.03 seconds
+WARNING 2025-08-31 08:22:04,474 pdf_renderer 28400 25928 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:22:04,583 pdf_renderer 28400 25928 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:22:04,692 pdf_renderer 28400 25928 ReportLab available as PDF fallback
+INFO 2025-08-31 08:22:05,134 pdf_renderer 28400 25928 xhtml2pdf available as PDF fallback
+INFO 2025-08-31 08:22:09,202 generation 28400 28300 PDF generation request for project 7
+INFO 2025-08-31 08:22:09,206 generation 28400 28300 PDF customizations: {'template_id': 'STANDARD', 'template_type': 'STANDARD', 'include_cabinet_details': True, 'include_door_details': True, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': True, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+INFO 2025-08-31 08:22:09,219 pdf_renderer 28400 28300 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 08:22:09,219 pdf_generator 28400 28300 Starting PDF generation for project 7
+INFO 2025-08-31 08:22:09,232 pdf_generator 28400 28300 Using template: quotation_pdf/standard_quotation.html
+INFO 2025-08-31 08:22:09,233 pdf_generator 28400 28300 HTML content rendered successfully
+INFO 2025-08-31 08:22:09,233 pdf_generator 28400 28300 Starting PDF rendering
+INFO 2025-08-31 08:22:09,233 pdf_renderer 28400 28300 Rendering PDF with ReportLab
+INFO 2025-08-31 08:22:09,233 pdf_renderer 28400 28300 Starting enhanced PDF generation with ReportLab
+INFO 2025-08-31 08:22:09,241 pdf_renderer 28400 28300 Enhanced PDF generated successfully with ReportLab, size: 2039 bytes
+INFO 2025-08-31 08:22:09,244 pdf_generator 28400 28300 PDF saved to storage: quotation_pdfs/quotation_test4_7_20250831_082209.pdf
+ERROR 2025-08-31 08:22:09,245 pdf_generator 28400 28300 Error saving PDF history: table quotation_pdf_quotationpdfhistory has no column named project_name
+INFO 2025-08-31 08:22:09,245 pdf_generator 28400 28300 PDF generation completed: quotation_test4_7_20250831_082209.pdf
+INFO 2025-08-31 08:22:09,245 generation 28400 28300 PDF generation completed in 0.04 seconds
+WARNING 2025-08-31 08:29:36,372 pdf_renderer 26408 20912 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:29:36,487 pdf_renderer 26408 20912 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:29:36,601 pdf_renderer 26408 20912 ReportLab available as PDF fallback
+INFO 2025-08-31 08:29:37,049 pdf_renderer 26408 20912 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 08:30:14,288 pdf_renderer 17208 18996 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:30:14,417 pdf_renderer 17208 18996 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:30:14,528 pdf_renderer 17208 18996 ReportLab available as PDF fallback
+INFO 2025-08-31 08:30:15,154 pdf_renderer 17208 18996 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 08:30:18,099 pdf_renderer 3296 6668 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:30:18,202 pdf_renderer 3296 6668 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:30:18,311 pdf_renderer 3296 6668 ReportLab available as PDF fallback
+INFO 2025-08-31 08:30:18,757 pdf_renderer 3296 6668 xhtml2pdf available as PDF fallback
+INFO 2025-08-31 08:30:23,671 generation 3296 6452 PDF generation request for project 7
+INFO 2025-08-31 08:30:23,676 generation 3296 6452 PDF customizations: {'template_id': 'DETAILED', 'template_type': 'DETAILED', 'include_cabinet_details': True, 'include_door_details': True, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': True, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+INFO 2025-08-31 08:30:23,676 pdf_renderer 3296 6452 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 08:30:23,677 pdf_generator 3296 6452 Starting PDF generation for project 7
+ERROR 2025-08-31 08:30:23,677 pdf_generator 3296 6452 Unexpected error in PDF generation: 'QuotationPDFDataCompiler' object has no attribute 'compile_complete_data'
+INFO 2025-08-31 08:30:23,677 generation 3296 6452 PDF generation completed in 0.01 seconds
+WARNING 2025-08-31 08:40:28,222 pdf_renderer 29344 32320 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:40:28,334 pdf_renderer 29344 32320 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:40:28,443 pdf_renderer 29344 32320 ReportLab available as PDF fallback
+INFO 2025-08-31 08:40:28,891 pdf_renderer 29344 32320 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 08:40:34,671 pdf_renderer 3076 32352 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:40:34,778 pdf_renderer 3076 32352 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:40:34,886 pdf_renderer 3076 32352 ReportLab available as PDF fallback
+INFO 2025-08-31 08:40:35,333 pdf_renderer 3076 32352 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 08:40:39,142 pdf_renderer 24280 28160 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:40:39,256 pdf_renderer 24280 28160 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:40:39,364 pdf_renderer 24280 28160 ReportLab available as PDF fallback
+INFO 2025-08-31 08:40:39,829 pdf_renderer 24280 28160 xhtml2pdf available as PDF fallback
+INFO 2025-08-31 08:40:43,708 generation 24280 23932 PDF generation request for project 7
+INFO 2025-08-31 08:40:43,712 generation 24280 23932 PDF customizations: {'template_id': 'DETAILED', 'template_type': 'DETAILED', 'include_cabinet_details': True, 'include_door_details': True, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': True, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+INFO 2025-08-31 08:40:43,712 pdf_renderer 24280 23932 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 08:40:43,712 pdf_generator 24280 23932 Starting PDF generation for project 7
+INFO 2025-08-31 08:40:43,712 data_compiler 24280 23932 Starting comprehensive PDF data compilation
+ERROR 2025-08-31 08:40:43,712 data_compiler 24280 23932 Error compiling PDF data: 'QuotationPDFDataCompiler' object has no attribute 'get_basic_project_data'
+ERROR 2025-08-31 08:40:43,712 pdf_generator 24280 23932 Unexpected error in PDF generation: 'int' object has no attribute 'customer'
+INFO 2025-08-31 08:40:43,712 generation 24280 23932 PDF generation completed in 0.00 seconds
+WARNING 2025-08-31 08:41:31,824 pdf_renderer 11016 24224 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:41:31,938 pdf_renderer 11016 24224 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:41:32,066 pdf_renderer 11016 24224 ReportLab available as PDF fallback
+INFO 2025-08-31 08:41:32,516 pdf_renderer 11016 24224 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 08:41:45,638 pdf_renderer 5796 24452 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:41:45,755 pdf_renderer 5796 24452 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:41:45,874 pdf_renderer 5796 24452 ReportLab available as PDF fallback
+INFO 2025-08-31 08:41:46,299 pdf_renderer 5796 24452 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 08:42:06,059 pdf_renderer 15884 31400 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:42:06,166 pdf_renderer 15884 31400 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:42:06,285 pdf_renderer 15884 31400 ReportLab available as PDF fallback
+INFO 2025-08-31 08:42:06,757 pdf_renderer 15884 31400 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 08:42:15,696 pdf_renderer 33808 30112 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:42:15,806 pdf_renderer 33808 30112 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:42:15,917 pdf_renderer 33808 30112 ReportLab available as PDF fallback
+INFO 2025-08-31 08:42:16,330 pdf_renderer 33808 30112 xhtml2pdf available as PDF fallback
+INFO 2025-08-31 08:42:22,660 generation 33808 26260 PDF generation request for project 7
+INFO 2025-08-31 08:42:22,664 generation 33808 26260 PDF customizations: {'template_id': 'DETAILED', 'template_type': 'DETAILED', 'include_cabinet_details': True, 'include_door_details': True, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': True, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+INFO 2025-08-31 08:42:22,664 pdf_renderer 33808 26260 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 08:42:22,664 pdf_generator 33808 26260 Starting PDF generation for project 7
+INFO 2025-08-31 08:42:22,664 data_compiler 33808 26260 Starting comprehensive PDF data compilation
+ERROR 2025-08-31 08:42:22,665 data_compiler 33808 26260 Error compiling PDF data: 'QuotationPDFDataCompiler' object has no attribute 'get_basic_project_data'
+ERROR 2025-08-31 08:42:22,665 pdf_generator 33808 26260 Unexpected error in PDF generation: 'int' object has no attribute 'customer'
+INFO 2025-08-31 08:42:22,665 generation 33808 26260 PDF generation completed in 0.00 seconds
+WARNING 2025-08-31 08:44:23,647 pdf_renderer 18244 26772 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:44:23,755 pdf_renderer 18244 26772 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:44:23,865 pdf_renderer 18244 26772 ReportLab available as PDF fallback
+INFO 2025-08-31 08:44:24,291 pdf_renderer 18244 26772 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 08:45:09,512 pdf_renderer 37724 30016 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:45:09,630 pdf_renderer 37724 30016 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:45:09,744 pdf_renderer 37724 30016 ReportLab available as PDF fallback
+INFO 2025-08-31 08:45:10,196 pdf_renderer 37724 30016 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 08:52:15,389 pdf_renderer 16976 13664 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:52:15,497 pdf_renderer 16976 13664 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:52:15,603 pdf_renderer 16976 13664 ReportLab available as PDF fallback
+INFO 2025-08-31 08:52:16,046 pdf_renderer 16976 13664 xhtml2pdf available as PDF fallback
+INFO 2025-08-31 08:52:27,886 generation 16976 6208 PDF generation request for project 7
+INFO 2025-08-31 08:52:27,891 generation 16976 6208 PDF customizations: {'template_id': 'DETAILED', 'template_type': 'DETAILED', 'include_cabinet_details': True, 'include_door_details': True, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': True, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+INFO 2025-08-31 08:52:28,158 pdf_renderer 16976 6208 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 08:52:28,158 pdf_generator 16976 6208 Starting PDF generation for project 7
+INFO 2025-08-31 08:52:28,159 data_compiler 16976 6208 Starting comprehensive PDF data compilation with your models
+ERROR 2025-08-31 08:52:28,159 data_compiler 16976 6208 Error getting customer details: 'Customer' object has no attribute 'id'
+INFO 2025-08-31 08:52:28,185 pdf_generator 16976 6208 Using template: quotation_pdf/detailed_quotation.html
+INFO 2025-08-31 08:52:28,223 pdf_generator 16976 6208 HTML content rendered successfully
+INFO 2025-08-31 08:52:28,223 pdf_generator 16976 6208 Starting PDF rendering
+INFO 2025-08-31 08:52:28,223 data_compiler 16976 6208 Starting comprehensive PDF data compilation with your models
+ERROR 2025-08-31 08:52:28,223 data_compiler 16976 6208 Error getting customer details: 'Customer' object has no attribute 'id'
+INFO 2025-08-31 08:52:28,263 pdf_renderer 16976 6208 Rendering PDF with ReportLab
+INFO 2025-08-31 08:52:28,263 pdf_renderer 16976 6208 Starting comprehensive PDF generation with ReportLab
+ERROR 2025-08-31 08:52:28,264 pdf_renderer 16976 6208 Primary renderer ReportLab failed: '>' not supported between instances of 'dict' and 'int'
+ERROR 2025-08-31 08:52:28,264 pdf_generator 16976 6208 PDF rendering failed: All renderers failed. Primary: '>' not supported between instances of 'dict' and 'int'
+ERROR 2025-08-31 08:52:28,264 pdf_generator 16976 6208 PDF generation error: Failed to render PDF: All renderers failed. Primary: '>' not supported between instances of 'dict' and 'int'
+INFO 2025-08-31 08:52:28,264 generation 16976 6208 PDF generation completed in 0.38 seconds
+WARNING 2025-08-31 08:57:01,558 pdf_renderer 17832 19916 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:57:01,669 pdf_renderer 17832 19916 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:57:01,777 pdf_renderer 17832 19916 ReportLab available as PDF fallback
+INFO 2025-08-31 08:57:02,212 pdf_renderer 17832 19916 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 08:57:21,670 pdf_renderer 26460 18044 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:57:21,779 pdf_renderer 26460 18044 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:57:21,891 pdf_renderer 26460 18044 ReportLab available as PDF fallback
+INFO 2025-08-31 08:57:22,346 pdf_renderer 26460 18044 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 08:57:25,071 pdf_renderer 2420 8 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 08:57:25,187 pdf_renderer 2420 8 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 08:57:25,305 pdf_renderer 2420 8 ReportLab available as PDF fallback
+INFO 2025-08-31 08:57:25,767 pdf_renderer 2420 8 xhtml2pdf available as PDF fallback
+INFO 2025-08-31 08:57:36,426 generation 2420 14240 PDF generation request for project 7
+INFO 2025-08-31 08:57:36,430 generation 2420 14240 PDF customizations: {'template_id': 'DETAILED', 'template_type': 'DETAILED', 'include_cabinet_details': True, 'include_door_details': True, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': True, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+INFO 2025-08-31 08:57:36,459 pdf_renderer 2420 14240 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 08:57:36,459 pdf_generator 2420 14240 Starting PDF generation for project 7
+INFO 2025-08-31 08:57:36,459 data_compiler 2420 14240 Starting comprehensive PDF data compilation with your models
+ERROR 2025-08-31 08:57:36,459 data_compiler 2420 14240 Error getting customer details: 'Customer' object has no attribute 'id'
+INFO 2025-08-31 08:57:36,485 pdf_generator 2420 14240 Using template: quotation_pdf/detailed_quotation.html
+INFO 2025-08-31 08:57:36,494 pdf_generator 2420 14240 HTML content rendered successfully
+INFO 2025-08-31 08:57:36,494 pdf_generator 2420 14240 Starting PDF rendering
+INFO 2025-08-31 08:57:36,494 data_compiler 2420 14240 Starting comprehensive PDF data compilation with your models
+ERROR 2025-08-31 08:57:36,494 data_compiler 2420 14240 Error getting customer details: 'Customer' object has no attribute 'id'
+INFO 2025-08-31 08:57:36,511 pdf_renderer 2420 14240 Rendering PDF with ReportLab
+INFO 2025-08-31 08:57:36,511 pdf_renderer 2420 14240 Starting comprehensive PDF generation with ReportLab
+INFO 2025-08-31 08:57:36,531 pdf_renderer 2420 14240 Comprehensive PDF generated successfully, size: 7647 bytes
+INFO 2025-08-31 08:57:36,532 pdf_generator 2420 14240 PDF saved to storage: quotation_pdfs/quotation_Unknown_Customer_7_20250831_085736.pdf
+INFO 2025-08-31 08:57:36,653 pdf_generator 2420 14240 PDF generation completed: quotation_Unknown_Customer_7_20250831_085736.pdf
+INFO 2025-08-31 08:57:36,654 generation 2420 14240 PDF generation completed in 0.23 seconds
+INFO 2025-08-31 08:59:08,199 generation 2420 33304 PDF generation request for project 5
+INFO 2025-08-31 08:59:08,203 generation 2420 33304 PDF customizations: {'template_id': 'STANDARD', 'template_type': 'STANDARD', 'include_cabinet_details': True, 'include_door_details': True, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': True, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+INFO 2025-08-31 08:59:08,230 pdf_renderer 2420 33304 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 08:59:08,230 pdf_generator 2420 33304 Starting PDF generation for project 5
+INFO 2025-08-31 08:59:08,230 data_compiler 2420 33304 Starting comprehensive PDF data compilation with your models
+ERROR 2025-08-31 08:59:08,230 data_compiler 2420 33304 Error getting customer details: 'Customer' object has no attribute 'id'
+INFO 2025-08-31 08:59:08,259 pdf_generator 2420 33304 Using template: quotation_pdf/standard_quotation.html
+INFO 2025-08-31 08:59:08,259 pdf_generator 2420 33304 HTML content rendered successfully
+INFO 2025-08-31 08:59:08,259 pdf_generator 2420 33304 Starting PDF rendering
+INFO 2025-08-31 08:59:08,260 data_compiler 2420 33304 Starting comprehensive PDF data compilation with your models
+ERROR 2025-08-31 08:59:08,260 data_compiler 2420 33304 Error getting customer details: 'Customer' object has no attribute 'id'
+INFO 2025-08-31 08:59:08,280 pdf_renderer 2420 33304 Rendering PDF with ReportLab
+INFO 2025-08-31 08:59:08,280 pdf_renderer 2420 33304 Starting comprehensive PDF generation with ReportLab
+INFO 2025-08-31 08:59:08,303 pdf_renderer 2420 33304 Comprehensive PDF generated successfully, size: 7868 bytes
+INFO 2025-08-31 08:59:08,304 pdf_generator 2420 33304 PDF saved to storage: quotation_pdfs/quotation_Unknown_Customer_5_20250831_085908.pdf
+INFO 2025-08-31 08:59:08,317 pdf_generator 2420 33304 PDF generation completed: quotation_Unknown_Customer_5_20250831_085908.pdf
+INFO 2025-08-31 08:59:08,317 generation 2420 33304 PDF generation completed in 0.12 seconds
+INFO 2025-08-31 10:06:04,729 generation 2420 7932 PDF generation request for project 5
+INFO 2025-08-31 10:06:04,732 generation 2420 7932 PDF customizations: {'template_id': 'STANDARD', 'template_type': 'STANDARD', 'include_cabinet_details': True, 'include_door_details': False, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': False, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+INFO 2025-08-31 10:06:04,755 pdf_renderer 2420 7932 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 10:06:04,756 pdf_generator 2420 7932 Starting PDF generation for project 5
+INFO 2025-08-31 10:06:04,757 data_compiler 2420 7932 Starting comprehensive PDF data compilation with your models
+ERROR 2025-08-31 10:06:04,758 data_compiler 2420 7932 Error getting customer details: 'Customer' object has no attribute 'id'
+INFO 2025-08-31 10:06:04,793 pdf_generator 2420 7932 Using template: quotation_pdf/standard_quotation.html
+INFO 2025-08-31 10:06:04,794 pdf_generator 2420 7932 HTML content rendered successfully
+INFO 2025-08-31 10:06:04,794 pdf_generator 2420 7932 Starting PDF rendering
+INFO 2025-08-31 10:06:04,794 data_compiler 2420 7932 Starting comprehensive PDF data compilation with your models
+ERROR 2025-08-31 10:06:04,794 data_compiler 2420 7932 Error getting customer details: 'Customer' object has no attribute 'id'
+INFO 2025-08-31 10:06:04,817 pdf_renderer 2420 7932 Rendering PDF with ReportLab
+INFO 2025-08-31 10:06:04,817 pdf_renderer 2420 7932 Starting comprehensive PDF generation with ReportLab
+INFO 2025-08-31 10:06:04,835 pdf_renderer 2420 7932 Comprehensive PDF generated successfully, size: 7714 bytes
+INFO 2025-08-31 10:06:04,836 pdf_generator 2420 7932 PDF saved to storage: quotation_pdfs/quotation_Unknown_Customer_5_20250831_100604.pdf
+INFO 2025-08-31 10:06:04,846 pdf_generator 2420 7932 PDF generation completed: quotation_Unknown_Customer_5_20250831_100604.pdf
+INFO 2025-08-31 10:06:04,846 generation 2420 7932 PDF generation completed in 0.12 seconds
+INFO 2025-08-31 10:06:56,739 generation 2420 7932 PDF generation request for project 5
+INFO 2025-08-31 10:06:56,743 generation 2420 7932 PDF customizations: {'template_id': 'STANDARD', 'template_type': 'STANDARD', 'include_cabinet_details': False, 'include_door_details': False, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': True, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+INFO 2025-08-31 10:06:56,794 pdf_renderer 2420 7932 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 10:06:56,794 pdf_generator 2420 7932 Starting PDF generation for project 5
+INFO 2025-08-31 10:06:56,795 data_compiler 2420 7932 Starting comprehensive PDF data compilation with your models
+ERROR 2025-08-31 10:06:56,795 data_compiler 2420 7932 Error getting customer details: 'Customer' object has no attribute 'id'
+INFO 2025-08-31 10:06:56,828 pdf_generator 2420 7932 Using template: quotation_pdf/standard_quotation.html
+INFO 2025-08-31 10:06:56,828 pdf_generator 2420 7932 HTML content rendered successfully
+INFO 2025-08-31 10:06:56,828 pdf_generator 2420 7932 Starting PDF rendering
+INFO 2025-08-31 10:06:56,828 data_compiler 2420 7932 Starting comprehensive PDF data compilation with your models
+ERROR 2025-08-31 10:06:56,828 data_compiler 2420 7932 Error getting customer details: 'Customer' object has no attribute 'id'
+INFO 2025-08-31 10:06:56,854 pdf_renderer 2420 7932 Rendering PDF with ReportLab
+INFO 2025-08-31 10:06:56,854 pdf_renderer 2420 7932 Starting comprehensive PDF generation with ReportLab
+INFO 2025-08-31 10:06:56,872 pdf_renderer 2420 7932 Comprehensive PDF generated successfully, size: 6809 bytes
+INFO 2025-08-31 10:06:56,873 pdf_generator 2420 7932 PDF saved to storage: quotation_pdfs/quotation_Unknown_Customer_5_20250831_100656.pdf
+INFO 2025-08-31 10:06:56,887 pdf_generator 2420 7932 PDF generation completed: quotation_Unknown_Customer_5_20250831_100656.pdf
+INFO 2025-08-31 10:06:56,887 generation 2420 7932 PDF generation completed in 0.15 seconds
+WARNING 2025-08-31 10:08:33,524 pdf_renderer 27516 38892 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 10:08:33,867 pdf_renderer 27516 38892 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 10:08:34,179 pdf_renderer 27516 38892 ReportLab available as PDF fallback
+INFO 2025-08-31 10:08:35,527 pdf_renderer 27516 38892 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 10:08:38,700 pdf_renderer 16556 14260 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 10:08:38,807 pdf_renderer 16556 14260 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 10:08:38,912 pdf_renderer 16556 14260 ReportLab available as PDF fallback
+INFO 2025-08-31 10:08:39,475 pdf_renderer 16556 14260 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 10:08:44,523 pdf_renderer 34428 36920 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 10:08:44,646 pdf_renderer 34428 36920 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 10:08:44,775 pdf_renderer 34428 36920 ReportLab available as PDF fallback
+INFO 2025-08-31 10:08:45,684 pdf_renderer 34428 36920 xhtml2pdf available as PDF fallback
+INFO 2025-08-31 10:08:52,127 generation 34428 16532 PDF generation request for project 5
+INFO 2025-08-31 10:08:52,131 generation 34428 16532 PDF customizations: {'template_id': 'DETAILED', 'template_type': 'DETAILED', 'include_cabinet_details': True, 'include_door_details': True, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': True, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+ERROR 2025-08-31 10:08:52,131 generation 34428 16532 Unexpected error in PDF generation: QuotationPDFGenerator() takes no arguments
+WARNING 2025-08-31 10:11:07,007 pdf_renderer 21584 28944 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 10:11:07,116 pdf_renderer 21584 28944 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 10:11:07,250 pdf_renderer 21584 28944 ReportLab available as PDF fallback
+INFO 2025-08-31 10:11:08,094 pdf_renderer 21584 28944 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 10:11:22,553 pdf_renderer 29412 7456 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 10:11:22,696 pdf_renderer 29412 7456 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 10:11:22,804 pdf_renderer 29412 7456 ReportLab available as PDF fallback
+INFO 2025-08-31 10:11:23,262 pdf_renderer 29412 7456 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 10:11:44,909 pdf_renderer 13968 17548 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 10:11:45,016 pdf_renderer 13968 17548 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 10:11:45,165 pdf_renderer 13968 17548 ReportLab available as PDF fallback
+INFO 2025-08-31 10:11:45,692 pdf_renderer 13968 17548 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 10:11:53,737 pdf_renderer 6552 13212 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 10:11:53,848 pdf_renderer 6552 13212 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 10:11:53,958 pdf_renderer 6552 13212 ReportLab available as PDF fallback
+INFO 2025-08-31 10:11:54,419 pdf_renderer 6552 13212 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 10:12:13,006 pdf_renderer 5028 25560 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 10:12:13,127 pdf_renderer 5028 25560 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 10:12:13,247 pdf_renderer 5028 25560 ReportLab available as PDF fallback
+INFO 2025-08-31 10:12:13,706 pdf_renderer 5028 25560 xhtml2pdf available as PDF fallback
+INFO 2025-08-31 10:13:08,398 generation 5028 29996 PDF generation request for project 5
+INFO 2025-08-31 10:13:08,402 generation 5028 29996 PDF customizations: {'template_id': 'DETAILED', 'template_type': 'DETAILED', 'include_cabinet_details': True, 'include_door_details': True, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': True, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+INFO 2025-08-31 10:13:08,603 pdf_renderer 5028 29996 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 10:13:08,620 pdf_renderer 5028 29996 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 10:13:08,620 pdf_generator 5028 29996 Starting PDF generation for project 5
+INFO 2025-08-31 10:13:08,620 data_compiler 5028 29996 Starting comprehensive PDF data compilation with your models
+ERROR 2025-08-31 10:13:08,620 data_compiler 5028 29996 Error getting customer details: 'Customer' object has no attribute 'id'
+INFO 2025-08-31 10:13:08,648 pdf_generator 5028 29996 Using template: quotation_pdf/detailed_quotation.html
+ERROR 2025-08-31 10:13:08,659 pdf_generator 5028 29996 Unexpected error in PDF generation: Invalid filter: 'replace'
+INFO 2025-08-31 10:13:08,659 generation 5028 29996 PDF generation completed in 0.26 seconds
+INFO 2025-08-31 10:13:37,515 generation 5028 29996 PDF generation request for project 5
+INFO 2025-08-31 10:13:37,518 generation 5028 29996 PDF customizations: {'template_id': 'STANDARD', 'template_type': 'STANDARD', 'include_cabinet_details': True, 'include_door_details': True, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': True, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+INFO 2025-08-31 10:13:37,550 pdf_renderer 5028 29996 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 10:13:37,569 pdf_renderer 5028 29996 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 10:13:37,569 pdf_generator 5028 29996 Starting PDF generation for project 5
+INFO 2025-08-31 10:13:37,569 data_compiler 5028 29996 Starting comprehensive PDF data compilation with your models
+ERROR 2025-08-31 10:13:37,569 data_compiler 5028 29996 Error getting customer details: 'Customer' object has no attribute 'id'
+INFO 2025-08-31 10:13:37,603 pdf_generator 5028 29996 Using template: quotation_pdf/standard_quotation.html
+INFO 2025-08-31 10:13:37,604 pdf_generator 5028 29996 HTML content rendered successfully
+INFO 2025-08-31 10:13:37,604 pdf_generator 5028 29996 Starting PDF rendering
+INFO 2025-08-31 10:13:37,604 data_compiler 5028 29996 Starting comprehensive PDF data compilation with your models
+ERROR 2025-08-31 10:13:37,604 data_compiler 5028 29996 Error getting customer details: 'Customer' object has no attribute 'id'
+INFO 2025-08-31 10:13:37,694 pdf_renderer 5028 29996 Rendering PDF with ReportLab
+INFO 2025-08-31 10:13:37,694 pdf_renderer 5028 29996 Starting comprehensive PDF generation with ReportLab
+INFO 2025-08-31 10:13:37,733 pdf_renderer 5028 29996 Comprehensive PDF generated successfully, size: 7868 bytes
+INFO 2025-08-31 10:13:37,735 pdf_generator 5028 29996 PDF saved to storage: quotation_pdfs/quotation_Unknown_Customer_5_20250831_101337.pdf
+INFO 2025-08-31 10:13:37,814 pdf_generator 5028 29996 PDF generation completed: quotation_Unknown_Customer_5_20250831_101337.pdf
+INFO 2025-08-31 10:13:37,814 generation 5028 29996 PDF generation completed in 0.30 seconds
+INFO 2025-08-31 10:21:15,397 generation 5028 7024 PDF generation request for project 5
+INFO 2025-08-31 10:21:15,400 generation 5028 7024 PDF customizations: {'template_id': 'DETAILED', 'template_type': 'DETAILED', 'include_cabinet_details': True, 'include_door_details': True, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': True, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+INFO 2025-08-31 10:21:15,444 pdf_renderer 5028 7024 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 10:21:15,484 pdf_renderer 5028 7024 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 10:21:15,485 pdf_generator 5028 7024 Starting PDF generation for project 5
+INFO 2025-08-31 10:21:15,485 data_compiler 5028 7024 Starting comprehensive PDF data compilation with your models
+ERROR 2025-08-31 10:21:15,485 data_compiler 5028 7024 Error getting customer details: 'Customer' object has no attribute 'id'
+INFO 2025-08-31 10:21:15,523 pdf_generator 5028 7024 Using template: quotation_pdf/detailed_quotation.html
+INFO 2025-08-31 10:21:15,602 pdf_generator 5028 7024 HTML content rendered successfully
+INFO 2025-08-31 10:21:15,603 pdf_generator 5028 7024 Starting PDF rendering
+INFO 2025-08-31 10:21:15,603 data_compiler 5028 7024 Starting comprehensive PDF data compilation with your models
+ERROR 2025-08-31 10:21:15,603 data_compiler 5028 7024 Error getting customer details: 'Customer' object has no attribute 'id'
+INFO 2025-08-31 10:21:15,619 pdf_renderer 5028 7024 Rendering PDF with ReportLab
+INFO 2025-08-31 10:21:15,619 pdf_renderer 5028 7024 Starting comprehensive PDF generation with ReportLab
+INFO 2025-08-31 10:21:15,634 pdf_renderer 5028 7024 Comprehensive PDF generated successfully, size: 7871 bytes
+INFO 2025-08-31 10:21:15,635 pdf_generator 5028 7024 PDF saved to storage: quotation_pdfs/quotation_Unknown_Customer_5_20250831_102115.pdf
+INFO 2025-08-31 10:21:15,644 pdf_generator 5028 7024 PDF generation completed: quotation_Unknown_Customer_5_20250831_102115.pdf
+INFO 2025-08-31 10:21:15,645 generation 5028 7024 PDF generation completed in 0.25 seconds
+INFO 2025-08-31 10:26:05,846 generation 5028 7024 PDF generation request for project 5
+INFO 2025-08-31 10:26:05,850 generation 5028 7024 PDF customizations: {'template_id': 'DETAILED', 'template_type': 'DETAILED', 'include_cabinet_details': True, 'include_door_details': True, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': True, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+INFO 2025-08-31 10:26:05,872 pdf_renderer 5028 7024 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 10:26:05,948 pdf_renderer 5028 7024 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 10:26:05,948 pdf_generator 5028 7024 Starting PDF generation for project 5
+INFO 2025-08-31 10:26:05,948 data_compiler 5028 7024 Starting comprehensive PDF data compilation with your models
+ERROR 2025-08-31 10:26:05,949 data_compiler 5028 7024 Error getting customer details: 'Customer' object has no attribute 'id'
+INFO 2025-08-31 10:26:05,997 pdf_generator 5028 7024 Using template: quotation_pdf/detailed_quotation.html
+INFO 2025-08-31 10:26:06,044 pdf_generator 5028 7024 HTML content rendered successfully
+INFO 2025-08-31 10:26:06,044 pdf_generator 5028 7024 Starting PDF rendering
+INFO 2025-08-31 10:26:06,045 data_compiler 5028 7024 Starting comprehensive PDF data compilation with your models
+ERROR 2025-08-31 10:26:06,045 data_compiler 5028 7024 Error getting customer details: 'Customer' object has no attribute 'id'
+INFO 2025-08-31 10:26:06,063 pdf_renderer 5028 7024 Rendering PDF with ReportLab
+INFO 2025-08-31 10:26:06,063 pdf_renderer 5028 7024 Starting comprehensive PDF generation with ReportLab
+INFO 2025-08-31 10:26:06,083 pdf_renderer 5028 7024 Comprehensive PDF generated successfully, size: 7868 bytes
+INFO 2025-08-31 10:26:06,096 pdf_generator 5028 7024 PDF saved to storage: quotation_pdfs/quotation_Unknown_Customer_5_20250831_102606.pdf
+INFO 2025-08-31 10:26:06,119 pdf_generator 5028 7024 PDF generation completed: quotation_Unknown_Customer_5_20250831_102606.pdf
+INFO 2025-08-31 10:26:06,119 generation 5028 7024 PDF generation completed in 0.27 seconds
+WARNING 2025-08-31 10:29:30,423 pdf_renderer 29268 25720 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 10:29:30,534 pdf_renderer 29268 25720 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 10:29:30,652 pdf_renderer 29268 25720 ReportLab available as PDF fallback
+INFO 2025-08-31 10:29:31,241 pdf_renderer 29268 25720 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 10:29:49,777 pdf_renderer 31792 25208 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 10:29:49,900 pdf_renderer 31792 25208 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 10:29:50,017 pdf_renderer 31792 25208 ReportLab available as PDF fallback
+INFO 2025-08-31 10:29:50,502 pdf_renderer 31792 25208 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 10:30:08,266 pdf_renderer 32572 14896 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 10:30:08,377 pdf_renderer 32572 14896 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 10:30:08,488 pdf_renderer 32572 14896 ReportLab available as PDF fallback
+INFO 2025-08-31 10:30:08,975 pdf_renderer 32572 14896 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 10:30:14,912 pdf_renderer 26852 20116 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 10:30:15,022 pdf_renderer 26852 20116 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 10:30:15,138 pdf_renderer 26852 20116 ReportLab available as PDF fallback
+INFO 2025-08-31 10:30:15,613 pdf_renderer 26852 20116 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 10:30:59,347 pdf_renderer 24920 19056 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 10:30:59,460 pdf_renderer 24920 19056 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 10:30:59,583 pdf_renderer 24920 19056 ReportLab available as PDF fallback
+INFO 2025-08-31 10:31:00,041 pdf_renderer 24920 19056 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 10:31:38,703 pdf_renderer 7784 16800 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 10:31:38,810 pdf_renderer 7784 16800 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 10:31:38,924 pdf_renderer 7784 16800 ReportLab available as PDF fallback
+INFO 2025-08-31 10:31:39,424 pdf_renderer 7784 16800 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 10:32:18,736 pdf_renderer 34244 28824 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 10:32:18,862 pdf_renderer 34244 28824 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 10:32:18,979 pdf_renderer 34244 28824 ReportLab available as PDF fallback
+INFO 2025-08-31 10:32:19,480 pdf_renderer 34244 28824 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 10:35:15,212 pdf_renderer 32776 22324 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 10:35:15,560 pdf_renderer 32776 22324 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 10:35:15,986 pdf_renderer 32776 22324 ReportLab available as PDF fallback
+INFO 2025-08-31 10:35:17,695 pdf_renderer 32776 22324 xhtml2pdf available as PDF fallback
+WARNING 2025-08-31 10:37:38,982 pdf_renderer 33724 21144 Running on Windows - WeasyPrint may require GTK+ libraries
+WARNING 2025-08-31 10:37:39,114 pdf_renderer 33724 21144 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-08-31 10:37:39,222 pdf_renderer 33724 21144 ReportLab available as PDF fallback
+INFO 2025-08-31 10:37:39,710 pdf_renderer 33724 21144 xhtml2pdf available as PDF fallback

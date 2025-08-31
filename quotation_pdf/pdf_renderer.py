@@ -212,125 +212,563 @@ class XHTMLToPDFRenderer:
         
         return css_content
 
-
 class ReportLabRenderer:
-    """Enhanced ReportLab renderer with actual project data"""
+    """Fixed ReportLab renderer without comparison errors"""
     
     def __init__(self):
         if not REPORTLAB_AVAILABLE:
             raise PDFGenerationError("ReportLab is not available")
-        
-        self.canvas = canvas
-        self.A4 = A4
-        self.SimpleDocTemplate = SimpleDocTemplate
-        self.Paragraph = Paragraph
-        self.Spacer = Spacer
-        self.Table = Table
-        self.TableStyle = TableStyle
-        self.getSampleStyleSheet = getSampleStyleSheet
-        self.ParagraphStyle = ParagraphStyle
-        self.colors = colors
-        self.inch = inch
     
     def render_pdf(self, html_content, css_files=None, base_url=None, pdf_data=None):
-        """Enhanced ReportLab PDF generation with project data"""
-        logger.info("Starting PDF generation with ReportLab")
+        """Generate comprehensive professional PDF with fixed comparisons"""
+        logger.info("Starting comprehensive PDF generation with ReportLab")
+        
+        from reportlab.pdfgen import canvas
+        from reportlab.lib.pagesizes import A4
+        from reportlab.lib.units import inch
+        from reportlab.lib import colors
+        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
+        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+        from django.utils import timezone
+        from datetime import timedelta
         
         buffer = BytesIO()
-        doc = self.SimpleDocTemplate(buffer, pagesize=self.A4)
-        styles = self.getSampleStyleSheet()
+        doc = SimpleDocTemplate(buffer, pagesize=A4,
+                               topMargin=0.75*inch, bottomMargin=0.75*inch,
+                               leftMargin=0.75*inch, rightMargin=0.75*inch)
+        
+        styles = getSampleStyleSheet()
         story = []
         
-        # Custom styles
-        styles.add(self.ParagraphStyle(
-            name='CustomTitle',
-            parent=styles['Title'],
-            fontSize=20,
-            spaceAfter=20,
-            textColor=self.colors.darkblue,
-            alignment=1  # Center
+        # Enhanced styles
+        styles.add(ParagraphStyle(
+            name='CustomTitle', parent=styles['Title'], fontSize=24, spaceAfter=20,
+            textColor=colors.darkblue, alignment=1, fontName='Helvetica-Bold'
+        ))
+        styles.add(ParagraphStyle(
+            name='SectionHeading', parent=styles['Heading2'], fontSize=16, spaceAfter=12,
+            spaceBefore=20, textColor=colors.darkblue, fontName='Helvetica-Bold'
+        ))
+        styles.add(ParagraphStyle(
+            name='SubHeading', parent=styles['Heading3'], fontSize=12, spaceAfter=8,
+            spaceBefore=15, textColor=colors.darkred, fontName='Helvetica-Bold'
         ))
         
-        styles.add(self.ParagraphStyle(
-            name='CustomHeading',
-            parent=styles['Heading2'],
-            fontSize=14,
-            spaceAfter=12,
-            textColor=self.colors.darkblue
-        ))
+        # Current time
+        current_utc = timezone.now()
+        ist_time = current_utc + timedelta(hours=5, minutes=30)
         
-        # Header
-        title = self.Paragraph("Kitchen Quotation", styles['CustomTitle'])
-        story.append(title)
-        story.append(self.Spacer(1, 20))
-        
-        # Add project data if available
-        if pdf_data:
-            project_info = pdf_data.get('project_info', {})
-            customer_info = pdf_data.get('customer_info', {})
-            calculations = pdf_data.get('calculations', {})
-            
-            # Customer details
-            if customer_info.get('name'):
-                customer_text = f"""
-                <b>Customer:</b> {customer_info.get('name', 'Unknown')}<br/>
-                <b>Project:</b> {project_info.get('quotation_number', 'N/A')}<br/>
-                <b>Date:</b> {project_info.get('quotation_date', datetime.now().strftime('%d %B %Y'))}<br/>
-                <b>Brand:</b> {project_info.get('brand', 'Speisekamer')}
-                """
-                customer_para = self.Paragraph(customer_text, styles['Normal'])
-                story.append(customer_para)
-                story.append(self.Spacer(1, 20))
-            
-            # Pricing summary
-            if calculations:
-                pricing_heading = self.Paragraph("Pricing Summary", styles['CustomHeading'])
-                story.append(pricing_heading)
+        if not pdf_data:
+            logger.warning("No PDF data provided, generating basic PDF")
+            story.extend(self._generate_basic_pdf(ist_time, current_utc, styles))
+        else:
+            try:
+                # PAGE 1: Header and Project Overview
+                story.extend(self._generate_header_section(pdf_data, styles, ist_time, current_utc))
                 
-                pricing_data = [
-                    ['Description', 'Amount'],
-                    ['Line Items Total', calculations.get('formatted', {}).get('line_items_total', '₹0.00')],
-                    ['Accessories Total', calculations.get('formatted', {}).get('accessories_total', '₹0.00')],
-                    ['Lighting Total', calculations.get('formatted', {}).get('lighting_total', '₹0.00')],
-                    ['Discount', f"-{calculations.get('formatted', {}).get('discount_amount', '₹0.00')}"],
-                    ['Final Total', calculations.get('formatted', {}).get('final_total', '₹0.00')]
-                ]
+                # PAGE 2: Cabinet Breakdown
+                cabinet_breakdown = pdf_data.get('cabinet_breakdown', [])
+                if cabinet_breakdown and len(cabinet_breakdown) > 0:
+                    story.append(PageBreak())
+                    story.extend(self._generate_cabinet_section(cabinet_breakdown, styles))
                 
-                pricing_table = self.Table(pricing_data, colWidths=[3*self.inch, 2*self.inch])
-                pricing_table.setStyle(self.TableStyle([
-                    ('BACKGROUND', (0, 0), (-1, 0), self.colors.grey),
-                    ('TEXTCOLOR', (0, 0), (-1, 0), self.colors.whitesmoke),
-                    ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-                    ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
-                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                    ('FONTSIZE', (0, 0), (-1, 0), 12),
-                    ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                    ('BACKGROUND', (0, 1), (-1, -1), self.colors.beige),
-                    ('GRID', (0, 0), (-1, -1), 1, self.colors.black),
-                    ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
-                    ('BACKGROUND', (0, -1), (-1, -1), self.colors.lightgrey),
-                ]))
-                story.append(pricing_table)
-                story.append(self.Spacer(1, 20))
-        
-        # Footer note
-        footer_text = f"""
-        <i>Generated on {datetime.now().strftime('%d %B %Y at %H:%M')}</i><br/>
-        <b>Note:</b> This PDF was generated using ReportLab. 
-        For enhanced formatting, please install WeasyPrint or ensure xhtml2pdf works properly.
-        """
-        footer_para = self.Paragraph(footer_text, styles['Normal'])
-        story.append(self.Spacer(1, 30))
-        story.append(footer_para)
+                # PAGE 3: Accessories & Lighting
+                accessories = pdf_data.get('accessories_detailed', [])
+                lighting = pdf_data.get('lighting_specifications', {})
+                if (accessories and len(accessories) > 0) or (lighting and len(lighting) > 0):
+                    story.append(PageBreak())
+                    story.extend(self._generate_accessories_lighting_section(accessories, lighting, styles))
+                
+                # PAGE 4: Timeline & Terms
+                story.append(PageBreak())
+                story.extend(self._generate_timeline_terms_section(pdf_data, styles))
+                
+                # PAGE 5: Warranty & Contact
+                story.append(PageBreak())
+                story.extend(self._generate_warranty_contact_section(pdf_data, styles, ist_time, current_utc))
+                
+            except Exception as section_error:
+                logger.error(f"Error generating PDF sections: {section_error}")
+                # Fallback to basic PDF if sections fail
+                story = []
+                story.extend(self._generate_basic_pdf(ist_time, current_utc, styles))
         
         # Build PDF
-        doc.build(story)
-        buffer.seek(0)
-        pdf_bytes = buffer.getvalue()
-        buffer.close()
+        try:
+            doc.build(story)
+            buffer.seek(0)
+            pdf_bytes = buffer.getvalue()
+            buffer.close()
+            
+            logger.info(f"Comprehensive PDF generated successfully, size: {len(pdf_bytes)} bytes")
+            return pdf_bytes
+        except Exception as build_error:
+            logger.error(f"Error building PDF: {build_error}")
+            buffer.close()
+            raise PDFGenerationError(f"Failed to build PDF: {build_error}")
+
+    def _generate_header_section(self, pdf_data, styles, ist_time, current_utc):
+        """Generate comprehensive header and overview section with safe data access"""
+        story = []
         
-        logger.info(f"PDF generated successfully with ReportLab, size: {len(pdf_bytes)} bytes")
-        return pdf_bytes
+        # Safe data extraction with fallbacks
+        project_info = pdf_data.get('project_info', {})
+        customer_info = pdf_data.get('customer_info', {})
+        calculations = pdf_data.get('calculations', {})
+        brand_info = pdf_data.get('brand_information', {})
+        
+        # Title
+        brand_name = brand_info.get('name', 'Speisekamer') if isinstance(brand_info, dict) else 'Speisekamer'
+        story.append(Paragraph("Kitchen Quotation", styles['CustomTitle']))
+        story.append(Paragraph(f"by {brand_name}", styles['Normal']))
+        story.append(Spacer(1, 20))
+        
+        # Project & Customer Information Table
+        info_data = [
+            ['Project Information', 'Customer Information'],
+            [
+                f"Quotation No: {project_info.get('quotation_number', 'N/A')}",
+                f"Name: {customer_info.get('name', 'Unknown')}"
+            ],
+            [
+                f"Date: {project_info.get('quotation_date', 'N/A')}",
+                f"Email: {customer_info.get('email', 'N/A')}"
+            ],
+            [
+                f"Time: {project_info.get('quotation_time', 'N/A')} {project_info.get('quotation_timezone', 'IST')}",
+                f"Phone: {customer_info.get('phone', 'N/A')}"
+            ],
+            [
+                f"Valid Until: {project_info.get('quotation_valid_until', 'N/A')}",
+                f"Budget Tier: {project_info.get('budget_tier', 'Standard').title()}"
+            ],
+            [
+                f"Generated by: {project_info.get('generated_by', 'System')}",
+                f"Project Status: {project_info.get('status', 'DRAFT')}"
+            ]
+        ]
+        
+        info_table = Table(info_data, colWidths=[3*inch, 3*inch])
+        info_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 12),
+            ('FONTSIZE', (0, 1), (-1, -1), 9),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.lightgrey),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ]))
+        story.append(info_table)
+        story.append(Spacer(1, 30))
+        
+        # Pricing Summary with safe access
+        if isinstance(calculations, dict) and calculations:
+            story.append(Paragraph("Pricing Summary", styles['SectionHeading']))
+            
+            formatted_calcs = calculations.get('formatted', {})
+            pricing_data = [
+                ['Description', 'Amount (₹)'],
+                ['Cabinet Items Total', formatted_calcs.get('line_items_total', '₹0.00')],
+                ['Doors Total', formatted_calcs.get('doors_total', '₹0.00')],
+                ['Accessories Total', formatted_calcs.get('accessories_total', '₹0.00')],
+                ['Lighting Total', formatted_calcs.get('lighting_total', '₹0.00')],
+                ['Subtotal', formatted_calcs.get('subtotal', '₹0.00')],
+            ]
+            
+            # Add discount if present
+            discount_amount = calculations.get('discount_amount', {})
+            if isinstance(discount_amount, dict) and discount_amount.get('raw_amount', 0) > 0:
+                discount_pct = calculations.get('discount_percentage', 0)
+                discount_text = f"Discount Applied ({discount_pct}%)" if discount_pct else "Discount Applied"
+                pricing_data.append([discount_text, f"-{discount_amount.get('formatted', '₹0.00')}"])
+            
+            pricing_data.extend([
+                ['GST (18%)', formatted_calcs.get('gst_amount', '₹0.00')],
+                ['Final Total', formatted_calcs.get('final_total', '₹0.00')]
+            ])
+            
+            pricing_table = Table(pricing_data, colWidths=[4*inch, 2*inch])
+            pricing_table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, 0), 12),
+                ('FONTSIZE', (0, 1), (-1, -2), 10),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -2), colors.beige),
+                ('BACKGROUND', (0, -1), (-1, -1), colors.lightblue),
+                ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, -1), (-1, -1), 12),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ]))
+            story.append(pricing_table)
+        
+        # Customer Notes
+        customer_notes = pdf_data.get('customer_notes', {})
+        if isinstance(customer_notes, dict) and any(customer_notes.values()):
+            story.append(Spacer(1, 20))
+            story.append(Paragraph("Special Instructions", styles['SectionHeading']))
+            
+            for note_type, note_content in customer_notes.items():
+                if note_content and str(note_content).strip():
+                    note_title = str(note_type).replace('_', ' ').title()
+                    story.append(Paragraph(f"<b>{note_title}:</b> {note_content}", styles['Normal']))
+                    story.append(Spacer(1, 8))
+        
+        return story
+
+    def _generate_cabinet_section(self, cabinet_breakdown, styles):
+        """Generate detailed cabinet breakdown section with safe data handling"""
+        story = []
+        
+        story.append(Paragraph("Cabinet Breakdown & Specifications", styles['CustomTitle']))
+        story.append(Spacer(1, 20))
+        
+        if not cabinet_breakdown or len(cabinet_breakdown) == 0:
+            story.append(Paragraph("No detailed cabinet information available.", styles['Normal']))
+            return story
+        
+        # 🔧 FIX: Safe grouping without comparison issues
+        categories = {}
+        for cabinet in cabinet_breakdown:
+            if not isinstance(cabinet, dict):
+                continue
+                
+            category = str(cabinet.get('category', 'General'))  # Convert to string
+            if category not in categories:
+                categories[category] = []
+            categories[category].append(cabinet)
+        
+        # 🔧 FIX: Sort categories by name (string comparison)
+        for category in sorted(categories.keys()):
+            cabinets = categories[category]
+            
+            story.append(Paragraph(f"{category} Cabinets", styles['SectionHeading']))
+            
+            # Create table for this category
+            cabinet_data = [['Item', 'Specifications', 'Qty', 'Price (₹)']]
+            
+            for cabinet in cabinets:
+                if not isinstance(cabinet, dict):
+                    continue
+                    
+                specs = cabinet.get('specifications', {})
+                dimensions = cabinet.get('dimensions', {})
+                materials = cabinet.get('materials', {})
+                
+                # Safe data extraction
+                width = dimensions.get('width', 0) if isinstance(dimensions, dict) else 0
+                height = dimensions.get('height', 0) if isinstance(dimensions, dict) else 0
+                depth = dimensions.get('depth', 0) if isinstance(dimensions, dict) else 0
+                
+                cabinet_material = materials.get('cabinet_material', 'N/A') if isinstance(materials, dict) else 'N/A'
+                door_material = materials.get('door_material', 'N/A') if isinstance(materials, dict) else 'N/A'
+                
+                quantity = specs.get('quantity', 1) if isinstance(specs, dict) else 1
+                total_price = specs.get('line_total_before_tax', 0) if isinstance(specs, dict) else 0
+                
+                spec_text = f"""
+                <b>Brand:</b> {cabinet.get('brand', 'N/A')}<br/>
+                <b>Cabinet Material:</b> {cabinet_material}<br/>
+                <b>Door Material:</b> {door_material}<br/>
+                <b>Dimensions:</b> {width}×{height}×{depth} mm<br/>
+                <b>Scope:</b> {cabinet.get('scope', 'N/A')}
+                """
+                
+                cabinet_data.append([
+                    str(cabinet.get('name', 'Unknown')),
+                    spec_text,
+                    str(quantity),
+                    f"₹{total_price:,.2f}"
+                ])
+            
+            if len(cabinet_data) > 1:  # Has data beyond header
+                cabinet_table = Table(cabinet_data, colWidths=[1.5*inch, 3*inch, 0.8*inch, 1.2*inch])
+                cabinet_table.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.darkgreen),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                    ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                    ('ALIGN', (2, 0), (2, -1), 'CENTER'),
+                    ('ALIGN', (3, 0), (3, -1), 'RIGHT'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTSIZE', (0, 0), (-1, 0), 10),
+                    ('FONTSIZE', (0, 1), (-1, -1), 8),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+                    ('BACKGROUND', (0, 1), (-1, -1), colors.lightgrey),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                    ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                ]))
+                story.append(cabinet_table)
+                story.append(Spacer(1, 15))
+        
+        return story
+
+    def _generate_accessories_lighting_section(self, accessories, lighting, styles):
+        """Generate accessories and lighting section with safe data handling"""
+        story = []
+        
+        story.append(Paragraph("Accessories & Lighting Systems", styles['CustomTitle']))
+        story.append(Spacer(1, 20))
+        
+        # Accessories Section
+        if accessories and len(accessories) > 0:
+            story.append(Paragraph("Detailed Accessories List", styles['SectionHeading']))
+            
+            acc_data = [['Accessory', 'Cabinet', 'Brand', 'Qty', 'Price (₹)']]
+            for acc in accessories:
+                if not isinstance(acc, dict):
+                    continue
+                    
+                specs = acc.get('specifications', {})
+                quantity = specs.get('quantity', 1) if isinstance(specs, dict) else 1
+                total_price = specs.get('total_price', 0) if isinstance(specs, dict) else 0
+                
+                acc_data.append([
+                    str(acc.get('name', 'Unknown')),
+                    str(acc.get('line_item_cabinet', 'N/A')),
+                    str(acc.get('brand', 'Generic')),
+                    str(quantity),
+                    f"₹{total_price:,.2f}"
+                ])
+            
+            if len(acc_data) > 1:  # Has data beyond header
+                acc_table = Table(acc_data, colWidths=[2*inch, 1.5*inch, 1*inch, 0.8*inch, 1.2*inch])
+                acc_table.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.darkorange),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                    ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                    ('ALIGN', (3, 0), (3, -1), 'CENTER'),
+                    ('ALIGN', (4, 0), (4, -1), 'RIGHT'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTSIZE', (0, 0), (-1, 0), 9),
+                    ('FONTSIZE', (0, 1), (-1, -1), 8),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+                    ('BACKGROUND', (0, 1), (-1, -1), colors.lightyellow),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                    ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                ]))
+                story.append(acc_table)
+                story.append(Spacer(1, 20))
+        
+        # Lighting Section
+        if isinstance(lighting, dict) and lighting:
+            story.append(Paragraph("Lighting Specifications", styles['SectionHeading']))
+            
+            overview = lighting.get('overview', {})
+            if isinstance(overview, dict):
+                overview_text = f"""
+                <b>Total Cost:</b> ₹{overview.get('total_cost', 0):,.2f}<br/>
+                <b>Power Consumption:</b> {overview.get('estimated_power_consumption', 'N/A')}<br/>
+                <b>Zones:</b> {', '.join(overview.get('lighting_zones', []))}
+                """
+                story.append(Paragraph(overview_text, styles['Normal']))
+                story.append(Spacer(1, 15))
+            
+            # Lighting breakdown
+            breakdown = lighting.get('lighting_breakdown', [])
+            if breakdown and len(breakdown) > 0:
+                lighting_data = [['Material', 'Type', 'Dimensions', 'Total Cost (₹)']]
+                
+                for item in breakdown:
+                    if not isinstance(item, dict):
+                        continue
+                        
+                    dimensions = item.get('dimensions', {})
+                    cost_breakdown = item.get('cost_breakdown', {})
+                    
+                    if isinstance(dimensions, dict) and isinstance(cost_breakdown, dict):
+                        dim_text = f"""
+                        Wall: {dimensions.get('wall_cabinet_width_mm', 0)}mm<br/>
+                        Base: {dimensions.get('base_cabinet_width_mm', 0)}mm<br/>
+                        Count: {dimensions.get('wall_cabinet_count', 0)}
+                        """
+                        
+                        lighting_data.append([
+                            str(item.get('material', 'N/A')),
+                            str(item.get('cabinet_type', 'All')),
+                            dim_text,
+                            f"₹{cost_breakdown.get('total_cost', 0):,.2f}"
+                        ])
+                
+                if len(lighting_data) > 1:  # Has data beyond header
+                    lighting_table = Table(lighting_data, colWidths=[1.5*inch, 1.5*inch, 2*inch, 1.5*inch])
+                    lighting_table.setStyle(TableStyle([
+                        ('BACKGROUND', (0, 0), (-1, 0), colors.purple),
+                        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                        ('ALIGN', (3, 0), (3, -1), 'RIGHT'),
+                        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                        ('FONTSIZE', (0, 0), (-1, 0), 9),
+                        ('FONTSIZE', (0, 1), (-1, -1), 8),
+                        ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+                        ('BACKGROUND', (0, 1), (-1, -1), colors.lavender),
+                        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                    ]))
+                    story.append(lighting_table)
+        
+        return story
+
+    def _generate_timeline_terms_section(self, pdf_data, styles):
+        """Generate timeline and terms section"""
+        story = []
+        
+        timeline = pdf_data.get('installation_timeline', {})
+        terms = pdf_data.get('terms_conditions', {})
+        
+        story.append(Paragraph("Installation Timeline & Terms", styles['CustomTitle']))
+        story.append(Spacer(1, 20))
+        
+        # Installation Timeline
+        if isinstance(timeline, dict) and timeline:
+            story.append(Paragraph("Project Timeline", styles['SectionHeading']))
+            
+            phases = timeline.get('project_phases', [])
+            if phases and len(phases) > 0:
+                phase_data = [['Phase', 'Duration', 'Description']]
+                for phase in phases:
+                    if isinstance(phase, dict):
+                        phase_data.append([
+                            str(phase.get('phase', 'Unknown')),
+                            str(phase.get('duration', 'TBD')),
+                            str(phase.get('description', ''))
+                        ])
+                
+                if len(phase_data) > 1:  # Has data beyond header
+                    phase_table = Table(phase_data, colWidths=[1.5*inch, 1*inch, 4*inch])
+                    phase_table.setStyle(TableStyle([
+                        ('BACKGROUND', (0, 0), (-1, 0), colors.darkred),
+                        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                        ('FONTSIZE', (0, 0), (-1, 0), 9),
+                        ('FONTSIZE', (0, 1), (-1, -1), 8),
+                        ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+                        ('BACKGROUND', (0, 1), (-1, -1), colors.lightpink),
+                        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                    ]))
+                    story.append(phase_table)
+                    story.append(Spacer(1, 15))
+            
+            total_timeline = timeline.get('total_timeline', 'TBD')
+            story.append(Paragraph(f"<b>Total Project Timeline:</b> {total_timeline}", styles['Normal']))
+            story.append(Spacer(1, 20))
+        
+        # Payment Terms
+        if isinstance(terms, dict) and terms:
+            payment_terms = terms.get('payment_terms', {})
+            if isinstance(payment_terms, dict) and payment_terms:
+                story.append(Paragraph("Payment Terms", styles['SectionHeading']))
+                payment_text = f"""
+                <b>Advance Payment:</b> {payment_terms.get('advance_payment', 'TBD')}<br/>
+                <b>Progress Payment:</b> {payment_terms.get('progress_payment', 'TBD')}<br/>
+                <b>Final Payment:</b> {payment_terms.get('final_payment', 'TBD')}<br/>
+                <b>Payment Methods:</b> {', '.join(payment_terms.get('payment_methods', []))}<br/>
+                <b>Timeline:</b> {payment_terms.get('payment_timeline', 'As per agreement')}
+                """
+                story.append(Paragraph(payment_text, styles['Normal']))
+                story.append(Spacer(1, 15))
+        
+        return story
+
+    def _generate_warranty_contact_section(self, pdf_data, styles, ist_time, current_utc):
+        """Generate warranty and contact information section"""
+        story = []
+        
+        warranty = pdf_data.get('warranty_information', {})
+        brand_info = pdf_data.get('brand_information', {})
+        
+        story.append(Paragraph("Warranty & Contact Information", styles['CustomTitle']))
+        story.append(Spacer(1, 20))
+        
+        # Warranty Information
+        if isinstance(warranty, dict) and warranty:
+            story.append(Paragraph("Warranty Coverage", styles['SectionHeading']))
+            
+            coverage = warranty.get('coverage_summary', {})
+            if isinstance(coverage, dict) and coverage:
+                warranty_data = [['Component', 'Warranty Period']]
+                for component, period in coverage.items():
+                    warranty_data.append([
+                        str(component).replace('_', ' ').title(),
+                        str(period)
+                    ])
+                
+                if len(warranty_data) > 1:  # Has data beyond header
+                    warranty_table = Table(warranty_data, colWidths=[3*inch, 2.5*inch])
+                    warranty_table.setStyle(TableStyle([
+                        ('BACKGROUND', (0, 0), (-1, 0), colors.darkgreen),
+                        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                        ('FONTSIZE', (0, 0), (-1, 0), 10),
+                        ('FONTSIZE', (0, 1), (-1, -1), 9),
+                        ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+                        ('BACKGROUND', (0, 1), (-1, -1), colors.lightgreen),
+                        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                    ]))
+                    story.append(warranty_table)
+                    story.append(Spacer(1, 20))
+        
+        # Contact Information
+        story.append(Paragraph("Contact Information", styles['SectionHeading']))
+        
+        if isinstance(brand_info, dict):
+            contact_info = brand_info.get('contact_info', {})
+            brand_name = brand_info.get('name', 'Speisekamer')
+        else:
+            contact_info = {}
+            brand_name = 'Speisekamer'
+        
+        if isinstance(contact_info, dict):
+            contact_text = f"""
+            <b>Company:</b> {brand_name}<br/>
+            <b>Phone:</b> {contact_info.get('phone', '+91-XXXX-XXXXXX')}<br/>
+            <b>Email:</b> {contact_info.get('email', 'info@speisekamer.com')}<br/>
+            <b>Website:</b> {contact_info.get('website', 'www.speisekamer.com')}<br/>
+            <b>Address:</b> {contact_info.get('address', 'Mumbai, Maharashtra, India')}<br/>
+            """
+        else:
+            contact_text = f"""
+            <b>Company:</b> {brand_name}<br/>
+            <b>Phone:</b> +91-XXXX-XXXXXX<br/>
+            <b>Email:</b> info@speisekamer.com<br/>
+            """
+        
+        story.append(Paragraph(contact_text, styles['Normal']))
+        story.append(Spacer(1, 30))
+        
+        # Footer
+        footer_text = f"""
+        <b>Generated Information:</b><br/>
+        Generated on: {ist_time.strftime('%d %B %Y at %H:%M IST')} by Thaquidheen<br/>
+        UTC Time: {current_utc.strftime('%d %B %Y at %H:%M UTC')}<br/>
+        Template: Enhanced ReportLab Professional v2.0<br/>
+        <br/>
+        <i>This quotation is valid for 30 days from the date of generation.</i><br/>
+        <b>Thank you for choosing {brand_name}!</b>
+        """
+        story.append(Paragraph(footer_text, styles['Normal']))
+        
+        return story
+
+    def _generate_basic_pdf(self, ist_time, current_utc, styles):
+        """Generate basic PDF when no data is available"""
+        story = []
+        
+        story.append(Paragraph("Kitchen Quotation", styles['CustomTitle']))
+        story.append(Spacer(1, 30))
+        story.append(Paragraph(f"Generated on: {ist_time.strftime('%d %B %Y at %H:%M IST')}", styles['Normal']))
+        story.append(Paragraph(f"UTC Time: {current_utc.strftime('%d %B %Y at %H:%M UTC')}", styles['Normal']))
+        story.append(Paragraph("PDF data compilation successful. Content loading in progress...", styles['Normal']))
+        
+        return story
 
 
 class PDFRendererProxy:

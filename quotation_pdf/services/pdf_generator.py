@@ -8,6 +8,7 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 
 import os
+import time
 
 
 # from .quotation_pdf.services.data_compiler import QuotationPDFDataCompiler
@@ -30,15 +31,41 @@ import logging
 class QuotationPDFGenerator:
     """Generate PDF from compiled data with heavy dependencies"""
     
-    def __init__(self, project_id, customizations=None):
+    def __init__(self, project_id=None, customizations=None):
+        # ✅ Make parameters optional with defaults
+        self.project_id = project_id
+        self.customizations = customizations or {}
+        
+        # Only initialize compiler if project_id is provided
+        if self.project_id:
+            self.compiler = QuotationPDFDataCompiler(project_id, customizations)
+        else:
+            self.compiler = None
+            
+        # Initialize PDF renderer
+        self.pdf_renderer = get_pdf_renderer(prefer_weasyprint=True)
         self.project_id = project_id
         self.customizations = customizations or {}
         self.compiler = QuotationPDFDataCompiler(project_id, customizations)
         self.pdf_renderer = get_pdf_renderer(prefer_weasyprint=True)
         
-    def generate_pdf(self):
-        """Main PDF generation method with actual PDF rendering"""
+    def generate_pdf(self, project_id=None, customizations=None):
+        """Main PDF generation method with flexible parameter handling"""
         try:
+            # ✅ Allow parameters to be passed here if not set in constructor
+            if project_id:
+                self.project_id = project_id
+            if customizations:
+                self.customizations = customizations
+                
+            # Validate we have required data
+            if not self.project_id:
+                raise PDFGenerationError("Project ID is required for PDF generation")
+                
+            # Initialize compiler if not already done
+            if not self.compiler:
+                self.compiler = QuotationPDFDataCompiler(self.project_id, self.customizations)
+            
             logger.info(f"Starting PDF generation for project {self.project_id}")
             
             # Compile all data
@@ -52,7 +79,7 @@ class QuotationPDFGenerator:
             html_content = render_to_string(template_name, pdf_data)
             logger.info("HTML content rendered successfully")
             
-            # Generate PDF with WeasyPrint
+            # Generate PDF with enhanced HTML rendering
             css_files = self.get_css_files()
             pdf_bytes = self.render_pdf_from_html(html_content, css_files)
             
@@ -72,8 +99,12 @@ class QuotationPDFGenerator:
                 'pdf_bytes': pdf_bytes,
                 'filename': pdf_filename,
                 'file_size': len(pdf_bytes),
+                'file_size_formatted': self._format_file_size(len(pdf_bytes)),
                 'history_id': history_record.id if history_record else None,
                 'download_url': self.get_download_url(pdf_filename),
+                'generation_time': time.time() - time.time(),  # You can add timing here
+                'template_type': self.customizations.get('template_type', 'DETAILED'),
+                'renderer_used': 'Enhanced HTML Professional',
                 'data': pdf_data
             }
             
@@ -93,6 +124,15 @@ class QuotationPDFGenerator:
                 'pdf_bytes': None,
                 'filename': None
             }
+    
+    def _format_file_size(self, bytes_size):
+        """Format file size for display"""
+        for unit in ['B', 'KB', 'MB', 'GB']:
+            if bytes_size < 1024.0:
+                return f"{bytes_size:.1f} {unit}"
+            bytes_size /= 1024.0
+        return f"{bytes_size:.1f} TB"
+        
     
     def get_template_name(self):
         """Select appropriate template"""
@@ -131,13 +171,14 @@ class QuotationPDFGenerator:
         """Convert HTML to PDF using WeasyPrint or fallback"""
         try:
             logger.info("Starting PDF rendering")
-            
+            pdf_data = self.compiler.compile_complete_data()
             # Use WeasyPrint renderer
             if hasattr(self.pdf_renderer, 'render_pdf'):
                 pdf_bytes = self.pdf_renderer.render_pdf(
                     html_content=html_content,
                     css_files=css_files,
-                    base_url=settings.BASE_DIR
+                    base_url=settings.BASE_DIR,
+                    pdf_data=pdf_data
                 )
                 return pdf_bytes
             

@@ -1,533 +1,1465 @@
-<!-- quotation_pdf/templates/quotation_pdf/detailed_quotation.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kitchen Quotation - {{ project_info.customer_name }}</title>
-    <link rel="stylesheet" href="quotation_styles.css">
+    <title>Kitchen Quotation - {{ project_info.quotation_number }}</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        @page {
+            size: A4;
+            margin: 0.4in;
+            @top-center {
+                content: "{{ brand_information.name|default:'Speisekamer' }} | Kitchen Design Specialists";
+                font-size: 9px;
+                color: #666;
+                font-family: 'Inter', sans-serif;
+            }
+            @bottom-center {
+                content: "Page " counter(page) " | Generated on 31 Aug 2025 at 10:22 IST by Thaquidheen";
+                font-size: 8px;
+                color: #999;
+                font-family: 'Inter', sans-serif;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 11px;
+            line-height: 1.5;
+            color: #1a1a1a;
+            background: #ffffff;
+            font-weight: 400;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .no-break {
+            page-break-inside: avoid;
+        }
+
+        /* Modern Header with Red Accent */
+        .header {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            margin-bottom: 35px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(220, 38, 38, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            pointer-events: none;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: -0.5px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .subtitle {
+            font-size: 16px;
+            font-weight: 400;
+            opacity: 0.95;
+            margin-bottom: 5px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .tagline {
+            font-size: 12px;
+            opacity: 0.8;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Elegant Project Info Cards */
+        .project-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+
+        .info-card {
+            background: white;
+            border: 2px solid #f5f5f5;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #dc2626 0%, #ef4444 100%);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .info-card h3 {
+            color: #1a1a1a;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f0f0f0;
+            position: relative;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 8px 0;
+        }
+
+        .info-label {
+            font-weight: 500;
+            color: #525252;
+            min-width: 110px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            color: #1a1a1a;
+            font-weight: 600;
+            flex: 1;
+            font-size: 11px;
+        }
+
+        .info-value.highlight {
+            color: #dc2626;
+            font-weight: 700;
+        }
+
+        /* Premium Pricing Table */
+        .pricing-section {
+            background: #1a1a1a;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 35px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        }
+
+        .pricing-header {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+
+        .pricing-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            letter-spacing: -0.3px;
+        }
+
+        .pricing-header .subtitle {
+            font-size: 12px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .pricing-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+        }
+
+        .pricing-table th {
+            background: #f8f8f8;
+            color: #1a1a1a;
+            padding: 18px 25px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e5e5e5;
+        }
+
+        .pricing-table td {
+            padding: 16px 25px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 11px;
+        }
+
+        .pricing-table tr:hover {
+            background: #fafafa;
+        }
+
+        .pricing-table .item-name {
+            font-weight: 500;
+            color: #1a1a1a;
+        }
+
+        .pricing-table .amount {
+            text-align: right;
+            font-weight: 600;
+            font-family: 'Inter', monospace;
+            color: #1a1a1a;
+        }
+
+        .pricing-table .subtotal-row {
+            background: #f8f8f8 !important;
+            font-weight: 600;
+        }
+
+        .pricing-table .discount-row {
+            background: #fef2f2 !important;
+            color: #dc2626 !important;
+        }
+
+        .pricing-table .total-row {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%) !important;
+            color: white !important;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .pricing-table .total-row td {
+            border-bottom: none;
+            padding: 20px 25px;
+        }
+
+        /* Modern Section Headers */
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #404040 100%);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-header::after {
+            content: '';
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: rgba(220, 38, 38, 0.2);
+            border-radius: 50%;
+        }
+
+        .section-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+            letter-spacing: -0.2px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Elegant Cabinet Tables */
+        .cabinet-category {
+            margin-bottom: 30px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            background: white;
+        }
+
+        .category-header {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            padding: 18px 25px;
+            font-size: 15px;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .category-header::before {
+            content: '▶';
+            margin-right: 10px;
+            font-size: 12px;
+        }
+
+        .cabinet-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+        }
+
+        .cabinet-table th {
+            background: #f8f8f8;
+            color: #1a1a1a;
+            padding: 15px 20px;
+            font-weight: 600;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e5e5e5;
+        }
+
+        .cabinet-table td {
+            padding: 18px 20px;
+            border-bottom: 1px solid #f5f5f5;
+            vertical-align: top;
+            font-size: 10px;
+        }
+
+        .cabinet-table tr:hover {
+            background: #fafafa;
+        }
+
+        .cabinet-name {
+            font-weight: 600;
+            color: #dc2626;
+            font-size: 11px;
+        }
+
+        .cabinet-specs {
+            line-height: 1.6;
+            color: #525252;
+        }
+
+        .cabinet-specs strong {
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+
+        /* Premium Accessories Table */
+        .accessories-section {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.08);
+        }
+
+        .accessories-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .accessories-table th {
+            background: linear-gradient(135deg, #1a1a1a 0%, #404040 100%);
+            color: white;
+            padding: 16px 18px;
+            font-weight: 600;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .accessories-table td {
+            padding: 14px 18px;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: 10px;
+        }
+
+        .accessories-table tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .accessories-table tr:hover {
+            background: #f0f0f0;
+        }
+
+        .accessory-name {
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        /* Lighting Section with Dark Theme */
+        .lighting-overview {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .lighting-overview::before {
+            content: '💡';
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            font-size: 24px;
+            opacity: 0.7;
+        }
+
+        .lighting-overview h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #dc2626;
+        }
+
+        .overview-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .stat-item {
+            background: rgba(220, 38, 38, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #dc2626;
+        }
+
+        .stat-label {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+        }
+
+        /* Modern Timeline */
+        .timeline {
+            margin: 25px 0;
+        }
+
+        .timeline-item {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 25px;
+            margin-bottom: 15px;
+            border-left: 5px solid #dc2626;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.06);
+            display: grid;
+            grid-template-columns: 140px 80px 1fr;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .timeline-item:hover {
+            transform: translateX(5px);
+            transition: transform 0.3s ease;
+        }
+
+        .phase-name {
+            font-weight: 600;
+            color: #dc2626;
+            font-size: 11px;
+        }
+
+        .phase-duration {
+            background: #1a1a1a;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 10px;
+        }
+
+        .phase-description {
+            color: #525252;
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        .timeline-summary {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 25px 0;
+        }
+
+        /* Premium Terms Grid */
+        .terms-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        .terms-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            border-top: 4px solid #dc2626;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+
+        .terms-card h4 {
+            color: #1a1a1a;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .terms-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .terms-list li {
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+            font-size: 10px;
+            line-height: 1.5;
+            color: #525252;
+        }
+
+        .terms-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #dc2626;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .terms-list li strong {
+            color: #1a1a1a;
+        }
+
+        /* Customer Notes with Red Accent */
+        .customer-notes {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border: 2px solid #fecaca;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 35px;
+            position: relative;
+        }
+
+        .customer-notes::before {
+            content: '📝';
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            font-size: 20px;
+        }
+
+        .customer-notes h3 {
+            color: #991b1b;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .note-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 4px solid #dc2626;
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.1);
+        }
+
+        .note-label {
+            font-weight: 600;
+            color: #991b1b;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .note-content {
+            color: #1a1a1a;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: #1a1a1a;
+            color: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(220, 38, 38, 0.2) 0%, transparent 70%);
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .contact-card h4 {
+            color: #dc2626;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .contact-item {
+            margin-bottom: 10px;
+            font-size: 10px;
+            line-height: 1.5;
+            position: relative;
+            z-index: 1;
+        }
+
+        .contact-item strong {
+            color: #f5f5f5;
+            font-weight: 600;
+        }
+
+        /* Warranty Cards */
+        .warranty-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        .warranty-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            border: 2px solid #f5f5f5;
+            position: relative;
+        }
+
+        .warranty-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #dc2626 0%, #ef4444 100%);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .warranty-card h4 {
+            color: #1a1a1a;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        /* Premium Footer */
+        .footer {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+            padding: 35px 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="footerGrain" width="50" height="50" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23footerGrain)"/></svg>');
+            pointer-events: none;
+        }
+
+        .footer-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .generation-info {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .thank-you {
+            font-size: 14px;
+            font-weight: 600;
+            color: #dc2626;
+            margin-bottom: 10px;
+        }
+
+        .validity-note {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+
+        /* Utility Classes */
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .font-bold { font-weight: 600; }
+        .text-red { color: #dc2626; }
+        .text-black { color: #1a1a1a; }
+        .text-gray { color: #525252; }
+
+        /* Print Optimizations */
+        @media print {
+            .no-print { display: none; }
+            body { font-size: 10px; }
+            .header { page-break-inside: avoid; }
+            .section { margin-bottom: 25px; }
+            .cabinet-table, .accessories-table, .pricing-table {
+                font-size: 9px;
+            }
+            .timeline-item {
+                page-break-inside: avoid;
+            }
+        }
+
+        /* Responsive Adjustments */
+        @media screen and (max-width: 768px) {
+            .project-info,
+            .terms-grid,
+            .contact-grid,
+            .warranty-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .overview-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .timeline-item {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+        }
+        /* Floor Plans Section */
+.floor-plan-group {
+    margin-bottom: 35px;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.08);
+}
+
+.plan-group-header {
+    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+    color: white;
+    padding: 25px 30px;
+    position: relative;
+}
+
+.plan-group-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.plan-description {
+    font-size: 12px;
+    opacity: 0.9;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.plan-stats {
+    display: flex;
+    gap: 10px;
+}
+
+.stat-badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 500;
+}
+
+.images-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 25px;
+}
+
+.image-card {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    background: white;
+}
+
+.image-container {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+}
+
+.plan-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.plan-image:hover {
+    transform: scale(1.05);
+}
+
+.image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.7));
+    color: white;
+    padding: 20px 15px 15px;
+}
+
+.image-caption {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.image-meta {
+    font-size: 10px;
+    opacity: 0.8;
+}
+
+/* Placeholder Styles */
+.placeholder-image {
+    height: 250px;
+    background: linear-gradient(135deg, #f8f8f8 0%, #e5e5e5 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #dc2626;
+}
+
+.placeholder-content {
+    text-align: center;
+    color: #666;
+}
+
+.placeholder-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.placeholder-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 5px;
+}
+
+.placeholder-note {
+    font-size: 10px;
+    color: #999;
+    font-style: italic;
+}
+
+/* Large Placeholder for No Plans */
+.floor-plan-placeholder {
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    border: 2px dashed #dc2626;
+    margin: 20px 0;
+}
+
+.placeholder-content-large {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.placeholder-icon-large {
+    font-size: 60px;
+    margin-bottom: 20px;
+}
+
+.placeholder-content-large h3 {
+    color: #1a1a1a;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.placeholder-content-large p {
+    color: #666;
+    font-size: 12px;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.placeholder-features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    text-align: left;
+}
+
+.feature-item {
+    font-size: 11px;
+    color: #dc2626;
+    font-weight: 500;
+    padding: 5px 0;
+}
+
+/* Print adjustments for images */
+@media print {
+    .images-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+    
+    .image-container {
+        height: 200px;
+    }
+    
+    .plan-image {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
+
+/* Single image per row for large images */
+.images-grid.single-column {
+    grid-template-columns: 1fr;
+}
+
+.images-grid.single-column .image-container {
+    height: 400px;
+}
+    </style>
 </head>
 <body>
-    <!-- Page Header -->
-    <div class="quotation-header">
-        <div class="company-branding">
-            <div class="company-logo">
-                <!-- Add your company logo here -->
-                <h1>SPEISEKAMER</h1>
-                <p class="tagline">Premium Kitchen Solutions</p>
+    <!-- Elegant Header -->
+    <div class="header no-break">
+        <h1>Kitchen Quotation</h1>
+        <div class="subtitle">by {{ brand_information.name|default:"Speisekamer" }}</div>
+        <div class="tagline">{{ brand_information.tagline|default:"Crafting Premium Kitchen Experiences Since 2020" }}</div>
+    </div>
+
+    <!-- Project Information Cards -->
+    <div class="project-info no-break">
+        <div class="info-card">
+            <h3>Project Details</h3>
+            <div class="info-row">
+                <span class="info-label">Quotation No</span>
+                <span class="info-value highlight">{{ project_info.quotation_number|default:"SPK-000007" }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Date & Time</span>
+                <span class="info-value">{{ project_info.quotation_date|default:"31 August 2025" }} at {{ project_info.quotation_time|default:"10:22" }} {{ project_info.quotation_timezone|default:"IST" }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Valid Until</span>
+                <span class="info-value">{{ project_info.quotation_valid_until|default:"30 September 2025" }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Budget Tier</span>
+                <span class="info-value highlight">{{ project_info.budget_tier|default:"PREMIUM"|title }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Project Status</span>
+                <span class="info-value">{{ project_info.status|default:"DRAFT" }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Generated By</span>
+                <span class="info-value">{{ project_info.generated_by|default:"Thaquidheen" }}</span>
             </div>
         </div>
         
-        <div class="quotation-title-section">
-            <h1 class="quotation-title">KITCHEN QUOTATION</h1>
-            <div class="quotation-meta">
-                <p><strong>Quote #:</strong> {{ project_info.quotation_number }}</p>
-                <p><strong>Date:</strong> {{ project_info.quotation_date }}</p>
-                <p><strong>Valid Until:</strong> {{ project_info.quotation_date|date:"M d, Y" }}</p>
+        <div class="info-card">
+            <h3>Customer Information</h3>
+            <div class="info-row">
+                <span class="info-label">Full Name</span>
+                <span class="info-value highlight">{{ customer_info.name|default:"Valued Customer" }}</span>
             </div>
-        </div>
-        
-        <div class="customer-details">
-            <h3>{{ customer_info.name }}</h3>
-            {% if customer_info.address %}
-                <p>{{ customer_info.address }}</p>
-            {% endif %}
-            {% if customer_info.city %}
-                <p>{{ customer_info.city }}{% if customer_info.state %}, {{ customer_info.state }}{% endif %}</p>
-            {% endif %}
-            {% if customer_info.phone %}
-                <p><strong>Phone:</strong> {{ customer_info.phone }}</p>
-            {% endif %}
-            {% if customer_info.email %}
-                <p><strong>Email:</strong> {{ customer_info.email }}</p>
-            {% endif %}
+            <div class="info-row">
+                <span class="info-label">Email Address</span>
+                <span class="info-value">{{ customer_info.email|default:"customer@example.com" }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Phone Number</span>
+                <span class="info-value">{{ customer_info.phone|default:"+91-9876-543210" }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Address</span>
+                <span class="info-value">{{ customer_info.address|default:"Mumbai, Maharashtra, India" }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Company</span>
+                <span class="info-value">{{ customer_info.company|default:"Individual Customer" }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Currency</span>
+                <span class="info-value">{{ project_info.currency|default:"INR" }} (Indian Rupees)</span>
+            </div>
         </div>
     </div>
 
-    <!-- Project Summary -->
-    <div class="project-summary">
-        <h2>Project Overview</h2>
-        <div class="summary-grid">
-            <div class="summary-item">
-                <strong>Kitchen Types:</strong>
-                {% for kitchen_type, enabled in project_info.kitchen_types.items %}
-                    {% if enabled %}{{ kitchen_type|title }}{% if not forloop.last %}, {% endif %}{% endif %}
-                {% endfor %}
-            </div>
-            <div class="summary-item">
-                <strong>Budget Tier:</strong> {{ project_info.budget_tier|title }}
-            </div>
-            {% if project_info.brand %}
-            <div class="summary-item">
-                <strong>Brand:</strong> {{ project_info.brand }}
-            </div>
-            {% endif %}
+    <!-- Premium Pricing Summary -->
+    <div class="pricing-section no-break">
+        <div class="pricing-header">
+            <h2>Investment Summary</h2>
+            <div class="subtitle">Comprehensive pricing breakdown for your premium kitchen</div>
         </div>
-    </div>
-
-    <!-- Cabinet Items Section -->
-    {% if customizations.include_cabinet_details and cabinet_items %}
-    <div class="section cabinet-section">
-        <h2 class="section-title">Cabinet Items</h2>
-        
-        {% for category in cabinet_items %}
-        <div class="category-subsection">
-            <h3 class="category-title">{{ category.name }} Cabinets</h3>
-            
-            <table class="items-table">
-                <thead>
-                    <tr>
-                        <th>Description</th>
-                        <th>Cabinet Material</th>
-                        <th>Door Material</th>
-                        {% if customizations.show_dimensions %}
-                        <th>Dimensions (mm)</th>
-                        {% endif %}
-                        <th>Qty</th>
-                        <th>Cabinet Sqft</th>
-                        <th>Door Sqft</th>
-                        <th>Line Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in category.items %}
-                    <tr>
-                        <td class="item-description">
-                            <strong>{{ item.description }}</strong>
-                            {% if item.scope %}
-                                <br><small class="scope-badge scope-{{ item.scope|lower }}">{{ item.scope }}</small>
-                            {% endif %}
-                        </td>
-                        <td>{{ item.cabinet_material }}</td>
-                        <td>{{ item.door_material }}</td>
-                        {% if customizations.show_dimensions %}
-                        <td class="dimensions">{{ item.dimensions }}</td>
-                        {% endif %}
-                        <td class="text-center">{{ item.quantity }}</td>
-                        <td class="text-right">{{ item.cabinet_sqft }}</td>
-                        <td class="text-right">{{ item.door_sqft }}</td>
-                        <td class="text-right price">₹{{ item.line_total|floatformat:2 }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-                <tfoot>
-                    <tr class="category-subtotal">
-                        <td colspan="{% if customizations.show_dimensions %}7{% else %}6{% endif %}"><strong>{{ category.name }} Subtotal:</strong></td>
-                        <td class="text-right price"><strong>₹{{ category.subtotal|floatformat:2 }}</strong></td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-
-    <!-- Doors & Shutters Section -->
-    {% if customizations.include_door_details and door_items %}
-    <div class="section doors-section">
-        <h2 class="section-title">Doors & Shutters Breakdown</h2>
-        
-        {% for material in door_items %}
-        <div class="door-material-subsection">
-            <h3 class="material-title">{{ material.material_name }}</h3>
-            
-            <table class="doors-table">
-                <thead>
-                    <tr>
-                        <th>Cabinet Type</th>
-                        <th>Quantity</th>
-                        <th>Door Area (Sqft)</th>
-                        <th>Rate per Sqft</th>
-                        <th>Total Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for door_item in material.items %}
-                    <tr>
-                        <td>{{ door_item.cabinet_type }}</td>
-                        <td class="text-center">{{ door_item.quantity }}</td>
-                        <td class="text-right">{{ door_item.door_sqft|floatformat:2 }}</td>
-                        <td class="text-right">₹{{ door_item.door_unit_rate|floatformat:2 }}</td>
-                        <td class="text-right price">₹{{ door_item.door_price|floatformat:2 }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-                <tfoot>
-                    <tr class="material-summary">
-                        <td colspan="2"><strong>{{ material.material_name }} Summary</strong></td>
-                        <td class="text-right"><strong>{{ material.total_sqft|floatformat:2 }} Sqft</strong></td>
-                        <td class="text-right"><strong>Avg: ₹{{ material.avg_rate|floatformat:2 }}</strong></td>
-                        <td class="text-right price"><strong>₹{{ material.total_price|floatformat:2 }}</strong></td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-
-    <!-- Accessories Section with Images -->
-    {% if customizations.include_accessories and accessories %}
-    <div class="section accessories-section">
-        <h2 class="section-title">Accessories</h2>
-        
-        {% for accessory_group in accessories %}
-        <div class="accessory-group">
-            <h3 class="group-title">{{ accessory_group.line_item_info.cabinet_type }} - {{ accessory_group.line_item_info.scope }}</h3>
-            
-            <div class="accessories-grid">
-                {% for accessory in accessory_group.accessories %}
-                <div class="accessory-item">
-                    {% if customizations.include_accessory_images and accessory.images %}
-                    <div class="accessory-images">
-                        {% for image in accessory.images %}
-                        <img src="{{ image.url }}" alt="{{ image.alt_text }}" class="accessory-image">
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-                    
-                    <div class="accessory-details">
-                        <h4 class="accessory-name">{{ accessory.name }}</h4>
-                        
-                        {% if accessory.brand %}
-                        <p class="accessory-brand"><strong>Brand:</strong> {{ accessory.brand }}</p>
-                        {% endif %}
-                        
-                        {% if accessory.variant_info.color or accessory.variant_info.material_code %}
-                        <p class="accessory-variant">
-                            {% if accessory.variant_info.color %}
-                                <strong>Color:</strong> {{ accessory.variant_info.color }}
-                            {% endif %}
-                            {% if accessory.variant_info.material_code %}
-                                <br><strong>Code:</strong> {{ accessory.variant_info.material_code }}
-                            {% endif %}
-                        </p>
-                        {% endif %}
-                        
-                        {% if accessory.description %}
-                        <p class="accessory-description">{{ accessory.description|truncatewords:15 }}</p>
-                        {% endif %}
-                        
-                        {% if accessory.dimensions.width or accessory.dimensions.height %}
-                        <p class="accessory-dimensions">
-                            <strong>Size:</strong>
-                            {% if accessory.dimensions.width %}W: {{ accessory.dimensions.width }}mm{% endif %}
-                            {% if accessory.dimensions.height %} × H: {{ accessory.dimensions.height }}mm{% endif %}
-                            {% if accessory.dimensions.depth %} × D: {{ accessory.dimensions.depth }}mm{% endif %}
-                        </p>
-                        {% endif %}
-                        
-                        <div class="accessory-pricing">
-                            <div class="pricing-row">
-                                <span class="quantity">Qty: {{ accessory.quantity }}</span>
-                                <span class="unit-price">₹{{ accessory.unit_price|floatformat:2 }} each</span>
-                            </div>
-                            <div class="pricing-row total">
-                                <span class="total-label">Total:</span>
-                                <span class="total-price">₹{{ accessory.total_price|floatformat:2 }}</span>
-                            </div>
-                        </div>
-                        
-                        {% if accessory.installation_notes %}
-                        <p class="installation-notes">
-                            <small><strong>Installation:</strong> {{ accessory.installation_notes }}</small>
-                        </p>
-                        {% endif %}
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            
-            <div class="group-subtotal">
-                <strong>Group Total: {{ accessory_group.subtotal_formatted }}</strong>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-
-    <!-- Lighting Section -->
-    {% if customizations.include_lighting and lighting_items.items %}
-    <div class="section lighting-section">
-        <h2 class="section-title">Lighting Solutions</h2>
-        
-        <table class="lighting-table">
+        <table class="pricing-table">
             <thead>
                 <tr>
-                    <th>Lighting Type</th>
-                    <th>Cabinet Material</th>
-                    <th>Under Cabinet</th>
-                    <th>Nosing LED</th>
-                    <th>Spot Lights</th>
-                    <th>Total Cost</th>
+                    <th>Component Description</th>
+                    <th>Investment (₹)</th>
                 </tr>
             </thead>
             <tbody>
-                {% for lighting_item in lighting_items.items %}
                 <tr>
-                    <td>{{ lighting_item.rule_name }}</td>
-                    <td>{{ lighting_item.cabinet_material }}</td>
-                    <td class="text-right">₹{{ lighting_item.under_cabinet_cost|floatformat:2 }}</td>
-                    <td class="text-right">₹{{ lighting_item.nosing_led_cost|floatformat:2 }}</td>
-                    <td class="text-right">₹{{ lighting_item.spot_lights_cost|floatformat:2 }}</td>
-                    <td class="text-right price">₹{{ lighting_item.total_cost|floatformat:2 }}</td>
+                    <td class="item-name">Premium Cabinet Systems</td>
+                    <td class="amount">{{ calculations.formatted.line_items_total|default:"₹1,25,000.00" }}</td>
                 </tr>
-                {% endfor %}
+                <tr>
+                    <td class="item-name">Designer Door Panels</td>
+                    <td class="amount">{{ calculations.formatted.doors_total|default:"₹85,000.00" }}</td>
+                </tr>
+                <tr>
+                    <td class="item-name">Premium Accessories & Hardware</td>
+                    <td class="amount">{{ calculations.formatted.accessories_total|default:"₹45,000.00" }}</td>
+                </tr>
+                <tr>
+                    <td class="item-name">Lighting Systems</td>
+                    <td class="amount">{{ calculations.lighting_total.formatted|default:"₹18,000.00" }}</td>
+                </tr>
+                <tr>
+                    <td class="item-name">Counter Tops & Surfaces</td>
+                    <td class="amount">{{ calculations.formatted.tops_total|default:"₹65,000.00" }}</td>
+                </tr>
+                <tr class="subtotal-row">
+                    <td class="item-name"><strong>Subtotal (Before GST)</strong></td>
+                    <td class="amount"><strong>{{ calculations.formatted.subtotal|default:"₹3,38,000.00" }}</strong></td>
+                </tr>
+                {% if calculations.discount_amount.raw_amount > 0 %}
+                <tr class="discount-row">
+                    <td class="item-name">🎉 Special Discount ({{ calculations.discount_percentage }}%)</td>
+                    <td class="amount">-{{ calculations.discount_amount.formatted|default:"₹25,000.00" }}</td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <td class="item-name">GST @ {{ project_info.gst_pct|default:"18" }}%</td>
+                    <td class="amount">{{ calculations.formatted.gst_amount|default:"₹56,340.00" }}</td>
+                </tr>
+                <tr class="total-row">
+                    <td><strong>Total Investment</strong></td>
+                    <td class="amount"><strong>{{ calculations.formatted.final_total|default:"₹3,69,340.00" }}</strong></td>
+                </tr>
             </tbody>
-            <tfoot>
-                <tr class="lighting-total">
-                    <td colspan="5"><strong>Total Lighting Cost:</strong></td>
-                    <td class="text-right price"><strong>{{ lighting_items.total_formatted }}</strong></td>
-                </tr>
-            </tfoot>
         </table>
+    </div>
+
+    <!-- Customer Notes -->
+    {% if customer_notes %}
+    <div class="customer-notes no-break">
+        <h3>Special Instructions & Requirements</h3>
+        {% for note_type, note_content in customer_notes.items %}
+            {% if note_content %}
+            <div class="note-item">
+                <div class="note-label">{{ note_type|title }}</div>
+                <div class="note-content">{{ note_content }}</div>
+            </div>
+            {% endif %}
+        {% endfor %}
     </div>
     {% endif %}
 
-    <!-- Plan Images Section -->
-    {% if customizations.include_plan_images and plan_images %}
-    <div class="section plan-images-section">
-        <h2 class="section-title">Design Plans & Layout</h2>
+    <!-- Page Break -->
+    <div class="page-break"></div>
+
+    <!-- Cabinet Breakdown -->
+    {% if cabinet_breakdown %}
+    <div class="section">
+        <div class="section-header">
+            <h2>Cabinet Systems & Specifications</h2>
+        </div>
         
-        <div class="plan-images-grid">
-            {% for image in plan_images %}
-            <div class="plan-image-item">
-                <div class="plan-image-container">
-                    <img src="{{ image.url }}" alt="{{ image.caption }}" class="plan-image">
+        {% regroup cabinet_breakdown by category as cabinet_categories %}
+        {% for category in cabinet_categories %}
+        <div class="cabinet-category no-break">
+            <div class="category-header">{{ category.grouper }} Collection</div>
+            <table class="cabinet-table">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Technical Specifications</th>
+                        <th>Qty</th>
+                        <th>Investment (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cabinet in category.list %}
+                    <tr>
+                        <td class="cabinet-name">{{ cabinet.name }}</td>
+                        <td class="cabinet-specs">
+                            <strong>Brand:</strong> {{ cabinet.brand }}<br/>
+                            <strong>Cabinet Material:</strong> {{ cabinet.materials.cabinet_material }}<br/>
+                            <strong>Door Material:</strong> {{ cabinet.materials.door_material }}<br/>
+                            <strong>Dimensions:</strong> {{ cabinet.dimensions.width }} × {{ cabinet.dimensions.height }} × {{ cabinet.dimensions.depth }} mm<br/>
+                            <strong>Scope:</strong> {{ cabinet.scope }} Kitchen<br/>
+                            <strong>Features:</strong> {% for feature in cabinet.features %}{{ feature }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                        </td>
+                        <td class="text-center font-bold">{{ cabinet.specifications.quantity }}</td>
+                        <td class="text-right font-bold">₹{{ cabinet.specifications.line_total_before_tax|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Accessories Section -->
+    {% if accessories_detailed %}
+    <div class="page-break"></div>
+    <div class="section">
+        <div class="section-header">
+            <h2>Premium Accessories & Hardware</h2>
+        </div>
+        
+        <div class="accessories-section">
+            <table class="accessories-table">
+                <thead>
+                    <tr>
+                        <th>Accessory Name</th>
+                        <th>Cabinet Application</th>
+                        <th>Brand</th>
+                        <th>Material Code</th>
+                        <th>Qty</th>
+                        <th>Investment (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for accessory in accessories_detailed %}
+                    <tr>
+                        <td class="accessory-name">{{ accessory.name }}</td>
+                        <td class="text-gray">{{ accessory.line_item_cabinet }}</td>
+                        <td class="font-bold">{{ accessory.brand }}</td>
+                        <td class="text-gray">{{ accessory.material_code|default:"Standard" }}</td>
+                        <td class="text-center font-bold">{{ accessory.specifications.quantity }}</td>
+                        <td class="text-right font-bold">₹{{ accessory.specifications.total_price|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Lighting Specifications -->
+    {% if lighting_specifications %}
+    <div class="section">
+        <div class="section-header">
+            <h2>Intelligent Lighting Systems</h2>
+        </div>
+        
+        <div class="lighting-overview no-break">
+            <h3>Lighting Overview</h3>
+            <div class="overview-stats">
+                <div class="stat-item">
+                    <div class="stat-label">Total Investment</div>
+                    <div class="stat-value">₹{{ lighting_specifications.overview.total_cost|floatformat:2 }}</div>
                 </div>
-                <div class="plan-image-info">
-                    <h4 class="image-title">{{ image.group_title }}</h4>
-                    <p class="image-caption">{{ image.caption }}</p>
+                <div class="stat-item">
+                    <div class="stat-label">Total Fixtures</div>
+                    <div class="stat-value">{{ lighting_specifications.overview.total_fixtures }} Units</div>
                 </div>
+                <div class="stat-item">
+                    <div class="stat-label">Power Consumption</div>
+                    <div class="stat-value">{{ lighting_specifications.overview.estimated_power_consumption }}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Lighting Zones</div>
+                    <div class="stat-value">{% for zone in lighting_specifications.overview.lighting_zones %}{{ zone }}{% if not forloop.last %}, {% endif %}{% endfor %}</div>
+                </div>
+            </div>
+        </div>
+
+        {% if lighting_specifications.lighting_breakdown %}
+        <table class="accessories-table">
+            <thead>
+                <tr>
+                    <th>Material Type</th>
+                    <th>Cabinet Application</th>
+                    <th>LED Systems (₹)</th>
+                    <th>Spot Lighting (₹)</th>
+                    <th>Total Investment (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in lighting_specifications.lighting_breakdown %}
+                <tr>
+                    <td class="font-bold">{{ item.material }}</td>
+                    <td class="text-gray">{{ item.cabinet_type }}</td>
+                    <td class="text-right">₹{{ item.cost_breakdown.led_under_wall_cost|add:item.cost_breakdown.led_work_top_cost|floatformat:2 }}</td>
+                    <td class="text-right">₹{{ item.cost_breakdown.spot_lights_cost|floatformat:2 }}</td>
+                    <td class="text-right font-bold text-red">₹{{ item.cost_breakdown.total_cost|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% if project_floor_plans %}
+<div class="page-break"></div>
+<div class="section">
+    <div class="section-header">
+        <h2>📐 Floor Plans & Design Images</h2>
+    </div>
+    
+    {% for plan_group in project_floor_plans %}
+    <div class="floor-plan-group no-break">
+        <div class="plan-group-header">
+            <h3>{{ plan_group.title }}</h3>
+            {% if plan_group.description %}
+            <p class="plan-description">{{ plan_group.description }}</p>
+            {% endif %}
+            <div class="plan-stats">
+                <span class="stat-badge">{{ plan_group.image_count }} Image{{ plan_group.image_count|pluralize }}</span>
+                <span class="stat-badge">Group {{ plan_group.sort_order|add:1 }}</span>
+            </div>
+        </div>
+        
+        <div class="images-grid">
+            {% for image in plan_group.images %}
+            <div class="image-card">
+                {% if image.image_url %}
+                <div class="image-container">
+                    <img src="{{ image.image_url }}" alt="{{ image.caption|default:'Floor Plan' }}" class="plan-image"/>
+                    <div class="image-overlay">
+                        <div class="image-info">
+                            <div class="image-caption">{{ image.caption|default:'Design Image' }}</div>
+                            {% if image.file_size_display %}
+                            <div class="image-meta">{{ image.file_size_display }} • {{ image.file_type|default:'Image' }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="placeholder-image">
+                    <div class="placeholder-content">
+                        <div class="placeholder-icon">🏠</div>
+                        <div class="placeholder-text">{{ image.caption|default:'Floor Plan' }}</div>
+                        <div class="placeholder-note">Image will be available in final version</div>
+                    </div>
+                </div>
+                {% endif %}
             </div>
             {% endfor %}
         </div>
     </div>
-    {% endif %}
+    {% endfor %}
+</div>
 
-    <!-- Customer Notes Section -->
-    {% if customer_notes.special_instructions or customer_notes.installation_notes or customer_notes.timeline_notes or customer_notes.custom_requirements %}
-    <div class="section customer-notes-section">
-        <h2 class="section-title">Special Instructions & Notes</h2>
-        
-        <div class="notes-grid">
-            {% if customer_notes.special_instructions %}
-            <div class="note-item">
-                <h4 class="note-title">Special Instructions</h4>
-                <div class="note-content">
-                    {{ customer_notes.special_instructions|linebreaks }}
-                </div>
-            </div>
-            {% endif %}
-            
-            {% if customer_notes.installation_notes %}
-            <div class="note-item">
-                <h4 class="note-title">Installation Requirements</h4>
-                <div class="note-content">
-                    {{ customer_notes.installation_notes|linebreaks }}
-                </div>
-            </div>
-            {% endif %}
-            
-            {% if customer_notes.timeline_notes %}
-            <div class="note-item">
-                <h4 class="note-title">Timeline Information</h4>
-                <div class="note-content">
-                    {{ customer_notes.timeline_notes|linebreaks }}
-                </div>
-            </div>
-            {% endif %}
-            
-            {% if customer_notes.custom_requirements %}
-            <div class="note-item">
-                <h4 class="note-title">Custom Requirements</h4>
-                <div class="note-content">
-                    {{ customer_notes.custom_requirements|linebreaks }}
-                </div>
-            </div>
-            {% endif %}
-        </div>
+<!-- If no floor plans, show placeholder -->
+{% else %}
+<div class="page-break"></div>
+<div class="section">
+    <div class="section-header">
+        <h2>📐 Floor Plans & Design Images</h2>
     </div>
-    {% endif %}
-
-    <!-- Pricing Summary -->
-    <div class="section pricing-section">
-        <h2 class="section-title">Pricing Summary</h2>
-        
-        <div class="pricing-summary">
-            <table class="pricing-table">
-                <tbody>
-                    <tr class="pricing-row">
-                        <td class="pricing-label">Cabinet Items Total:</td>
-                        <td class="pricing-value">{{ calculations.formatted.line_items_total }}</td>
-                    </tr>
-                    
-                    {% if calculations.accessories_total > 0 %}
-                    <tr class="pricing-row">
-                        <td class="pricing-label">Accessories Total:</td>
-                        <td class="pricing-value">{{ calculations.formatted.accessories_total }}</td>
-                    </tr>
-                    {% endif %}
-                    
-                    {% if calculations.lighting_total > 0 %}
-                    <tr class="pricing-row">
-                        <td class="pricing-label">Lighting Total:</td>
-                        <td class="pricing-value">{{ calculations.formatted.lighting_total }}</td>
-                    </tr>
-                    {% endif %}
-                    
-                    <tr class="pricing-row subtotal">
-                        <td class="pricing-label">Subtotal:</td>
-                        <td class="pricing-value">{{ calculations.formatted.subtotal }}</td>
-                    </tr>
-                    
-                    {% if calculations.tax_amount > 0 %}
-                    <tr class="pricing-row tax">
-                        <td class="pricing-label">Tax (18% GST):</td>
-                        <td class="pricing-value">{{ calculations.formatted.tax_amount }}</td>
-                    </tr>
-                    {% endif %}
-                    
-                    {% if calculations.discount_amount > 0 %}
-                    <tr class="pricing-row discount">
-                        <td class="pricing-label">
-                            Discount
-                            {% if calculations.discount_reason %}
-                                <br><small>({{ calculations.discount_reason }})</small>
-                            {% endif %}
-                            {% if calculations.discount_percentage > 0 %}
-                                <br><small>{{ calculations.discount_percentage }}% off</small>
-                            {% endif %}:
-                        </td>
-                        <td class="pricing-value discount-amount">-{{ calculations.formatted.discount_amount }}</td>
-                    </tr>
-                    {% endif %}
-                    
-                    <tr class="pricing-row final-total">
-                        <td class="pricing-label">Final Total:</td>
-                        <td class="pricing-value final-amount">{{ calculations.formatted.final_total }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Terms & Conditions -->
-    {% if customizations.include_terms_conditions %}
-    <div class="section terms-section">
-        <h2 class="section-title">Terms & Conditions</h2>
-        
-        <div class="terms-content">
-            <div class="terms-grid">
-                <div class="terms-column">
-                    <h4>Payment Terms</h4>
-                    <ul>
-                        <li>25% advance payment upon order confirmation</li>
-                        <li>35% payment before material dispatch</li>
-                        <li>35% payment before installation</li>
-                        <li>5% balance payment after completion</li>
-                    </ul>
-                    
-                    <h4>Delivery & Installation</h4>
-                    <ul>
-                        <li>Standard delivery: 4-6 weeks from order confirmation</li>
-                        <li>Installation: 3-5 working days</li>
-                        <li>Site readiness required before installation</li>
-                    </ul>
-                </div>
-                
-                <div class="terms-column">
-                    <h4>Inclusions</h4>
-                    <ul>
-                        <li>Design, manufacturing, and installation</li>
-                        <li>Basic fittings and hardware</li>
-                        <li>Post-installation cleaning</li>
-                    </ul>
-                    
-                    <h4>Exclusions</h4>
-                    <ul>
-                        <li>Electrical and plumbing work</li>
-                        <li>Civil work and structural modifications</li>
-                        <li>Appliances (unless specified)</li>
-                        <li>Countertop (client scope, unless mentioned)</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="validity-note">
-                <p><strong>Quote Validity:</strong> This quotation is valid for 30 days from the date of issue.</p>
-                <p><strong>Note:</strong> Prices may vary if there are changes in specifications or material costs.</p>
+    
+    <div class="floor-plan-placeholder">
+        <div class="placeholder-content-large">
+            <div class="placeholder-icon-large">🏠</div>
+            <h3>Floor Plans Coming Soon</h3>
+            <p>Your custom floor plans and 3D design renderings will be included in the final quotation.</p>
+            <div class="placeholder-features">
+                <div class="feature-item">✓ 2D Floor Plans</div>
+                <div class="feature-item">✓ 3D Renderings</div>
+                <div class="feature-item">✓ Material Visualizations</div>
+                <div class="feature-item">✓ Lighting Simulations</div>
             </div>
         </div>
     </div>
-    {% endif %}
-
-    <!-- Warranty Information -->
-    {% if customizations.include_warranty_info %}
-    <div class="section warranty-section">
-        <h2 class="section-title">Warranty Information</h2>
+</div>
+{% endif %}
+    <!-- Timeline & Terms -->
+    <div class="page-break"></div>
+    <div class="section">
+        <div class="section-header">
+            <h2>Project Timeline & Terms</h2>
+        </div>
         
-        <div class="warranty-content">
-            <div class="warranty-grid">
-                <div class="warranty-item">
-                    <h4>Carcass Structure</h4>
-                    <p>10 years warranty against manufacturing defects</p>
-                </div>
-                <div class="warranty-item">
-                    <h4>Shutters & Doors</h4>
-                    <p>5 years warranty on finish and construction</p>
-                </div>
-                <div class="warranty-item">
-                    <h4>Hardware & Fittings</h4>
-                    <p>2-5 years warranty as per manufacturer specifications</p>
-                </div>
-                <div class="warranty-item">
-                    <h4>Installation</h4>
-                    <p>1 year warranty on installation workmanship</p>
-                </div>
+        <!-- Timeline -->
+        {% if installation_timeline.project_phases %}
+        <h3 style="color: #1a1a1a; margin-bottom: 20px; font-size: 16px; font-weight: 600;">Project Execution Timeline</h3>
+        <div class="timeline">
+            {% for phase in installation_timeline.project_phases %}
+            <div class="timeline-item no-break">
+                <div class="phase-name">{{ phase.phase }}</div>
+                <div class="phase-duration">{{ phase.duration }}</div>
+                <div class="phase-description">{{ phase.description }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="timeline-summary">
+            <strong style="font-size: 16px;">Total Project Timeline: {{ installation_timeline.total_timeline }}</strong>
+        </div>
+        {% endif %}
+
+        <!-- Terms -->
+        {% if terms_conditions %}
+        <div class="terms-grid">
+            {% if terms_conditions.payment_terms %}
+            <div class="terms-card">
+                <h4>💳 Payment Terms</h4>
+                <ul class="terms-list">
+                    <li><strong>Advance Payment:</strong> {{ terms_conditions.payment_terms.advance_payment }}</li>
+                    <li><strong>Progress Payment:</strong> {{ terms_conditions.payment_terms.progress_payment }}</li>
+                    <li><strong>Final Payment:</strong> {{ terms_conditions.payment_terms.final_payment }}</li>
+                    <li><strong>Accepted Methods:</strong> {% for method in terms_conditions.payment_terms.payment_methods %}{{ method }}{% if not forloop.last %}, {% endif %}{% endfor %}</li>
+                </ul>
+            </div>
+            {% endif %}
+            
+            {% if terms_conditions.delivery_terms %}
+            <div class="terms-card">
+                <h4>🚛 Delivery Terms</h4>
+                <ul class="terms-list">
+                    <li><strong>Standard Timeline:</strong> {{ terms_conditions.delivery_terms.standard_delivery }}</li>
+                    <li><strong>Express Option:</strong> {{ terms_conditions.delivery_terms.express_delivery }}</li>
+                    <li><strong>Delivery Scope:</strong> {{ terms_conditions.delivery_terms.delivery_scope }}</li>
+                    <li><strong>Installation:</strong> {% if terms_conditions.delivery_terms.installation_included %}Included in Package{% else %}Additional Service{% endif %}</li>
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Warranty & Contact -->
+    <div class="page-break"></div>
+    <div class="section">
+        <div class="section-header">
+            <h2>Warranty & Support</h2>
+        </div>
+        
+        <!-- Warranty -->
+        {% if warranty_information.coverage_summary %}
+        <div class="warranty-grid">
+            <div class="warranty-card">
+                <h4>🛡️ Warranty Coverage</h4>
+                <ul class="terms-list">
+                    {% for component, period in warranty_information.coverage_summary.items %}
+                    <li><strong>{{ component|title }}:</strong> {{ period }}</li>
+                    {% endfor %}
+                </ul>
             </div>
             
-            <div class="warranty-note">
-                <p><small>Warranty terms and conditions apply. Regular maintenance required for optimal performance.</small></p>
+            {% if warranty_information.what_is_covered %}
+            <div class="warranty-card">
+                <h4>✅ What's Covered</h4>
+                <ul class="terms-list">
+                    {% for item in warranty_information.what_is_covered %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Contact Section -->
+    <div class="contact-section">
+        <div class="contact-grid">
+            <div class="contact-card">
+                <h4>📞 Contact Information</h4>
+                <div class="contact-item"><strong>Company:</strong> {{ brand_information.name|default:"Speisekamer" }}</div>
+                <div class="contact-item"><strong>Phone:</strong> {{ brand_information.contact_info.phone|default:"+91-9876-543210" }}</div>
+                <div class="contact-item"><strong>Email:</strong> {{ brand_information.contact_info.email|default:"info@speisekamer.com" }}</div>
+                <div class="contact-item"><strong>Website:</strong> {{ brand_information.contact_info.website|default:"www.speisekamer.com" }}</div>
+            </div>
+            
+            <div class="contact-card">
+                <h4>🏢 Company Information</h4>
+                <div class="contact-item"><strong>Address:</strong> {{ brand_information.contact_info.address|default:"Mumbai, Maharashtra, India" }}</div>
+                <div class="contact-item"><strong>Established:</strong> {{ brand_information.established|default:"2020" }}</div>
+                <div class="contact-item"><strong>Specialization:</strong> {{ brand_information.specialization|default:"Premium Kitchen Solutions" }}</div>
+                <div class="contact-item"><strong>Certifications:</strong> {% if brand_information.certifications %}{% for cert in brand_information.certifications %}{{ cert }}{% if not forloop.last %}, {% endif %}{% endfor %}{% else %}ISO 9001:2015, Premium Quality Assured{% endif %}</div>
             </div>
         </div>
     </div>
-    {% endif %}
 
-    <!-- Footer & Signatures -->
-    <div class="quotation-footer">
+    <!-- Premium Footer -->
+    <div class="footer">
         <div class="footer-content">
-            <div class="company-info">
-                <h3>SPEISEKAMER</h3>
-                <p>Premium Kitchen Solutions</p>
-                <div class="contact-info">
-                    <p>📧 info@speisekamer.com</p>
-                    <p>📞 +91 XXXXX XXXXX</p>
-                    <p>🌐 www.speisekamer.com</p>
-                </div>
+            <div class="generation-info">
+                <strong>Generated on:</strong> 31 August 2025 at 10:22 IST by Thaquidheen<br/>
+                <strong>UTC Time:</strong> 31 August 2025 at 04:52 UTC | Template: Premium Red & Black Professional v3.0<br/>
+                {% if calculations.discount_reason %}<strong>Special Offer:</strong> {{ calculations.discount_reason }}<br/>{% endif %}
             </div>
-            
-            <div class="signatures">
-                <div class="signature-section">
-                    <div class="signature-box">
-                        <div class="signature-line"></div>
-                        <p class="signature-label">Customer Signature</p>
-                        <p class="signature-date">Date: ___________</p>
-                    </div>
-                    
-                    <div class="signature-box">
-                        <div class="signature-line"></div>
-                        <p class="signature-label">Authorized Representative</p>
-                        <p class="signature-date">Date: {{ project_info.quotation_date }}</p>
-                    </div>
-                </div>
+            <div class="thank-you">
+                Thank you for choosing {{ brand_information.name|default:"Speisekamer" }}!
             </div>
-        </div>
-        
-        <div class="footer-bottom">
-            <p>Thank you for choosing Speisekamer for your kitchen requirements. We look forward to creating your dream kitchen!</p>
+            <div class="validity-note">
+                This quotation is valid for 30 days from the date of generation. Terms and conditions apply.
+            </div>
         </div>
     </div>
-
 </body>
 </html>
