@@ -102,7 +102,77 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 PDF_STORAGE_PATH = os.path.join(MEDIA_ROOT, 'quotation_pdfs')
 
+PDF_GENERATION_CONFIG = {
+    'DEFAULT_TEMPLATE': 'DETAILED',
+    'MAX_FILE_SIZE_MB': 50,
+    'STORAGE_PATH': os.path.join(MEDIA_ROOT, 'quotation_pdfs'),
+    'TEMP_PATH': os.path.join(BASE_DIR, 'temp_pdfs'),
+    'ENABLE_WATERMARK': False,
+    'DEFAULT_PAGE_SIZE': 'A4',
+    'DEFAULT_MARGIN': '15mm',
+}
 
+PDF_STORAGE_ROOT = os.path.join(MEDIA_ROOT, 'quotation_pdfs')
+PDF_TEMP_ROOT = os.path.join(BASE_DIR, 'temp_pdfs')
+
+# Ensure directories exist
+os.makedirs(PDF_STORAGE_ROOT, exist_ok=True)
+os.makedirs(PDF_TEMP_ROOT, exist_ok=True)
+
+# WeasyPrint specific settings
+WEASYPRINT_CSS_PATHS = [
+    os.path.join(BASE_DIR, 'quotation_pdf', 'static', 'css', 'quotation_styles.css'),
+]
+
+# Font paths for better PDF rendering
+WEASYPRINT_FONT_PATHS = [
+    '/usr/share/fonts/',
+    '/usr/local/share/fonts/',
+    os.path.join(BASE_DIR, 'static', 'fonts'),  # Your custom fonts
+]
+
+# PDF generation timeout (seconds)
+PDF_GENERATION_TIMEOUT = 120
+
+
+# Enable/disable PDF generation features
+PDF_FEATURES = {
+    'EMAIL_PDF': True,
+    'SHARE_LINKS': True,
+    'BULK_GENERATION': True,
+    'WATERMARKS': False,
+    'DIGITAL_SIGNATURE': False,
+}
+
+# Logging configuration for PDF generation
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'pdf_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'pdf_generation.log'),
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'quotation_pdf': {
+            'handlers': ['pdf_file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+    },
+}
+
+# Create logs directory
+os.makedirs(os.path.join(BASE_DIR, 'logs'), exist_ok=True)
 
 JAZZMIN_SETTINGS = {
     "site_title": "Speisekamer Admin",
