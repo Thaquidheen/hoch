@@ -941,3 +941,21 @@ WARNING 2025-08-31 10:37:38,982 pdf_renderer 33724 21144 Running on Windows - We
 WARNING 2025-08-31 10:37:39,114 pdf_renderer 33724 21144 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
 INFO 2025-08-31 10:37:39,222 pdf_renderer 33724 21144 ReportLab available as PDF fallback
 INFO 2025-08-31 10:37:39,710 pdf_renderer 33724 21144 xhtml2pdf available as PDF fallback
+INFO 2025-08-31 10:37:43,816 generation 33724 28356 PDF generation request for project 5
+INFO 2025-08-31 10:37:43,820 generation 33724 28356 PDF customizations: {'template_id': 'DETAILED', 'template_type': 'DETAILED', 'include_cabinet_details': True, 'include_door_details': True, 'include_accessories': True, 'include_accessory_images': True, 'include_plan_images': True, 'include_lighting': True, 'show_item_codes': True, 'show_dimensions': True, 'include_warranty_info': True, 'include_terms_conditions': True, 'discount_percentage': 0, 'discount_amount': 0, 'discount_reason': '', 'special_instructions': '', 'installation_notes': '', 'timeline_notes': '', 'custom_requirements': '', 'selected_plan_images': []}
+INFO 2025-08-31 10:37:43,910 pdf_renderer 33724 28356 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 10:37:43,927 pdf_renderer 33724 28356 Using ReportLab renderer (reliable fallback)
+INFO 2025-08-31 10:37:43,927 pdf_generator 33724 28356 Starting PDF generation for project 5
+INFO 2025-08-31 10:37:43,927 data_compiler 33724 28356 Starting comprehensive PDF data compilation with your models
+ERROR 2025-08-31 10:37:43,927 data_compiler 33724 28356 Error getting customer details: 'Customer' object has no attribute 'id'
+INFO 2025-08-31 10:37:43,962 pdf_generator 33724 28356 Using template: quotation_pdf/detailed_quotation.html
+INFO 2025-08-31 10:37:44,079 pdf_generator 33724 28356 HTML content rendered successfully
+INFO 2025-08-31 10:37:44,079 pdf_generator 33724 28356 Starting PDF rendering
+INFO 2025-08-31 10:37:44,079 data_compiler 33724 28356 Starting comprehensive PDF data compilation with your models
+ERROR 2025-08-31 10:37:44,079 data_compiler 33724 28356 Error getting customer details: 'Customer' object has no attribute 'id'
+INFO 2025-08-31 10:37:44,101 pdf_renderer 33724 28356 Rendering PDF with ReportLab
+INFO 2025-08-31 10:37:44,101 pdf_renderer 33724 28356 Starting comprehensive PDF generation with ReportLab
+INFO 2025-08-31 10:37:44,119 pdf_renderer 33724 28356 Comprehensive PDF generated successfully, size: 7870 bytes
+INFO 2025-08-31 10:37:44,131 pdf_generator 33724 28356 PDF saved to storage: quotation_pdfs/quotation_Unknown_Customer_5_20250831_103744.pdf
+INFO 2025-08-31 10:37:44,156 pdf_generator 33724 28356 PDF generation completed: quotation_Unknown_Customer_5_20250831_103744.pdf
+INFO 2025-08-31 10:37:44,156 generation 33724 28356 PDF generation completed in 0.34 seconds
