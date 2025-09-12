@@ -1,575 +1,224 @@
-<!-- quotation_pdf/templates/quotation_pdf/simple_quotation_compatible.html -->
-<!-- xhtml2pdf Compatible Quotation Template -->
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Quotation - {{ project_info.project_name }}</title>
-    <style type="text/css">
-        /* xhtml2pdf Compatible Styles Only */
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 12px;
-            line-height: 1.4;
-            margin: 0;
-            padding: 20px;
-            color: #000;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 3px solid #333;
-            padding-bottom: 20px;
-        }
-        
-        .company-name {
-            font-size: 28px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
-        }
-        
-        .company-tagline {
-            font-size: 14px;
-            color: #666;
-            font-style: italic;
-        }
-        
-        .quotation-title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #000;
-            margin: 20px 0 10px 0;
-        }
-        
-        .quotation-number {
-            font-size: 14px;
-            color: #666;
-        }
-        
-        /* Two Column Layout using Tables */
-        .info-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 25px;
-        }
-        
-        .info-table td {
-            vertical-align: top;
-            padding: 15px;
-            width: 50%;
-        }
-        
-        .info-section {
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            padding: 15px;
-        }
-        
-        .info-section h3 {
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
-            margin: 0 0 10px 0;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 5px;
-        }
-        
-        .info-row {
-            margin-bottom: 8px;
-        }
-        
-        .info-label {
-            font-weight: bold;
-            color: #555;
-            display: inline-block;
-            width: 100px;
-        }
-        
-        .info-value {
-            color: #000;
-        }
-        
-        /* Tables for Items */
-        .items-table, .pricing-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        
-        .items-table th, .pricing-table th {
-            background-color: #e9e9e9;
-            border: 1px solid #666;
-            padding: 12px 8px;
-            text-align: left;
-            font-weight: bold;
-            font-size: 11px;
-        }
-        
-        .items-table td, .pricing-table td {
-            border: 1px solid #ccc;
-            padding: 10px 8px;
-            vertical-align: top;
-            font-size: 11px;
-        }
-        
-        .items-table tr:nth-child(even) {
-            background-color: #f5f5f5;
-        }
-        
-        .section-header {
-            background-color: #333;
-            color: white;
-            padding: 15px;
-            margin: 25px 0 10px 0;
-            font-size: 16px;
-            font-weight: bold;
-        }
-        
-        .text-center { text-align: center; }
-        .text-right { text-align: right; }
-        .text-bold { font-weight: bold; }
-        
-        /* Pricing specific styles */
-        .subtotal-row {
-            background-color: #f0f0f0 !important;
-            font-weight: bold;
-        }
-        
-        .discount-row {
-            background-color: #ffe6e6 !important;
-            color: #cc0000 !important;
-        }
-        
-        .total-row {
-            background-color: #333 !important;
-            color: white !important;
-            font-weight: bold;
-            font-size: 13px;
-        }
-        
-        .amount {
-            text-align: right;
-            font-weight: bold;
-        }
-        
-        /* Terms and conditions */
-        .terms {
-            margin-top: 30px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            background-color: #fafafa;
-        }
-        
-        .terms h3 {
-            margin-top: 0;
-        }
-        
-        .terms ul {
-            margin: 10px 0;
-            padding-left: 20px;
-        }
-        
-        .terms li {
-            margin-bottom: 5px;
-        }
-        
-        /* Footer */
-        .footer {
-            margin-top: 40px;
-            text-align: center;
-            border-top: 2px solid #333;
-            padding-top: 20px;
-            font-size: 11px;
-            color: #666;
-        }
-        
-        .signature-section {
-            margin-top: 50px;
-        }
-        
-        .signature-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .signature-table td {
-            width: 50%;
-            text-align: center;
-            padding: 40px 20px;
-            border-top: 1px solid #666;
-        }
+    <title>DEBUG - Data Check</title>
+    <style>
+        body { font-family: Arial; margin: 20px; font-size: 12px; }
+        .debug-box { background: #f0f0f0; padding: 15px; margin: 10px 0; border: 1px solid #ccc; }
+        .error { background: #ffcccc; }
+        .success { background: #ccffcc; }
     </style>
 </head>
 <body>
-    <!-- Header Section -->
-    <div class="header">
-        <div class="company-name">{{ company_info.name|default:"Kitchen Company" }}</div>
-        <div class="company-tagline">{{ company_info.tagline|default:"Premium Kitchen Solutions" }}</div>
-        
-        <div class="quotation-title">QUOTATION</div>
-        <div class="quotation-number">
-            Quote #: {{ quotation_info.quotation_number|default:"Q-001" }} | 
-            Date: {{ quotation_info.date|default:"2024-01-01" }}
-        </div>
-    </div>
-
-    <!-- Project and Customer Information -->
-    <table class="info-table">
-        <tr>
-            <td>
-                <div class="info-section">
-                    <h3>Project Information</h3>
-                    <div class="info-row">
-                        <span class="info-label">Type:</span>
-                        <span class="info-value">{{ project_info.project_type|default:"Kitchen Design" }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Dimensions:</span>
-                        <span class="info-value">{{ project_info.dimensions|default:"TBD" }}</span>
-                    </div>
-                </div>
-            </td>
-            <td>
-                <div class="info-section">
-                    <h3>Customer Details</h3>
-                    <div class="info-row">
-                        <span class="info-label">Name:</span>
-                        <span class="info-value">{{ customer_info.name|default:"Customer Name" }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Phone:</span>
-                        <span class="info-value">{{ customer_info.phone|default:"Phone Number" }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Email:</span>
-                        <span class="info-value">{{ customer_info.email|default:"Email Address" }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Address:</span>
-                        <span class="info-value">{{ customer_info.address|default:"Customer Address" }}</span>
-                    </div>
-                </div>
-            </td>
-        </tr>
-    </table>
-
-    <!-- Kitchen Items Section -->
-    {% if kitchen_items %}
-    <div class="section-header">Kitchen Components</div>
-    <table class="items-table">
-        <thead>
-            <tr>
-                <th style="width: 5%;">#</th>
-                <th style="width: 35%;">Item Description</th>
-                <th style="width: 15%;">Specifications</th>
-                <th style="width: 10%;">Qty</th>
-                <th style="width: 12%;">Unit Price</th>
-                <th style="width: 12%;">Amount</th>
-                <th style="width: 11%;">Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in kitchen_items %}
-            <tr>
-                <td class="text-center">{{ forloop.counter }}</td>
-                <td>
-                    <strong>{{ item.name|default:"Kitchen Item" }}</strong>
-                    {% if item.description %}
-                    <br>{{ item.description }}
-                    {% endif %}
-                </td>
-                <td>
-                    {% if item.dimensions %}
-                    {{ item.dimensions }}<br>
-                    {% endif %}
-                    {% if item.material %}
-                    Material: {{ item.material }}
-                    {% endif %}
-                </td>
-                <td class="text-center">{{ item.quantity|default:1 }}</td>
-                <td class="text-right">₹{{ item.unit_price|default:"0.00" }}</td>
-                <td class="text-right">₹{{ item.amount|default:"0.00" }}</td>
-                <td class="text-right text-bold">₹{{ item.total|default:"0.00" }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% endif %}
-
-    <!-- Doors Section -->
-    {% if doors_items %}
-    <div class="section-header">Door Components</div>
-    <table class="items-table">
-        <thead>
-            <tr>
-                <th style="width: 5%;">#</th>
-                <th style="width: 40%;">Door Type</th>
-                <th style="width: 20%;">Specifications</th>
-                <th style="width: 10%;">Qty</th>
-                <th style="width: 12%;">Unit Price</th>
-                <th style="width: 13%;">Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for door in doors_items %}
-            <tr>
-                <td class="text-center">{{ forloop.counter }}</td>
-                <td>
-                    <strong>{{ door.name|default:"Door" }}</strong>
-                    {% if door.style %}
-                    <br>Style: {{ door.style }}
-                    {% endif %}
-                </td>
-                <td>
-                    {% if door.dimensions %}
-                    {{ door.dimensions }}<br>
-                    {% endif %}
-                    {% if door.finish %}
-                    Finish: {{ door.finish }}
-                    {% endif %}
-                </td>
-                <td class="text-center">{{ door.quantity|default:1 }}</td>
-                <td class="text-right">₹{{ door.unit_price|default:"0.00" }}</td>
-                <td class="text-right text-bold">₹{{ door.total|default:"0.00" }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% endif %}
-
-    <!-- Accessories Section -->
-    {% if accessories_items %}
-    <div class="section-header">Accessories & Hardware</div>
-    <table class="items-table">
-        <thead>
-            <tr>
-                <th style="width: 5%;">#</th>
-                <th style="width: 45%;">Accessory</th>
-                <th style="width: 15%;">Brand/Model</th>
-                <th style="width: 10%;">Qty</th>
-                <th style="width: 12%;">Unit Price</th>
-                <th style="width: 13%;">Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for accessory in accessories_items %}
-            <tr>
-                <td class="text-center">{{ forloop.counter }}</td>
-                <td>
-                    <strong>{{ accessory.name|default:"Accessory" }}</strong>
-                    {% if accessory.description %}
-                    <br>{{ accessory.description }}
-                    {% endif %}
-                </td>
-                <td>{{ accessory.brand|default:"-" }}</td>
-                <td class="text-center">{{ accessory.quantity|default:1 }}</td>
-                <td class="text-right">₹{{ accessory.unit_price|default:"0.00" }}</td>
-                <td class="text-right text-bold">₹{{ accessory.total|default:"0.00" }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% endif %}
-
-    <!-- Lighting Section -->
-    {% if lighting_items %}
-    <div class="section-header">Lighting Solutions</div>
-    <table class="items-table">
-        <thead>
-            <tr>
-                <th style="width: 5%;">#</th>
-                <th style="width: 40%;">Lighting Item</th>
-                <th style="width: 20%;">Specifications</th>
-                <th style="width: 10%;">Qty</th>
-                <th style="width: 12%;">Unit Price</th>
-                <th style="width: 13%;">Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for light in lighting_items %}
-            <tr>
-                <td class="text-center">{{ forloop.counter }}</td>
-                <td>
-                    <strong>{{ light.name|default:"Light Fixture" }}</strong>
-                    {% if light.type %}
-                    <br>Type: {{ light.type }}
-                    {% endif %}
-                </td>
-                <td>
-                    {% if light.wattage %}
-                    {{ light.wattage }}W<br>
-                    {% endif %}
-                    {% if light.color_temperature %}
-                    {{ light.color_temperature }}K
-                    {% endif %}
-                </td>
-                <td class="text-center">{{ light.quantity|default:1 }}</td>
-                <td class="text-right">₹{{ light.unit_price|default:"0.00" }}</td>
-                <td class="text-right text-bold">₹{{ light.total|default:"0.00" }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% endif %}
-
-    <!-- Pricing Summary -->
-    <div class="section-header">Price Summary</div>
-    <table class="pricing-table">
-        <tbody>
-            {% if pricing_summary.kitchen_total %}
-            <tr>
-                <td style="width: 70%;">Kitchen Components Subtotal</td>
-                <td class="amount">₹{{ pricing_summary.kitchen_total|default:"0.00" }}</td>
-            </tr>
-            {% endif %}
-            
-            {% if pricing_summary.doors_total %}
-            <tr>
-                <td>Doors Subtotal</td>
-                <td class="amount">₹{{ pricing_summary.doors_total|default:"0.00" }}</td>
-            </tr>
-            {% endif %}
-            
-            {% if pricing_summary.accessories_total %}
-            <tr>
-                <td>Accessories Subtotal</td>
-                <td class="amount">₹{{ pricing_summary.accessories_total|default:"0.00" }}</td>
-            </tr>
-            {% endif %}
-            
-            {% if pricing_summary.lighting_total %}
-            <tr>
-                <td>Lighting Subtotal</td>
-                <td class="amount">₹{{ pricing_summary.lighting_total|default:"0.00" }}</td>
-            </tr>
-            {% endif %}
-            
-            <tr class="subtotal-row">
-                <td>Subtotal</td>
-                <td class="amount">₹{{ pricing_summary.subtotal|default:"0.00" }}</td>
-            </tr>
-            
-            {% if pricing_summary.discount_amount and pricing_summary.discount_amount != "0.00" %}
-            <tr class="discount-row">
-                <td>
-                    Discount
-                    {% if pricing_summary.discount_percentage %}
-                    ({{ pricing_summary.discount_percentage }}%)
-                    {% endif %}
-                    {% if pricing_summary.discount_reason %}
-                    - {{ pricing_summary.discount_reason }}
-                    {% endif %}
-                </td>
-                <td class="amount">-₹{{ pricing_summary.discount_amount }}</td>
-            </tr>
-            {% endif %}
-            
-            {% if pricing_summary.tax_amount and pricing_summary.tax_amount != "0.00" %}
-            <tr>
-                <td>Tax ({{ pricing_summary.tax_percentage|default:"18" }}%)</td>
-                <td class="amount">₹{{ pricing_summary.tax_amount|default:"0.00" }}</td>
-            </tr>
-            {% endif %}
-            
-            <tr class="total-row">
-                <td><strong>TOTAL AMOUNT</strong></td>
-                <td class="amount"><strong>₹{{ pricing_summary.total|default:"0.00" }}</strong></td>
-            </tr>
-        </tbody>
-    </table>
-
-    <!-- Timeline Information -->
-    {% if timeline_info %}
-    <div class="section-header">Project Timeline</div>
-    <table class="items-table">
-        <thead>
-            <tr>
-                <th style="width: 30%;">Phase</th>
-                <th style="width: 20%;">Duration</th>
-                <th style="width: 50%;">Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for phase in timeline_info %}
-            <tr>
-                <td><strong>{{ phase.name|default:"Phase" }}</strong></td>
-                <td class="text-center">{{ phase.duration|default:"TBD" }}</td>
-                <td>{{ phase.description|default:"Phase description" }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <h1>🔍 DEBUG: Template Data Check</h1>
     
-    {% if timeline_summary %}
-    <div style="background-color: #f0f0f0; padding: 15px; margin-top: 10px; text-align: center;">
-        <strong>Total Project Duration: {{ timeline_summary.total_duration|default:"6-8 weeks" }}</strong>
+    <!-- Check if debug_info exists -->
+    {% if debug_info %}
+    <div class="debug-box success">
+        <h3>✅ Debug Info Available</h3>
+        <p><strong>Data compiled:</strong> {{ debug_info.data_compiled }}</p>
+        <p><strong>Sections:</strong> {{ debug_info.sections_available|join:", " }}</p>
+        <p><strong>UTC Time:</strong> {{ debug_info.current_time_utc }}</p>
+        <p><strong>IST Time:</strong> {{ debug_info.current_time_ist }}</p>
+        <p><strong>User:</strong> {{ debug_info.current_user }}</p>
+        <p><strong>Project ID:</strong> {{ debug_info.project_id }}</p>
+        <p><strong>Template Method:</strong> {{ debug_info.template_context_method|default:"Not specified" }}</p>
+    </div>
+    {% else %}
+    <div class="debug-box error">
+        <h3>❌ Debug Info Missing</h3>
+        <p>Template context may not be properly prepared.</p>
     </div>
     {% endif %}
+    
+    <!-- Check project_info -->
+    {% if project_info %}
+    <div class="debug-box success">
+        <h3>✅ Project Info Available</h3>
+        <p><strong>Customer:</strong> {{ project_info.customer_name|default:"Not found" }}</p>
+        <p><strong>Quotation No:</strong> {{ project_info.quotation_number|default:"Not found" }}</p>
+        <p><strong>Date:</strong> {{ project_info.quotation_date|default:"Not found" }}</p>
+        <p><strong>Time:</strong> {{ project_info.quotation_time|default:"Not found" }} {{ project_info.quotation_timezone|default:"" }}</p>
+        <p><strong>Brand:</strong> {{ project_info.brand|default:"Not found" }}</p>
+        <p><strong>Generated by:</strong> {{ project_info.generated_by|default:"Not found" }}</p>
+        <p><strong>Status:</strong> {{ project_info.status|default:"Not found" }}</p>
+        <p><strong>Currency:</strong> {{ project_info.currency|default:"Not found" }}</p>
+    </div>
+    {% else %}
+    <div class="debug-box error">
+        <h3>❌ Project Info Missing</h3>
+        <p>project_info variable not found in template context.</p>
+    </div>
+    {% endif %}
+    
+    <!-- Check customer_info -->
+    {% if customer_info %}
+    <div class="debug-box success">
+        <h3>✅ Customer Info Available</h3>
+        <p><strong>Name:</strong> {{ customer_info.name|default:"Not found" }}</p>
+        <p><strong>Phone:</strong> {{ customer_info.phone|default:"Not found" }}</p>
+        <p><strong>Address:</strong> {{ customer_info.address|default:"Not found" }}</p>
+        <p><strong>Email:</strong> {{ customer_info.email|default:"Not found" }}</p>
+    </div>
+    {% else %}
+    <div class="debug-box error">
+        <h3>❌ Customer Info Missing</h3>
+        <p>customer_info variable not found in template context.</p>
+    </div>
+    {% endif %}
+    
+    <!-- Check calculations -->
+    {% if calculations %}
+    <div class="debug-box success">
+        <h3>✅ Calculations Available</h3>
+        <p><strong>Grand Total:</strong> {{ calculations.grand_total|default:"Not found" }}</p>
+        <p><strong>Formatted Final Total:</strong> {{ calculations.formatted.final_total|default:"Not found" }}</p>
+        <p><strong>GST Amount:</strong> {{ calculations.formatted.gst_amount|default:"Not found" }}</p>
+        <p><strong>Subtotal Cabinets:</strong> {{ calculations.formatted.line_items_total|default:"Not found" }}</p>
+        <p><strong>Doors Total:</strong> {{ calculations.formatted.doors_total|default:"Not found" }}</p>
+        <p><strong>Accessories Total:</strong> {{ calculations.formatted.accessories_total|default:"Not found" }}</p>
+    </div>
+    {% else %}
+    <div class="debug-box error">
+        <h3>❌ Calculations Missing</h3>
+        <p>calculations variable not found in template context.</p>
+    </div>
+    {% endif %}
+    
+    <!-- Check cabinet_breakdown -->
+    {% if cabinet_breakdown %}
+    <div class="debug-box success">
+        <h3>✅ Cabinet Breakdown Available</h3>
+        <p><strong>Cabinet Count:</strong> {{ cabinet_breakdown|length }}</p>
+        {% if cabinet_breakdown|length > 0 %}
+            <p><strong>First Cabinet:</strong> {{ cabinet_breakdown.0.name|default:"Name not found" }}</p>
+            <p><strong>First Cabinet Category:</strong> {{ cabinet_breakdown.0.category|default:"Category not found" }}</p>
+            <p><strong>First Cabinet Brand:</strong> {{ cabinet_breakdown.0.brand|default:"Brand not found" }}</p>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="debug-box error">
+        <h3>❌ Cabinet Breakdown Missing</h3>
+        <p>cabinet_breakdown variable not found or empty.</p>
+    </div>
+    {% endif %}
+    
+    <!-- Check accessories_detailed -->
+    {% if accessories_detailed %}
+    <div class="debug-box success">
+        <h3>✅ Accessories Available</h3>
+        <p><strong>Accessory Count:</strong> {{ accessories_detailed|length }}</p>
+        {% if accessories_detailed|length > 0 %}
+            <p><strong>First Accessory:</strong> {{ accessories_detailed.0.name|default:"Name not found" }}</p>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="debug-box error">
+        <h3>❌ Accessories Missing</h3>
+        <p>accessories_detailed variable not found or empty.</p>
+    </div>
+    {% endif %}
+    
+    <!-- Check brand_information -->
+    {% if brand_information %}
+    <div class="debug-box success">
+        <h3>✅ Brand Information Available</h3>
+        <p><strong>Brand Name:</strong> {{ brand_information.name|default:"Not found" }}</p>
+        <p><strong>Tagline:</strong> {{ brand_information.tagline|default:"Not found" }}</p>
+        <p><strong>Phone:</strong> {{ brand_information.contact_info.phone|default:"Not found" }}</p>
+        <p><strong>Email:</strong> {{ brand_information.contact_info.email|default:"Not found" }}</p>
+    </div>
+    {% else %}
+    <div class="debug-box error">
+        <h3>❌ Brand Information Missing</h3>
+        <p>brand_information variable not found.</p>
+    </div>
     {% endif %}
 
-    <!-- Terms and Conditions -->
-    <div class="terms">
-        <h3>Terms and Conditions</h3>
+    <!-- Check lighting_specifications -->
+    {% if lighting_specifications %}
+    <div class="debug-box success">
+        <h3>✅ Lighting Specifications Available</h3>
+        <p><strong>Total Cost:</strong> {{ lighting_specifications.overview.total_cost|default:"Not found" }}</p>
+        <p><strong>Total Fixtures:</strong> {{ lighting_specifications.overview.total_fixtures|default:"Not found" }}</p>
+    </div>
+    {% else %}
+    <div class="debug-box error">
+        <h3>❌ Lighting Specifications Missing</h3>
+        <p>lighting_specifications variable not found or empty.</p>
+    </div>
+    {% endif %}
+
+    <!-- Check project_floor_plans -->
+    {% if project_floor_plans %}
+    <div class="debug-box success">
+        <h3>✅ Floor Plans Available</h3>
+        <p><strong>Floor Plan Groups:</strong> {{ project_floor_plans|length }}</p>
+    </div>
+    {% else %}
+    <div class="debug-box error">
+        <h3>❌ Floor Plans Missing</h3>
+        <p>project_floor_plans variable not found or empty.</p>
+    </div>
+    {% endif %}
+    
+    <!-- ✅ FIXED - All Available Template Variables -->
+    <div class="debug-box">
+        <h3>🔧 All Available Template Variables</h3>
+        <p>Available sections from debug_info:</p>
         <ul>
-            <li>This quotation is valid for 30 days from the date of issue.</li>
-            <li>50% advance payment required to commence work.</li>
-            <li>Balance payment due upon project completion.</li>
-            <li>All materials are covered under manufacturer warranty.</li>
-            <li>Installation charges are included in the quoted prices.</li>
-            <li>Any additional work or changes will be charged separately.</li>
-            <li>Delivery timeline may vary based on material availability.</li>
+        {% if debug_info.sections_available %}
+            {% for section in debug_info.sections_available %}
+                <li>{{ section }}</li>
+            {% endfor %}
+        {% else %}
+            <li>No sections found or debug_info missing</li>
+        {% endif %}
         </ul>
         
-        {% if warranty_info %}
-        <h4>Warranty Information:</h4>
-        <p>{{ warranty_info.description|default:"Standard warranty terms apply." }}</p>
+        <p>Template context keys:</p>
+        <ul>
+        {% if debug_info.context_keys %}
+            {% for key in debug_info.context_keys %}
+                <li>{{ key }}</li>
+            {% endfor %}
+        {% else %}
+            <li>No context keys found</li>
         {% endif %}
-        
-        {% if special_instructions %}
-        <h4>Special Instructions:</h4>
-        <p>{{ special_instructions }}</p>
-        {% endif %}
+        </ul>
     </div>
 
-    <!-- Signature Section -->
-    <div class="signature-section">
-        <table class="signature-table">
-            <tr>
-                <td>
-                    <div>Customer Signature</div>
-                    <div style="margin-top: 10px; font-size: 10px;">
-                        {{ customer_info.name|default:"Customer Name" }}<br>
-                        Date: ________________
-                    </div>
-                </td>
-                <td>
-                    <div>Authorized Signatory</div>
-                    <div style="margin-top: 10px; font-size: 10px;">
-                        {{ company_info.signatory|default:"Company Representative" }}<br>
-                        Date: {{ quotation_info.date|default:"2024-01-01" }}
-                    </div>
-                </td>
-            </tr>
-        </table>
+    <!-- ✅ Validation Results -->
+    {% if debug_info.validation_results %}
+    <div class="debug-box">
+        <h3>🔍 Data Validation Results</h3>
+        <p><strong>Project Info Valid:</strong> {{ debug_info.validation_results.project_info_valid|yesno:"✅ Yes,❌ No" }}</p>
+        <p><strong>Customer Info Valid:</strong> {{ debug_info.validation_results.customer_info_valid|yesno:"✅ Yes,❌ No" }}</p>
+        <p><strong>Calculations Valid:</strong> {{ debug_info.validation_results.calculations_valid|yesno:"✅ Yes,❌ No" }}</p>
+        <p><strong>Cabinet Data Valid:</strong> {{ debug_info.validation_results.cabinet_data_valid|yesno:"✅ Yes,❌ No" }}</p>
+        <p><strong>Accessories Data Valid:</strong> {{ debug_info.validation_results.accessories_data_valid|yesno:"✅ Yes,❌ No" }}</p>
+        <p><strong>Brand Info Valid:</strong> {{ debug_info.validation_results.brand_info_valid|yesno:"✅ Yes,❌ No" }}</p>
     </div>
-
-    <!-- Footer -->
-    <div class="footer">
-        <div>{{ company_info.name|default:"Kitchen Company" }}</div>
-        <div>
-            {{ company_info.address|default:"Company Address" }} | 
-            Phone: {{ company_info.phone|default:"Phone Number" }} | 
-            Email: {{ company_info.email|default:"Email Address" }}
-        </div>
-        {% if company_info.website %}
-        <div>Website: {{ company_info.website }}</div>
-        {% endif %}
-        
-        <div style="margin-top: 10px; font-style: italic;">
-            Thank you for choosing us for your kitchen needs!
-        </div>
+    {% endif %}
+    
+    <!-- ✅ Summary Information -->
+    <div class="debug-box">
+        <h3>📊 Data Summary</h3>
+        <p><strong>Customer Name:</strong> {{ debug_info.customer_name|default:"Not Available" }}</p>
+        <p><strong>Quotation Number:</strong> {{ debug_info.quotation_number|default:"Not Available" }}</p>
+        <p><strong>Final Total:</strong> {{ debug_info.final_total|default:"Not Available" }}</p>
+        <p><strong>Cabinet Count:</strong> {{ debug_info.cabinet_count|default:"0" }}</p>
+        <p><strong>Accessories Count:</strong> {{ debug_info.accessories_count|default:"0" }}</p>
+        <p><strong>Floor Plans Count:</strong> {{ debug_info.floor_plans_count|default:"0" }}</p>
+    </div>
+    
+    <!-- ✅ Current Timestamp -->
+    <div class="debug-box">
+        <h3>⏰ Current Timestamp</h3>
+        <p><strong>Generated at:</strong> 31 August 2025 at {{ debug_info.current_time_ist|default:"13:23:05 IST" }} by {{ debug_info.current_user|default:"Thaquidheen" }}</p>
+        <p><strong>UTC Time:</strong> {{ debug_info.current_time_utc|default:"2025-08-31 07:53:05" }}</p>
+        <p><strong>Template Method:</strong> {{ debug_info.template_context_method|default:"direct_assignment" }}</p>
+        <p><strong>Template rendered successfully!</strong> 🚀</p>
     </div>
 </body>
 </html>
