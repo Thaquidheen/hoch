@@ -1773,3 +1773,43 @@ INFO 2025-08-31 17:33:09,480 pdf_generator 35660 30076 PDF rendering successful 
 INFO 2025-08-31 17:33:09,514 generation 35660 30076 PDF generation completed in 0.53 seconds
 WARNING 2025-09-02 19:45:10,115 pdf_renderer 2952 18732 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
 INFO 2025-09-02 19:45:12,193 pdf_renderer 2952 18732 xhtml2pdf available
+WARNING 2025-09-12 15:21:42,448 pdf_renderer 10216 13244 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-09-12 15:21:44,928 pdf_renderer 10216 13244 xhtml2pdf available
+WARNING 2025-09-15 06:57:25,685 pdf_renderer 3676 13104 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-09-15 06:57:27,732 pdf_renderer 3676 13104 xhtml2pdf available
+WARNING 2025-09-15 07:05:52,153 pdf_renderer 2056 7456 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-09-15 07:05:53,171 pdf_renderer 2056 7456 xhtml2pdf available
+WARNING 2025-09-15 07:06:00,351 pdf_renderer 5452 13576 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-09-15 07:06:00,917 pdf_renderer 5452 13576 xhtml2pdf available
+WARNING 2025-09-15 07:06:03,707 pdf_renderer 12196 11792 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-09-15 07:06:04,338 pdf_renderer 12196 11792 xhtml2pdf available
+WARNING 2025-09-15 07:06:19,663 pdf_renderer 11116 13892 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-09-15 07:06:20,279 pdf_renderer 11116 13892 xhtml2pdf available
+WARNING 2025-09-15 07:06:33,621 pdf_renderer 2860 6120 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-09-15 07:06:34,235 pdf_renderer 2860 6120 xhtml2pdf available
+WARNING 2025-09-15 07:06:37,163 pdf_renderer 5236 13576 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-09-15 07:06:37,804 pdf_renderer 5236 13576 xhtml2pdf available
+WARNING 2025-09-15 07:06:48,081 pdf_renderer 10320 8220 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-09-15 07:06:48,663 pdf_renderer 10320 8220 xhtml2pdf available
+WARNING 2025-09-15 07:07:35,251 pdf_renderer 12732 7496 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-09-15 07:07:35,925 pdf_renderer 12732 7496 xhtml2pdf available
+WARNING 2025-09-15 07:09:16,729 pdf_renderer 12268 1772 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-09-15 07:09:17,301 pdf_renderer 12268 1772 xhtml2pdf available
+WARNING 2025-09-15 07:09:36,851 pdf_renderer 13076 6084 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-09-15 07:09:37,463 pdf_renderer 13076 6084 xhtml2pdf available
+WARNING 2025-09-15 07:09:56,981 pdf_renderer 4188 10068 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-09-15 07:09:57,620 pdf_renderer 4188 10068 xhtml2pdf available
+WARNING 2025-09-15 07:10:20,313 pdf_renderer 4268 12696 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-09-15 07:10:20,918 pdf_renderer 4268 12696 xhtml2pdf available
+WARNING 2025-09-15 07:10:46,835 pdf_renderer 3368 14052 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-09-15 07:10:47,416 pdf_renderer 3368 14052 xhtml2pdf available
+WARNING 2025-09-15 07:11:35,273 pdf_renderer 2900 5520 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-09-15 07:11:35,872 pdf_renderer 2900 5520 xhtml2pdf available
+WARNING 2025-09-15 07:12:16,332 pdf_renderer 9856 10068 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-09-15 07:12:16,917 pdf_renderer 9856 10068 xhtml2pdf available
+WARNING 2025-09-15 07:12:55,556 pdf_renderer 11784 4860 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-09-15 07:12:56,121 pdf_renderer 11784 4860 xhtml2pdf available
+WARNING 2025-09-15 07:13:09,667 pdf_renderer 2116 3572 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-09-15 07:13:10,212 pdf_renderer 2116 3572 xhtml2pdf available
+WARNING 2025-09-15 07:24:10,466 pdf_renderer 2396 1568 WeasyPrint dependencies not available: cannot load library 'gobject-2.0-0': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'gobject-2.0-0'
+INFO 2025-09-15 07:24:11,082 pdf_renderer 2396 1568 xhtml2pdf available

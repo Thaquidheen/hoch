@@ -205,20 +205,6 @@ class ProductVariant(BaseModel):
         help_text="Maximum Retail Price"
     )
     
-    tax_rate = models.DecimalField(
-        max_digits=5,
-        decimal_places=2,
-        default=Decimal('18.00'),
-        validators=[MinValueValidator(Decimal('0')), MaxValueValidator(Decimal('100'))],
-        help_text="Tax percentage (default 18%)"
-    )
-    tax_amount = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        default=Decimal('0.00'),
-        help_text="Calculated tax amount (auto-calculated)"
-    )
-    
     discount_rate = models.DecimalField(
         max_digits=5,
         decimal_places=2,
@@ -237,11 +223,11 @@ class ProductVariant(BaseModel):
         max_digits=10,
         decimal_places=2,
         default=Decimal('0.00'),
-        help_text="Final company price (auto-calculated: MRP + Tax - Discount)"
+        help_text="Final company price (auto-calculated: MRP - Discount)"
     )
     
     # Inventory
-    stock_quantity = models.PositiveIntegerField(default=0)
+    
     sku_code = models.CharField(max_length=100, unique=True, blank=True)
     
     # Additional specifications
@@ -253,17 +239,16 @@ class ProductVariant(BaseModel):
     
     def save(self, *args, **kwargs):
         # Calculate tax amount: tax_rate% of MRP
-        self.tax_amount = (self.mrp * self.tax_rate) / 100
-        
-        # Calculate discount amount
         self.discount_amount = (self.mrp * self.discount_rate) / 100
         
-        # Calculate company price: MRP + Tax - Discount
-        self.company_price = self.mrp + self.tax_amount - self.discount_amount
+        # Calculate discount amount
+        self.company_price = self.mrp - self.discount_amount
+        
+      
         
         # Auto-generate SKU if not provided
         if not self.sku_code:
-            self.sku_code = self.material_code
+            self.sku_code = f"{self.product.id}-{self.material_code}"
         
         super().save(*args, **kwargs)
     
@@ -281,11 +266,9 @@ class ProductVariant(BaseModel):
     
     @property
     def price_breakdown(self):
-        """Return detailed price breakdown"""
+        """Return price breakdown for display"""
         return {
             'mrp': float(self.mrp),
-            'tax_rate': float(self.tax_rate),
-            'tax_amount': float(self.tax_amount),
             'discount_rate': float(self.discount_rate),
             'discount_amount': float(self.discount_amount),
             'company_price': float(self.company_price),

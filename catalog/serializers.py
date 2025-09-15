@@ -113,41 +113,37 @@ class ProductVariantSerializer(serializers.ModelSerializer):
     dimensions_display = serializers.SerializerMethodField()
     price_breakdown = serializers.SerializerMethodField()
     image_url = serializers.SerializerMethodField()
-
-    # Price calculation fields (read-only - calculated automatically)
-    tax_amount = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
-    discount_amount = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
-    company_price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    discount_percentage_display = serializers.SerializerMethodField()
 
     class Meta:
         model = ProductVariant
         fields = [
-            'id', 'product', 'product_name', 'brand_name', 'category_name',
+            'id', 'product',
             
-            # Size fields (simplified)
+            # Size fields
             'size_width', 'size_height', 'size_depth', 'dimensions_display',
             
-            # Color field (simplified)
+            # Color field
             'color_name',
             
             # Material code
             'material_code',
             
-            # NEW: Image field
+            # Image field
             'image', 'image_url',
             
-            # Pricing fields
-            'mrp', 'tax_rate', 'tax_amount', 'discount_rate', 'discount_amount', 'company_price',
-            'price_breakdown',
+            # UPDATED: Pricing fields (removed tax, removed stock)
+            'mrp', 'discount_rate', 'discount_amount', 'company_price',
+            'price_breakdown', 'discount_percentage_display',
             
-            # Stock and other fields
-            'stock_quantity', 'sku_code', 'specifications',
+            # Other fields
+            'sku_code', 'specifications',
             
             # Meta
             'is_active', 'created_at', 'updated_at'
         ]
         read_only_fields = [
-            'tax_amount', 'discount_amount', 'company_price', 
+            'discount_amount', 'company_price', 'discount_percentage_display',
             'created_at', 'updated_at'
         ]
     
@@ -157,17 +153,15 @@ class ProductVariantSerializer(serializers.ModelSerializer):
     def get_price_breakdown(self, obj):
         return obj.price_breakdown
     
+    def get_discount_percentage_display(self, obj):
+        return obj.discount_percentage_display
+    
     def get_image_url(self, obj):
         """Get absolute URL for variant image"""
         if obj.image:
             request = self.context.get('request')
             if request:
                 return request.build_absolute_uri(obj.image.url)
-            else:
-                # Fallback
-                from django.conf import settings
-                base_url = getattr(settings, 'BASE_URL', 'http://127.0.0.1:8000')
-                return f"{base_url.rstrip('/')}{obj.image.url}"
         return None
     
     def validate_mrp(self, value):
@@ -181,55 +175,30 @@ class ProductVariantSerializer(serializers.ModelSerializer):
         if value < 0 or value > 100:
             raise serializers.ValidationError("Discount rate must be between 0 and 100")
         return value
-    
-    def validate_tax_rate(self, value):
-        """Validate tax rate is between 0-100"""
-        if value < 0 or value > 100:
-            raise serializers.ValidationError("Tax rate must be between 0 and 100")
-        return value
-    
-    def validate_material_code(self, value):
-        """Validate material code uniqueness"""
-        if ProductVariant.objects.filter(
-            material_code=value
-        ).exclude(id=self.instance.id if self.instance else None).exists():
-            raise serializers.ValidationError("Material code must be unique")
-        return value
 
 
 class ProductVariantListSerializer(serializers.ModelSerializer):
-    """Lightweight serializer for product variant lists with image"""
+    """Lightweight serializer for variant lists"""
     
     product_name = serializers.CharField(source='product.name', read_only=True)
-    brand_name = serializers.CharField(source='product.brand.name', read_only=True)
     category_name = serializers.CharField(source='product.category.name', read_only=True)
-    dimensions_display = serializers.SerializerMethodField()
+    brand_name = serializers.CharField(source='product.brand.name', read_only=True)
     image_url = serializers.SerializerMethodField()
     
     class Meta:
         model = ProductVariant
         fields = [
-            'id', 'product_name', 'brand_name', 'category_name',
-            'color_name', 'dimensions_display', 'material_code',
-            'mrp', 'discount_rate', 'tax_rate', 'company_price',
-            'stock_quantity', 'image_url', 'is_active'
+            'id', 'product_name', 'category_name', 'brand_name',
+            'material_code', 'color_name', 'image_url',
+            'mrp', 'discount_rate', 'company_price', 
+            'sku_code', 'is_active'
         ]
     
-    def get_dimensions_display(self, obj):
-        return obj.dimensions_display
-    
     def get_image_url(self, obj):
-        """Get absolute URL for variant image"""
         if obj.image:
             request = self.context.get('request')
             if request:
-                # Build absolute URI
                 return request.build_absolute_uri(obj.image.url)
-            else:
-                # Fallback: construct absolute URL manually
-                from django.conf import settings
-                base_url = getattr(settings, 'BASE_URL', 'http://127.0.0.1:8000')
-                return f"{base_url.rstrip('/')}{obj.image.url}"
         return None
 
 
@@ -311,17 +280,11 @@ class ProductListSerializer(serializers.ModelSerializer):
 
 
 class PriceCalculationSerializer(serializers.Serializer):
-    """Serializer for price calculations without saving"""
+    """Updated serializer for price calculations without tax"""
     mrp = serializers.DecimalField(
         max_digits=10, 
         decimal_places=2,
         validators=[MinValueValidator(Decimal('0.01'))]
-    )
-    tax_rate = serializers.DecimalField(
-        max_digits=5,
-        decimal_places=2,
-        default=Decimal('18.00'),
-        validators=[MinValueValidator(Decimal('0')), MaxValueValidator(Decimal('100'))]
     )
     discount_rate = serializers.DecimalField(
         max_digits=5,
@@ -331,24 +294,20 @@ class PriceCalculationSerializer(serializers.Serializer):
     )
     
     def validate(self, data):
-        """Calculate all price-related fields"""
+        """Calculate price-related fields without tax"""
         mrp = data['mrp']
-        tax_rate = data.get('tax_rate', Decimal('18.00'))
         discount_rate = data.get('discount_rate', Decimal('0.00'))
-        
-        # Calculate tax amount
-        tax_amount = (mrp * tax_rate) / 100
         
         # Calculate discount amount
         discount_amount = (mrp * discount_rate) / 100
         
-        # Calculate company price
-        company_price = mrp + tax_amount - discount_amount
+        # Calculate company price (MRP - Discount, no tax)
+        company_price = mrp - discount_amount
         
         # Add calculated fields to response
-        data['tax_amount'] = tax_amount
         data['discount_amount'] = discount_amount
         data['company_price'] = company_price
+        data['savings'] = discount_amount
         
         return data
 

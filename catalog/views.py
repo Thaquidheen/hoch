@@ -339,11 +339,11 @@ class ProductVariantViewSet(viewsets.ModelViewSet):
     
 
 class PriceCalculatorAPIView(APIView):
-    """Standalone price calculator API"""
+    """Updated price calculator API without tax calculations"""
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
-        """Calculate price breakdown for given inputs"""
+        """Calculate price breakdown for given MRP and discount"""
         serializer = PriceCalculationSerializer(data=request.data)
         if serializer.is_valid():
             calculations = serializer.validated_data
@@ -352,19 +352,18 @@ class PriceCalculatorAPIView(APIView):
                 'success': True,
                 'inputs': {
                     'mrp': str(calculations['mrp']),
-                    'tax_rate': str(calculations['tax_rate']),
                     'discount_rate': str(calculations['discount_rate'])
                 },
                 'calculations': {
-                    'tax_amount': str(calculations['tax_amount']),
                     'discount_amount': str(calculations['discount_amount']),
-                    'company_price': str(calculations['company_price'])
+                    'company_price': str(calculations['company_price']),
+                    'savings': str(calculations['savings'])
                 },
                 'breakdown': {
                     'mrp': f"₹{calculations['mrp']:,.2f}",
-                    'tax': f"₹{calculations['tax_amount']:,.2f} ({calculations['tax_rate']}%)",
                     'discount': f"-₹{calculations['discount_amount']:,.2f} ({calculations['discount_rate']}%)",
-                    'final_price': f"₹{calculations['company_price']:,.2f}"
+                    'final_price': f"₹{calculations['company_price']:,.2f}",
+                    'you_save': f"₹{calculations['savings']:,.2f}"
                 }
             })
         
@@ -450,7 +449,7 @@ class CatalogUtilitiesAPIView(APIView):
     
 
 class CatalogDashboardAPIView(APIView):
-    """Dashboard API view with proper DRF authentication"""
+    """Updated Dashboard API view without tax and stock references"""
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
@@ -460,54 +459,37 @@ class CatalogDashboardAPIView(APIView):
         total_categories = Category.objects.filter(is_active=True).count()
         total_brands = Brand.objects.filter(is_active=True).count()
 
-        # Stock statistics
-        low_stock_count = ProductVariant.objects.filter(
-            is_active=True,
-            stock_quantity__lte=10,
-            stock_quantity__gt=0
-        ).count()
-
-        out_of_stock_count = ProductVariant.objects.filter(
-            is_active=True,
-            stock_quantity=0
-        ).count()
-
-        # Value statistics - FIXED: using 'company_price' instead of 'value'
-        total_value = ProductVariant.objects.filter(is_active=True).aggregate(
-            total=Sum('company_price')
-        )['total'] or Decimal('0.00')
-
-        # Additional value statistics for better dashboard insights
+        # Value statistics (no more stock calculations)
         total_mrp = ProductVariant.objects.filter(is_active=True).aggregate(
             total=Sum('mrp')
-        )['total'] or Decimal('0.00')
-
-        total_tax_amount = ProductVariant.objects.filter(is_active=True).aggregate(
-            total=Sum('tax_amount')
         )['total'] or Decimal('0.00')
 
         total_discount_amount = ProductVariant.objects.filter(is_active=True).aggregate(
             total=Sum('discount_amount')
         )['total'] or Decimal('0.00')
 
-        # Category breakdown with enhanced statistics
+        total_company_price = ProductVariant.objects.filter(is_active=True).aggregate(
+            total=Sum('company_price')
+        )['total'] or Decimal('0.00')
+
+        # Category breakdown
         category_stats = Category.objects.filter(is_active=True).annotate(
             product_count=Count('product', filter=Q(product__is_active=True)),
             variant_count=Count('product__variants', filter=Q(product__variants__is_active=True)),
-            total_value=Sum('product__variants__company_price', filter=Q(product__variants__is_active=True))
-        ).values('id', 'name', 'product_count', 'variant_count', 'total_value')
+            total_mrp=Sum('product__variants__mrp', filter=Q(product__variants__is_active=True)),
+            total_company_price=Sum('product__variants__company_price', filter=Q(product__variants__is_active=True))
+        ).values('id', 'name', 'product_count', 'variant_count', 'total_mrp', 'total_company_price')
 
-        # Brand breakdown with enhanced statistics
+        # Brand breakdown
         brand_stats = Brand.objects.filter(is_active=True).annotate(
             product_count=Count('product', filter=Q(product__is_active=True)),
             variant_count=Count('product__variants', filter=Q(product__variants__is_active=True)),
-            total_value=Sum('product__variants__company_price', filter=Q(product__variants__is_active=True))
-        ).values('id', 'name', 'product_count', 'variant_count', 'total_value')
+            total_mrp=Sum('product__variants__mrp', filter=Q(product__variants__is_active=True)),
+            total_company_price=Sum('product__variants__company_price', filter=Q(product__variants__is_active=True))
+        ).values('id', 'name', 'product_count', 'variant_count', 'total_mrp', 'total_company_price')
 
-        # Top performing variants by value
-        top_variants = ProductVariant.objects.filter(is_active=True).select_related('product').annotate(
-            stock_value=F('stock_quantity') * F('company_price')
-        ).order_by('-stock_value')[:10]
+        # Top performing variants by company price
+        top_variants = ProductVariant.objects.filter(is_active=True).select_related('product').order_by('-company_price')[:10]
 
         top_variants_data = []
         for variant in top_variants:
@@ -515,13 +497,14 @@ class CatalogDashboardAPIView(APIView):
                 'id': variant.id,
                 'material_code': variant.material_code,
                 'product_name': variant.product.name,
+                'mrp': str(variant.mrp),
+                'discount_rate': str(variant.discount_rate),
                 'company_price': str(variant.company_price),
-                'stock_quantity': variant.stock_quantity,
-                'stock_value': str(variant.stock_value),
+                'savings': str(variant.discount_amount),
                 'dimensions': f"W:{variant.size_width or 0} × H:{variant.size_height or 0} × D:{variant.size_depth or 0}mm"
             })
 
-        # Price range analysis
+        # Price range analysis based on company_price
         price_ranges = [
             {
                 'range': '0-5000',
@@ -555,13 +538,6 @@ class CatalogDashboardAPIView(APIView):
             }
         ]
 
-        # Stock status distribution
-        stock_distribution = {
-            'in_stock': ProductVariant.objects.filter(is_active=True, stock_quantity__gt=10).count(),
-            'low_stock': ProductVariant.objects.filter(is_active=True, stock_quantity__lte=10, stock_quantity__gt=0).count(),
-            'out_of_stock': ProductVariant.objects.filter(is_active=True, stock_quantity=0).count()
-        }
-
         data = {
             # Basic counts
             'total_products': total_products,
@@ -569,16 +545,11 @@ class CatalogDashboardAPIView(APIView):
             'total_categories': total_categories,
             'total_brands': total_brands,
             
-            # Stock statistics
-            'low_stock_count': low_stock_count,
-            'out_of_stock_count': out_of_stock_count,
-            'stock_distribution': stock_distribution,
-            
-            # Financial statistics
-            'total_value': str(total_value),
+            # Financial statistics (no stock)
             'total_mrp': str(total_mrp),
-            'total_tax_amount': str(total_tax_amount),
             'total_discount_amount': str(total_discount_amount),
+            'total_company_price': str(total_company_price),
+            'total_savings': str(total_discount_amount),  # Total savings for customers
             
             # Breakdowns
             'category_breakdown': list(category_stats),
